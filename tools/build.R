@@ -1,10 +1,14 @@
 # Script setup ----
-library(ATRItools); library(tidyverse); library(devtools);
-setwd("~/bot/A4LEARN/A4LEARN/")
+# library(ATRItools); 
+library(tidyverse); library(devtools);
+# TODO CHANGE PATH
+setwd("~/Downloads/A4LEARN/A4LEARN/")
 
 # Read in csv files ----
 ## list all csv files under data folder
-source("./R/function.R")
+
+source("../tools/make_dir.R")
+  
 safe.dir.create("./data")
 csv_files <- list.files("../A4LEARN-20240917", pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
 for (file in csv_files) {
@@ -15,7 +19,7 @@ for (file in csv_files) {
   #remove(list = var_name)
 }
 
-# Document ATRI derived dataset(s) ----
+# Document all ATRI dataset(s) ----
 source("../tools/datadic.R")
 
 # Generate documentation and build the R package ----

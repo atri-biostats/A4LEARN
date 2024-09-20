@@ -1,7 +1,4 @@
-#' Create directory if not already exists
-#' 
-#' @name safe.dir.create
-#' @export
+# Create directory if not already exists
 safe.dir.create <- function(path) {
   dirTest <- function(x) !is.na(isdir <- file.info(x)$isdir) & 
     isdir

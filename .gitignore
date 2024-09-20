@@ -1,4 +1,16 @@
 .Rproj.user
+.Rproj
 .Rhistory
 .RData
 .Ruserdata
+
+.gz
+
+
+A4LEARN/man/
+A4LEARN/data/
+A4LEARN/NAMESPACE
+A4LEARN/R/
+
+# SOURCE DATASET
+A4LEARN-20240917/
