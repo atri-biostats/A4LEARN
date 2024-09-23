@@ -1,7 +1,16 @@
+# Clear dataDoc.R if already exists
+dataDoc_path <- "./R/dataDoc.R"
+
+# Check if the file exists
+if (file.exists(dataDoc_path)) {
+  # Remove the file invisibly
+  invisible(file.remove(dataDoc_path))
+} 
+
+# get derived data info
 derived_datadic <- derived_datadic %>%
   mutate(FILE_NAME = stringr::str_remove(FILE_NAME, ".csv"))
 derived_names <- unique(derived_datadic$FILE_NAME)
-
 
 # Document ATRI derived dataset(s) ----
 for(tt in derived_names){
@@ -77,3 +86,5 @@ for(tt in external_names){
 ", sep = "
 ", file = file.path(".", "R", "dataDoc.R"), append = TRUE)          
 }
+
+print("Dataset documentation created in dataDoc.R.")

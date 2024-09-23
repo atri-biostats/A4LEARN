@@ -1,16 +1,21 @@
+# R project files and settings
 .Rproj.user
-.Rproj
 .Rhistory
 .RData
 .Ruserdata
 
-.gz
+# Compressed data files
+*.gz
 
-
+# A4LEARN package structure
 A4LEARN/man/
 A4LEARN/data/
 A4LEARN/NAMESPACE
 A4LEARN/R/
+A4LEARN/.Rbuildignore
 
-# SOURCE DATASET
+# Source Dataset
 A4LEARN-20240917/
+
+# Rendering outputs
+*.html
