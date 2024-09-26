@@ -1,13 +1,48 @@
-# Clear dataDoc.R if already exists
-dataDoc_path <- "./R/dataDoc.R"
+# Document data dictionary and data_download_date ----
+dir.create(file.path("..", "R"))
+cat("#' A4 LEARN data dictionaries
+#'
+#' These data files contain meta data for other data files in this package.
+#'
+#' @docType data
+#' @name datadic
+#' @usage data(clinical_datadic)
+#' @usage data(derived_datadic)
+#' @usage data(external_datadic)
+#' @usage data(visits_datadic)
+#' @format A data frame
+#' @keywords datasets dictionary datadictionary
+\"clinical_datadic\"
 
-# Check if the file exists
-if (file.exists(dataDoc_path)) {
-  # Remove the file invisibly
-  invisible(file.remove(dataDoc_path))
-} 
+#' @rdname datadic
+\"derived_datadic\"
 
-# get derived data info
+#' @rdname datadic
+\"external_datadic\"
+
+#' @rdname datadic
+\"visits_datadic\"
+
+#' A4 LEARN data download date
+#'
+#' The date when data in this package were downloaded from
+#' <https://www.a4studydata.org/>.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name data_download_date
+#' @usage data(data_download_date)
+#' @format A `Date` class object.
+NULL
+
+", file = file.path("..", "R", "data.R"))
+
+# function for escaping braces
+escape <- function(x){
+  y <- gsub("{", "\\{", x, fixed = TRUE)
+  gsub("}", "\\}", y, fixed = TRUE)
+}
+# get derived data info ----
 derived_datadic <- derived_datadic %>%
   mutate(FILE_NAME = stringr::str_remove(FILE_NAME, ".csv"))
 derived_names <- unique(derived_datadic$FILE_NAME)
@@ -31,14 +66,14 @@ for(tt in derived_names){
       paste("#' @format A data frame with", nrow(dd), "rows and", ncol(dd), "variables."),
       "NULL
 ", sep = "
-", file = file.path(".", "R", "dataDoc.R"), append = TRUE)          
+", file = file.path("..", "R", "data.R"), append = TRUE)
 }
 
-# Get unique clinical names as lowercap
+# Get unique clinical names as lowercap ----
 clinical_datadic$CRF_NAME = tolower(clinical_datadic$CRF_NAME)
 clinical_names <- unique(clinical_datadic$CRF_NAME)
 
-# Document ATRI clinical dataset(s)
+# Document ATRI clinical dataset(s) ----
 for(tt in clinical_names){
   message(tt)
   assign("dd", get(tt))
@@ -48,7 +83,7 @@ for(tt in clinical_names){
       "#' \\itemize{",
       paste("#'   \\item", paste0(
         subset(clinical_datadic, CRF_NAME == tt)$FIELD_NAME, ": ",
-        subset(clinical_datadic, CRF_NAME == tt)$FIELD_TEXT)),
+        escape(subset(clinical_datadic, CRF_NAME == tt)$FIELD_TEXT))),
       "#' }",
       "#' @docType data",
       "#' @keywords datasets",
@@ -57,15 +92,15 @@ for(tt in clinical_names){
       paste("#' @format A data frame with", nrow(dd), "rows and", ncol(dd), "variables."),
       "NULL
 ", sep = "
-", file = file.path(".", "R", "dataDoc.R"), append = TRUE)          
+", file = file.path("..", "R", "data.R"), append = TRUE)          
 }
 
-# Document ATRI external dataset(s)
+# Get unique external dataset(s) ----
 external_datadic <- external_datadic %>%
   mutate(FILE_NAME = stringr::str_remove(FILE_NAME, ".csv"))
 external_names <- unique(external_datadic$FILE_NAME)
 
-# Document ATRI external dataset(s)
+# Document ATRI external dataset(s) ----
 for(tt in external_names){
   message(tt)
   assign("dd", get(tt))
@@ -75,7 +110,7 @@ for(tt in external_names){
       "#' \\itemize{",
       paste("#'   \\item", paste0(
         subset(external_datadic, FILE_NAME == tt)$FIELD_NAME, ": ",
-        subset(external_datadic, FILE_NAME == tt)$FIELD_DESC)),
+        escape(subset(external_datadic, FILE_NAME == tt)$FIELD_DESC))),
       "#' }",
       "#' @docType data",
       "#' @keywords datasets",
@@ -84,7 +119,8 @@ for(tt in external_names){
       paste("#' @format A data frame with", nrow(dd), "rows and", ncol(dd), "variables."),
       "NULL
 ", sep = "
-", file = file.path(".", "R", "dataDoc.R"), append = TRUE)          
+", file = file.path("..", "R", "data.R"), append = TRUE)          
 }
 
-print("Dataset documentation created in dataDoc.R.")
+message("Dataset documentation created in data.R.")
+

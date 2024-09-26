@@ -3,19 +3,21 @@
 .Rhistory
 .RData
 .Ruserdata
+.csv
 
 # Compressed data files
 *.gz
 
 # A4LEARN package structure
-A4LEARN/man/
-A4LEARN/data/
-A4LEARN/NAMESPACE
-A4LEARN/R/
-A4LEARN/.Rbuildignore
+man/
+data/
+NAMESPACE
+R/
+.Rbuildignore
 
 # Source Dataset
-A4LEARN-20240917/
+data-raw/*.csv
 
 # Rendering outputs
 *.html
+docs
