@@ -20,4 +20,5 @@ build_readme()
 # usethis::use_pkgdown()
 # setwd('../')
 # pkgdown::build_site()
-# usethis::use_pkgdown_github_pages()
+# publish online:
+# pkgdown::deploy_to_branch()
