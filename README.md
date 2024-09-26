@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# A4LEARN <a href="https://www.a4studydata.org/"><img src="A4LEARN/man/figures/logo.png" align="right" height="138" /></a>4LEARN
+# A4LEARN <a href="https://www.a4studydata.org/"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 This is an R data package for the Anti-Amyloid Treatment in Asymptomatic
 Alzheimer’s (A4) and Longitudinal Evaluation of Amyloid Risk and
@@ -14,7 +14,7 @@ To generate the package:
 
 - clone this repository
 - download A4 and LEARN data from <https://www.a4studydata.org/> and
-  move to [data-raw](data-raw)
+  copy to [data-raw](data-raw)
 - `source('data-raw/data-prep.R', chdir=TRUE)` to convert
   `data-raw/*.csv` files to `data/*.rda` files
 - `source('tools/build.R', chdir=TRUE)` to generate documentation and

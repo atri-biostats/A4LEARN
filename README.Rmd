@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# A4LEARN <a href="https://www.a4studydata.org/"><img src="A4LEARN/man/figures/logo.png" align="right" height="138" /></a>4LEARN
+# A4LEARN <a href="https://www.a4studydata.org/"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 This is an R data package for the Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4) and Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN) study. All raw/derived datasets are included as shared on https://www.a4studydata.org/.
 
@@ -23,7 +23,7 @@ This is an R data package for the Anti-Amyloid Treatment in Asymptomatic Alzheim
 To generate the package:
 
 * clone this repository
-* download A4 and LEARN data from [https://www.a4studydata.org/](https://www.a4studydata.org/) and move to [data-raw](data-raw)
+* download A4 and LEARN data from [https://www.a4studydata.org/](https://www.a4studydata.org/) and copy to [data-raw](data-raw)
 * `source('data-raw/data-prep.R', chdir=TRUE)` to convert `data-raw/*.csv` files to `data/*.rda` files
 * `source('tools/build.R', chdir=TRUE)` to generate documentation and build R package
 

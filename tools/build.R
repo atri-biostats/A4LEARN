@@ -15,7 +15,7 @@ install.packages(pkg_dir, repos = NULL, type = "source")
 # Build README.md ----
 build_readme()
 
-# Build websiet ----
+# Build website ----
 # run once:
 # usethis::use_pkgdown()
 # setwd('../')
