@@ -20,7 +20,7 @@ To generate the package:
 - `source('tools/build.R')` to generate documentation and build R
   package
 
-## Example
+## Introduction
 
 The document demonstrates how to reproduce some primary findings of the
 A4 trial (Sperling et al. 2023) using R. Data were downloaded from
@@ -148,26 +148,80 @@ table1 <- tableby(TX ~ AGEYR + EDCCNTU + SEX + RACE + ETHNIC + MARITAL + WRKRET 
   control = tableby.control(test=TRUE,
     stats.labels = list(Nmiss = "Missing")))
 
-output_format <- knitr::opts_knit$get("rmarkdown.pandoc.to")
-
-if(!is.null(output_format) && output_format == "latex"){
-  # format table for pdf document
-  table1 %>%
-    summary(labelTranslations = A4labels, digits = 1, text = "latex") %>%
-    kable(format="latex", escape = FALSE, longtable = T, booktabs = TRUE, 
-      linesep = "", row.names = FALSE,
-      caption = "Baseline characteristics.") %>%
-    kable_styling(latex_options = c("HOLD_position", "repeat_header")) %>% 
-    column_spec(1, width = "17 em") %>%
-    column_spec(2:4, width = "6 em")
-}
-
-if(!is.null(output_format) && output_format == "html"){
-  # format table for html
-  summary(table1, labelTranslations = A4labels, digits = 1, 
-    title = "Baseline characteristics.")
-}
+summary(table1, labelTranslations = A4labels, digits = 1,
+  title = "Baseline characteristics.")
 ```
+
+|                                      | Placebo (N=583) | Solanezumab (N=564) | Total (N=1147) | p value |
+|:-------------------------------------|:---------------:|:-------------------:|:--------------:|--------:|
+| **Age (y)**                          |                 |                     |                |   0.923 |
+|    Mean (SD)                         |   71.9 (5.0)    |     72.0 (4.7)      |   72.0 (4.8)   |         |
+|    Range                             |   65.0 - 85.7   |     65.0 - 85.5     |  65.0 - 85.7   |         |
+| **Education (y)**                    |                 |                     |                |   0.785 |
+|    Mean (SD)                         |   16.6 (2.9)    |     16.6 (2.7)      |   16.6 (2.8)   |         |
+|    Range                             |   8.0 - 30.0    |     7.0 - 30.0      |   7.0 - 30.0   |         |
+| **Sex**                              |                 |                     |                |   0.481 |
+|    Male                              |   231 (39.6%)   |     235 (41.7%)     |  466 (40.6%)   |         |
+|    Female                            |   352 (60.4%)   |     329 (58.3%)     |  681 (59.4%)   |         |
+| **Racial categories**                |                 |                     |                |   0.831 |
+|    American Indian or Alaskan Native |    0 (0.0%)     |      1 (0.2%)       |    1 (0.1%)    |         |
+|    Asian                             |    13 (2.2%)    |      11 (2.0%)      |   24 (2.1%)    |         |
+|    Black or African American         |    15 (2.6%)    |      12 (2.1%)      |   27 (2.4%)    |         |
+|    More than one race                |    3 (0.5%)     |      5 (0.9%)       |    8 (0.7%)    |         |
+|    Unknown or Not Reported           |    3 (0.5%)     |      4 (0.7%)       |    7 (0.6%)    |         |
+|    White                             |   549 (94.2%)   |     531 (94.1%)     |  1080 (94.2%)  |         |
+| **Ethnicity**                        |                 |                     |                |   0.910 |
+|    Hispanic or Latino                |    18 (3.1%)    |      16 (2.8%)      |   34 (3.0%)    |         |
+|    Not Hispanic or Latino            |   560 (96.1%)   |     542 (96.1%)     |  1102 (96.1%)  |         |
+|    Unknown or Not reported           |    5 (0.9%)     |      6 (1.1%)       |   11 (1.0%)    |         |
+| **Marital Status**                   |                 |                     |                |   0.208 |
+|    Divorced                          |   80 (13.7%)    |     89 (15.8%)      |  169 (14.7%)   |         |
+|    Married                           |   415 (71.2%)   |     405 (71.8%)     |  820 (71.5%)   |         |
+|    Never married                     |    26 (4.5%)    |      14 (2.5%)      |   40 (3.5%)    |         |
+|    Unknown or Not Reported           |    12 (2.1%)    |      6 (1.1%)       |   18 (1.6%)    |         |
+|    Widowed                           |    50 (8.6%)    |      50 (8.9%)      |   100 (8.7%)   |         |
+| **Retirement Status**                |                 |                     |                |   0.722 |
+|    No                                |   142 (24.4%)   |     126 (22.3%)     |  268 (23.4%)   |         |
+|    Not Applicable                    |    9 (1.5%)     |      9 (1.6%)       |   18 (1.6%)    |         |
+|    Yes                               |   432 (74.1%)   |     429 (76.1%)     |  861 (75.1%)   |         |
+| **FBP SUVr**                         |                 |                     |                |   0.903 |
+|    Mean (SD)                         |    1.3 (0.2)    |      1.3 (0.2)      |   1.3 (0.2)    |         |
+|    Range                             |    1.0 - 2.1    |      1.0 - 2.1      |   1.0 - 2.1    |         |
+| **FBP Centiloid**                    |                 |                     |                |   0.903 |
+|    Mean (SD)                         |   65.9 (32.1)   |     66.2 (33.5)     |  66.0 (32.8)   |         |
+|    Range                             |   0.3 - 205.4   |     0.3 - 201.7     |  0.3 - 205.4   |         |
+| **APOE Genotype**                    |                 |                     |                |   0.624 |
+|    E2/E2                             |    0 (0.0%)     |      1 (0.2%)       |    1 (0.1%)    |         |
+|    E2/E3                             |    33 (5.7%)    |      28 (5.0%)      |   61 (5.3%)    |         |
+|    E2/E4                             |    22 (3.8%)    |      13 (2.3%)      |   35 (3.1%)    |         |
+|    E3/E3                             |   208 (35.7%)   |     202 (35.8%)     |  410 (35.7%)   |         |
+|    E3/E4                             |   273 (46.8%)   |     273 (48.4%)     |  546 (47.6%)   |         |
+|    E4/E4                             |    47 (8.1%)    |      47 (8.3%)      |   94 (8.2%)    |         |
+| **APOE e4**                          |                 |                     |                |   0.896 |
+|    No                                |   241 (41.3%)   |     231 (41.0%)     |  472 (41.2%)   |         |
+|    Yes                               |   342 (58.7%)   |     333 (59.0%)     |  675 (58.8%)   |         |
+| **PACC**                             |                 |                     |                |   0.831 |
+|    Mean (SD)                         |   -0.0 (2.6)    |      0.0 (2.7)      |   0.0 (2.7)    |         |
+|    Range                             |   -12.5 - 7.8   |     -10.3 - 6.4     |  -12.5 - 7.8   |         |
+| **LM Delayed Recall**                |                 |                     |                |   0.757 |
+|    Missing                           |        1        |          0          |       1        |         |
+|    Mean (SD)                         |   12.7 (3.5)    |     12.6 (3.8)      |   12.6 (3.7)   |         |
+|    Range                             |   2.0 - 22.0    |     0.0 - 23.0      |   0.0 - 23.0   |         |
+| **MMSE**                             |                 |                     |                |   0.763 |
+|    Mean (SD)                         |   28.8 (1.2)    |     28.8 (1.3)      |   28.8 (1.3)   |         |
+|    Range                             |   24.0 - 30.0   |     22.0 - 30.0     |  22.0 - 30.0   |         |
+| **CFI Combined**                     |                 |                     |                |   0.045 |
+|    Missing                           |        2        |          0          |       2        |         |
+|    Mean (SD)                         |    3.6 (3.3)    |      4.0 (3.6)      |   3.8 (3.5)    |         |
+|    Range                             |   0.0 - 20.0    |     0.0 - 22.0      |   0.0 - 22.0   |         |
+| **ADL Partner**                      |                 |                     |                |   0.266 |
+|    Mean (SD)                         |   43.5 (2.6)    |     43.4 (2.7)      |   43.4 (2.6)   |         |
+|    Range                             |   26.8 - 45.0   |     25.0 - 45.0     |  25.0 - 45.0   |         |
+| **CDR-SB**                           |                 |                     |                |   0.154 |
+|    Mean (SD)                         |    0.0 (0.2)    |      0.1 (0.2)      |   0.1 (0.2)    |         |
+|    Range                             |    0.0 - 2.0    |      0.0 - 1.0      |   0.0 - 2.0    |         |
+
+Baseline characteristics.
 
 ## PACC Data
 
@@ -217,9 +271,6 @@ ns22 <- function(t){
     Boundary.knots = c(0, max(ADQS_PACC$ADURW))), t)[,2])
 }
 
-assign("ns21", ns21, envir = .GlobalEnv)
-assign("ns22", ns22, envir = .GlobalEnv)
-
 # GLS model fit:
 pacc_fit <- gls(PACC ~ 
     I(ns21(ADURW)) + I(ns22(ADURW)) +
@@ -233,8 +284,7 @@ pacc_fit <- gls(PACC ~
 ``` r
 ref_grid(pacc_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_PACC$TX)),
-  vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(),
-  data = ADQS_PACC, 
+  vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
   mode = "satterthwaite") %>%
   emmeans(~ ADURW | TX) %>%
   pairs(reverse = TRUE) %>%
@@ -454,9 +504,10 @@ Paul S Aisen, and Alzheimer’s Disease Neuroimaging Initiative. 2023.
 Donohue, Michael C, Reisa A Sperling, David P Salmon, Dorene M Rentz,
 Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
 “The Preclinical Alzheimer Cognitive Composite: Measuring
-Amyloid-Related Decline.” JAMA Neurology 71 (8): 961–70. R Core Team.
-2019. R: A Language and Environment for Statistical Computing. Vienna,
-Austria: R Foundation for Statistical Computing.
+Amyloid-Related Decline.” *JAMA Neurology* 71 (8): 961–70.
+
+R Core Team. 2019. R: A Language and Environment for Statistical
+Computing. Vienna, Austria: R Foundation for Statistical Computing.
 <https://www.R-project.org>.
 
 Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith

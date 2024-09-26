@@ -1,5 +1,8 @@
 library(tidyverse); library(devtools);
 
+# Load data ----
+devtools::load_all('../')
+
 # Document all ATRI dataset(s) ----
 source("document.R")
 
@@ -13,6 +16,7 @@ install.packages(pkg_dir, repos = NULL, type = "source")
 build_readme()
 
 # Build websiet ----
+# run once:
 # usethis::use_pkgdown()
 # setwd('../')
 # pkgdown::build_site()
