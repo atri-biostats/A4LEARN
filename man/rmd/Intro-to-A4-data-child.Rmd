@@ -34,82 +34,29 @@ theme_set(theme_bw() +
   theme(legend.background = element_rect(fill="transparent")))
 ```
 
-## Read data
-
-```{r read-data}
-# Participant characteristics data:
-SUBJINFO_raw <- SUBJINFO
-# Longitudinal PACC data from Analysis Data Questionnaire Scores (ADQS):
-ADQS_raw <- ADQS
-```
-
 ## Data manipulations
 
 ```{r data-manipulation}
 # Outcomes collected at Visit 1
-V1OUTCOME <- ADQS_raw %>%
+V1OUTCOME <- A4LEARN::ADQS %>%
   dplyr::filter(VISITCD == "001") %>%
   select(BID, QSTESTCD, QSSTRESN) %>%
   pivot_wider(values_from = QSSTRESN, names_from = QSTESTCD)
 
 # Outcomes collected at Visit 6
-V6OUTCOME <- ADQS_raw %>%
+V6OUTCOME <- A4LEARN::ADQS %>%
   dplyr::filter(VISITCD == "006") %>%
   select(BID, QSTESTCD, QSSTRESN) %>%
   pivot_wider(values_from = QSSTRESN, names_from = QSTESTCD)
 
-SUBJINFO <- SUBJINFO_raw %>%
+SUBJINFO <- A4LEARN::SUBJINFO %>%
   left_join(V6OUTCOME, by = "BID") %>%
   left_join(V1OUTCOME %>%
       select(BID, CDRSB, CFITOTAL, CFISP, CFIPT, ADLPQPT, ADLPQSP), 
-    by = "BID") %>%
-  mutate(
-    AGECAT = case_when(AGEYR < 65 ~ "Age < 65",
-      AGEYR >= 65 & AGEYR < 75 ~ "65 <= Age < 75",
-      AGEYR >= 75 & AGEYR < 85 ~ "75 <= Age < 85",
-      AGEYR >= 85 ~ "Age >= 85"),
-    SEX = factor(case_when(
-      SEX == 1 ~ "Female",
-      SEX == 2 ~ "Male"), levels = c("Male", "Female")),
-    RACE = case_when(RACE == 1 ~ "White",
-      RACE == 2 ~ "Black or African American",
-      RACE == 58 ~ "Asian",
-      RACE == 79 ~ "Native Hawaiian or Other Pacific Islander",
-      RACE == 84 ~ "American Indian or Alaskan Native",
-      RACE == 97 ~ "Unknown or Not Reported",
-      RACE == 100 ~ "More than one race"),
-    MARITAL = case_when(MARITAL == 2 ~ "Divorced",
-      MARITAL == 4 ~ "Never married",
-      MARITAL == 5 ~ "Widowed",
-      MARITAL == 11 ~ "Married",
-      MARITAL == 97 ~ "Unknown or Not Reported"),
-    ETHNIC = case_when(ETHNIC == 50 ~ "Hispanic or Latino",
-      ETHNIC == 56 ~ "Not Hispanic or Latino",
-      ETHNIC == 97 ~ "Unknown or Not reported"),
-    ALCHLBL = case_when(ALCHLBL == 0 ~ "No",
-      ALCHLBL == 1 ~ "Yes"),
-    CFBL = case_when(CFBL == 0 ~ "No",
-      CFBL == 1 ~ "Yes"),
-    TBBL = case_when(TBBL == 0 ~ "No",
-      TBBL == 1 ~ "Yes"),
-    WRKRET = case_when(WRKRET == 1 ~ "Yes",
-      WRKRET == 0 ~ "No",
-      WRKRET == 96 ~ "Not Applicable"),
-    APOEGNPRSNFLG = case_when(APOEGNPRSNFLG == 1 ~ "Yes",
-      APOEGNPRSNFLG == 0 ~ "No"),
-    AGEYR = as.numeric(AGEYR),
-    SUVRCER = as.numeric(SUVRCER),
-    AMYLCENT = as.numeric(AMYLCENT),
-    EDCCNTU = as.numeric(EDCCNTU),
-    COGDSSTTSV6 = as.numeric(COGDSSTTSV6),
-    COGLMDRTSV6 = as.numeric(COGLMDRTSV6),
-    TX = factor(TX, levels = c("Placebo", "Solanezumab")),
-    COMPLETER_label = case_when(
-      SUBJCOMPTR == 1 ~ "Completer",
-      TRUE ~ "Dropout"))
+    by = "BID")
 
-# Filter ADQS_raw for PACC collected in the blinded phases among mITT population
-ADQS_PACC <- ADQS_raw %>%
+# Filter A4LEARN::ADQS for PACC collected in the blinded phases among mITT population
+ADQS_PACC <- A4LEARN::ADQS %>%
   dplyr::filter(MITTFL== 1) %>%
   dplyr::filter(EPOCH == "BLINDED TREATMENT") %>%
   dplyr::filter(QSTESTCD == "PACC") %>%

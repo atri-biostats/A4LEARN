@@ -25,7 +25,7 @@ To generate the package:
 * clone this repository
 * download A4 and LEARN data from [https://www.a4studydata.org/](https://www.a4studydata.org/) and move to [data-raw](data-raw)
 * `source('data-raw/data-prep.R', chdir=TRUE)` to convert `data-raw/*.csv` files to `data/*.rda` files
-* `source('tools/build.R')` to generate documentation and build R package
+* `source('tools/build.R', chdir=TRUE)` to generate documentation and build R package
 
 ```{r, child='man/rmd/Intro-to-A4-data-child.Rmd'}
 ```
