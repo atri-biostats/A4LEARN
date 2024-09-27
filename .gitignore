@@ -9,7 +9,7 @@
 *.gz
 
 # A4LEARN package structure
-man/
+man/*.Rd
 data/
 NAMESPACE
 R/
