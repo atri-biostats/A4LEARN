@@ -1,12 +1,12 @@
 ---
-title: "Introduction to A4 Data"
+title: "Introduction to A4 data"
 author: "ATRI Biostatistics"
 output:   
   rmarkdown::html_vignette:
     toc: true
 urlcolor: blue
 vignette: >
-  %\VignetteIndexEntry{Intro-to-A4-data}
+  %\VignetteIndexEntry{Introduction to A4 data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
