@@ -9,7 +9,7 @@ source("document.R")
 # Generate documentation, build, and install the R package ----
 document()
 check(error_on = "error")
-pkg_dir <- build()
+pkg_dir <- build(args="--compact-vignettes=both")
 install.packages(pkg_dir, repos = NULL, type = "source")
 
 # Build README.md ----

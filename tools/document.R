@@ -1,48 +1,53 @@
 library(tidyverse)
 
-# Document data dictionary and data_download_date ----
 dir.create(file.path("..", "R"))
-cat("#' A4 LEARN data dictionaries
-#'
-#' These data files contain meta data for other data files in this package.
-#'
-#' @docType data
-#' @name datadic
-#' @usage data(clinical_datadic)
-#' @usage data(derived_datadic)
-#' @usage data(external_datadic)
-#' @usage data(visits_datadic)
-#' @format A data frame
-#' @keywords datasets dictionary datadictionary
-#' @examples
-#' browseVignettes('A4LEARN')
-\"clinical_datadic\"
 
-#' @rdname datadic
-\"derived_datadic\"
+# Add A4LEARN-package.R file ----
+cat("#' @keywords internal",
+  "\"_PACKAGE\"\n",
+  "## usethis namespace: start",
+  "#' @importFrom rmarkdown pdf_document knitr_options_pdf",
+  "## usethis namespace: end",
+  "NULL",
+  file = file.path('..', 'R', 'A4LEARN-package.R'), sep = '\n')
 
-#' @rdname datadic
-\"external_datadic\"
-
-#' @rdname datadic
-\"visits_datadic\"
-NULL
-
-#' A4 LEARN data download date
-#'
-#' The date when data in this package were downloaded from
-#' <https://www.a4studydata.org/>.
-#'
-#' @docType data
-#' @keywords datasets
-#' @name data_download_date
-#' @usage data(data_download_date)
-#' @format A `Date` class object.
-#' @examples
-#' browseVignettes('A4LEARN')
-NULL
-
-", file = file.path("..", "R", "data.R"))
+# Document data dictionary and data_download_date ----
+cat("#' A4 LEARN data dictionaries",
+  "#'",
+  "#' These data files contain meta data for other data files in this package.",
+  "#'",
+  "#' @docType data",
+  "#' @name datadic",
+  "#' @usage data(clinical_datadic)",
+  "#' @usage data(derived_datadic)",
+  "#' @usage data(external_datadic)",
+  "#' @usage data(visits_datadic)",
+  "#' @format A data frame",
+  "#' @keywords datasets dictionary datadictionary",
+  "#' @examples",
+  "#' browseVignettes('A4LEARN')",
+  "\"clinical_datadic\"\n",
+  "#' @rdname datadic",
+  "\"derived_datadic\"\n",
+  "#' @rdname datadic",
+  "\"external_datadic\"\n",
+  "#' @rdname datadic",
+  "\"visits_datadic\"",
+  "NULL\n",
+  "#' A4 LEARN data download date",
+  "#'",
+  "#' The date when data in this package were downloaded from",
+  "#' <https://www.a4studydata.org/>.",
+  "#'",
+  "#' @docType data",
+  "#' @keywords datasets",
+  "#' @name data_download_date",
+  "#' @usage data(data_download_date)",
+  "#' @format A `Date` class object.",
+  "#' @examples",
+  "#' browseVignettes('A4LEARN')",
+  "NULL\n\n",
+  file = file.path("..", "R", "data.R"), sep = "\n")
 
 # function for escaping braces
 escape <- function(x){
@@ -99,7 +104,9 @@ for(tt in clinical_names){
     paste0("#' @usage data(", tt, ")"),
     paste("#' @format A data frame with", nrow(dd), "rows and", ncol(dd), "variables."),
     "#' @examples",
+    "#' \\dontrun{",
     "#' browseVignettes('A4LEARN')",
+    "#' }",
     "NULL\n", sep = "\n",
     file = file.path("..", "R", "data.R"), append = TRUE)          
 }
