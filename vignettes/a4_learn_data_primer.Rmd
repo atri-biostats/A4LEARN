@@ -1,0 +1,134 @@
+---
+title: "A4 / LEARN Data Primer"
+author: "ATRI Biostatistics"
+output:   
+  rmarkdown::html_vignette:
+    toc: true
+urlcolor: blue
+vignette: >
+  %\VignetteIndexEntry{A4 / LEARN Data Primer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8, 
+  fig.height = 8 / 1.6, 
+  out.width = "100%"
+)
+
+options(digits = 2, width = 150)
+```
+
+# Introduction
+This document demonstrates an example on how to explore A4/LEARN data using R programming language.
+
+## Load required R packages
+
+```{r packages, results = "hide", message = FALSE, warning = FALSE} 
+library(tidyverse)
+library(arsenal)
+library(A4LEARN)
+```
+
+# Prepare data
+
+**Rescreens**
+
+Participants who re-screened may appear in the data twice with different BIDs 
+each time. The A4LEARN::SUBJINFO derived dataset indicates which participants are re-screens,
+and how the re-screen BIDs are mapped to each other. The code below also accounts
+for this to set up the removal of duplicate appearances.
+
+```{r prep_rescreens, results = "hide"}
+rescreens <- A4LEARN::SUBJINFO %>%
+  filter(!is.na(PREVBID)) %>%
+  rename(BID1 = PREVBID, BID2 = BID) %>%
+  select(BID1, BID2)
+```
+
+**Gather Amyloid PET data**
+
+The Amyloid PET quantitative data (`A4LEARN::imaging_SUVR_amyloid`) is in long format with one row per
+region. We use `tidyr::pivot_wider` to transform to wide format with one column
+per region.
+
+```{r prep_pet, results = "hide"}
+pet <- A4LEARN::imaging_SUVR_amyloid %>% 
+  filter(brain_region != '' & VISCODE == 2) %>%
+  pivot_wider(id_cols='BID', names_from=brain_region, values_from=suvr_cer) %>%
+  left_join(A4LEARN::imaging_PET_VA, by='BID') %>%
+  left_join(rescreens, by=c('BID' = 'BID1')) %>% 
+  mutate( # update PET BIDs to second BID if necessary
+    BID = case_when(
+      !is.na(BID2) ~ BID2,
+      TRUE ~ BID)) %>%
+  arrange(BID, BID2) %>%
+  filter(!duplicated(BID, fromLast = TRUE)) %>%
+  select(-BID2)
+```
+
+**Baseline PACC**
+
+```{r prep_pacc, results = "hide"}
+pacc_bl <- A4LEARN::PACC %>% 
+  filter(VISCODE == 6) %>%
+  select(BID, PACC.raw, MMSCORE, LDELTOTAL, DIGITTOTAL, FCTOTAL96)
+```
+
+**Prepare data table**
+
+```{r prep_data, results = "hide"}
+dd <- A4LEARN::SUBJINFO %>% select(BID, APOEGN) %>%
+  left_join(A4LEARN::ptdemog, by='BID') %>%
+  left_join(pet, by=c('SUBSTUDY','BID')) %>%
+  left_join(A4LEARN::imaging_volumetric_mri %>%
+    filter(is.na(VISCODE) | VISCODE==4)) %>%
+  left_join(pacc_bl, by=c('BID')) %>%
+  # remove first appearance of rescreens:
+  filter(!BID %in% rescreens$BID1) %>% 
+  rename(`A4 amyloid eligibility` = overall_score) %>%
+  rename(
+    `Age at screening (yrs)` = PTAGE,
+    `APOE genotype` = APOEGN, 
+    `Education (yrs)` = PTEDUCAT, 
+    `Amyloid PET SUVr^b^` = Composite_Summary,
+    Sex = PTGENDER,
+    Ethnicity = PTETHNIC,
+    `Marital status` = PTMARRY,
+    `Participant retired` = PTNOTRT,
+    `Hippocampal Occupancy` = HOC,
+    PACC = PACC.raw, 
+    MMSE = MMSCORE, 
+    `Logical memory delay` = LDELTOTAL, 
+    `Digit symbol` = DIGITTOTAL, 
+    `FCSRT (2xFree + Cued)` = FCTOTAL96,
+    `A4 amyloid eligibility^b^` = `A4 amyloid eligibility`) %>% 
+  # rename values and fields for footnote setup in summary table
+  mutate(SUBSTUDY = factor(SUBSTUDY, levels = c('A4', 'LEARN'),
+    labels = c('A4^a^' , 'LEARN'))) %>%
+  filter(!SUBSTUDY %in% 'SF') # excluding screen-fails
+```
+
+# Summarize data
+
+```{r summarize, results='asis'}
+tableby(SUBSTUDY ~ .,
+  data = select(dd, SUBSTUDY, `A4 amyloid eligibility^b^`, `Age at screening (yrs)`, `Education (yrs)`,
+    `APOE genotype`, `Amyloid PET SUVr^b^`, `Hippocampal Occupancy`, Sex, Ethnicity,
+    `Marital status`, `Participant retired`, 
+    PACC, MMSE, `Logical memory delay`, `Digit symbol`, `FCSRT (2xFree + Cued)`), digits = 2) %>%
+summary(title = "Baseline characteristics of A4-randomized^a^ and LEARN-enrolled cohorts")
+```
+
+^a^ A4-randomized cohort (n=`r sum(dd$SUBSTUDY=='A4^a^')`) includes other participants in addition to the modified intention-to-treat population (mITT n=1147) reported in the A4 trial (Sperling et al. 2023). The modified intention-to-treat population population that was reported for the A4 trial results include those who received at least one dose of solanezumab or placebo and underwent assessment for the primary end point. Please refer to the `vignette(topic = 'Intro-to-A4-data')` file for code to reproduce the baseline characteristics and primary findings of the A4 study. \
+^b^ Refer to A4 Amyloid PET Eligibility Methods PDF document (`vignette(topic = 'imaging_PET_VA_methods')`) regarding these amyloid-related measures, the eligibility determination process and the modifications made to the SUVR algorithm.
+
+# References
+
+R Core Team. 2019. R: A Language and Environment for Statistical Computing. Vienna, Austria: R Foundation for Statistical Computing. https://www.R-project.org.
+
+Sperling, R. A., Donohue, M. C., Raman, R., Rafii, M. S., Johnson, K., Masters, C. L., van Dyck, C. H., Iwatsubo, T., Marshall, G. A., Yaari, R., Mancini, M., Holdridge, K. C., Case, M., Sims, J. R., Aisen, P. S., & A4 Study Team (2023). Trial of Solanezumab in Preclinical Alzheimer's Disease. *The New England journal of medicine*, 389(12), 1096–1107. https://doi.org/10.1056/NEJMoa2305032
