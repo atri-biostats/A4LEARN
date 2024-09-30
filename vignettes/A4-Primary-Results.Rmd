@@ -1,12 +1,13 @@
 ---
-title: "Introduction to A4 data"
+title: "A4 Primary Results"
 author: "ATRI Biostatistics"
 output:   
   rmarkdown::html_vignette:
     toc: true
+bibliography: references.bib  
 urlcolor: blue
 vignette: >
-  %\VignetteIndexEntry{Introduction to A4 data}
+  %\VignetteIndexEntry{A4 Primary Results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,9 +18,10 @@ knitr::opts_chunk$set(echo = TRUE,
   comment = "#>",
   fig.width = 8, 
   fig.height = 4, 
-  out.width = "100%"
+  out.width = "100%",
+  dev = 'svg'
 )
 ```
 
-```{r, child='../man/rmd/Intro-to-A4-data-child.Rmd'}
+```{r, child='../man/rmd/A4-Primary-Results-child.Rmd'}
 ```
