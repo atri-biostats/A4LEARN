@@ -18,10 +18,11 @@ knitr::opts_chunk$set(echo = TRUE,
   comment = "#>",
   fig.width = 8, 
   fig.height = 4, 
-  out.width = "100%",
-  dev = 'svg'
+  out.width = "100%"
 )
 ```
+
+The *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease (A4)* study was a Phase 3, double-blind, placebo-controlled study of solanezumab in subjects with preclinical Alzheimer's Disease [@sperling2023trial]. The code below demonstrates how to reproduce some primary findings of the A4 trial [@sperling2023trial] using @R. Data were downloaded from [https://www.a4studydata.org/](https://www.a4studydata.org/) on `r A4LEARN::data_download_date`.
 
 ```{r, child='../man/rmd/A4-Primary-Results-child.Rmd'}
 ```

@@ -1,5 +1,6 @@
 ---
 output: github_document
+bibliography: vignettes/references.bib  
 always_allow_html: true
 ---
 
@@ -10,22 +11,31 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
+  fig.width = 8, 
+  fig.height = 4, 
   out.width = "100%"
 )
 ```
 
 # A4LEARN <a href="https://www.a4studydata.org/"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
-This is an R data package for the Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4) and Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN) study. All raw/derived datasets are included as shared on https://www.a4studydata.org/.
+## Overview
+
+`A4LEARN` is an R package containing data and code to reproduce results from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study [@sperling2023trial] and *Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study [@sperling2024amyloid]. `A4LEARN` is a bundle of data, analysis code examples, and html and pdf documentation. The html documentation is viewable at [https://atrihub.github.io/A4LEARN](https://atrihub.github.io/A4LEARN). 
+
+All data, including the `A4LEARN` R package, is avalialable from [https://www.a4studydata.org/](https://www.a4studydata.org/) after registering and agreeing to the [terms of use](https://www.a4studydata.org/terms-of-use).
 
 ## Installation
 
-To generate the package:
+To install `A4LEARN`:
 
-* clone this repository
-* download A4 and LEARN data from [https://www.a4studydata.org/](https://www.a4studydata.org/) and copy to [data-raw](data-raw)
-* `source('data-raw/data-prep.R', chdir=TRUE)` to convert `data-raw/*.csv` files to `data/*.rda` files
-* `source('tools/build.R', chdir=TRUE)` to generate documentation and build R package
+* Register at [https://www.a4studydata.org](https://www.a4studydata.org)
+* Download `A4LEARN_1.0.20240917.tar.gz` from [https://www.a4studydata.org/](https://www.a4studydata.org/)
+* In R, run `install.packages("path/to/A4LEARN_1.0.20240917.tar.gz", repos = NULL, type = "source")`
 
-```{r, child='man/rmd/Intro-to-A4-data-child.Rmd'}
+The script to build this R package can be found in [tools](https://github.com/atrihub/A4LEARN/tree/main/tools).
+
+# Reproducing A4 primary results
+
+```{r, child='man/rmd/A4-Primary-Results-child.Rmd'}
 ```

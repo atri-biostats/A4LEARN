@@ -25,7 +25,9 @@ cat("#' A4 LEARN data dictionaries",
   "#' @format A data frame",
   "#' @keywords datasets dictionary datadictionary",
   "#' @examples",
+  "#' \\dontrun{",
   "#' browseVignettes('A4LEARN')",
+  "#' }",
   "\"clinical_datadic\"\n",
   "#' @rdname datadic",
   "\"derived_datadic\"\n",
@@ -45,7 +47,9 @@ cat("#' A4 LEARN data dictionaries",
   "#' @usage data(data_download_date)",
   "#' @format A `Date` class object.",
   "#' @examples",
+  "#' \\dontrun{",
   "#' browseVignettes('A4LEARN')",
+  "#' }",
   "NULL\n\n",
   file = file.path("..", "R", "data.R"), sep = "\n")
 
@@ -77,7 +81,9 @@ for(tt in derived_names){
     paste0("#' @usage data(", tt, ")"),
     paste("#' @format A data frame with", nrow(dd), "rows and", ncol(dd), "variables."),
     "#' @examples",
+    "#' \\dontrun{",
     "#' browseVignettes('A4LEARN')",
+    "#' }",
     "NULL\n", sep = "\n",
     file = file.path("..", "R", "data.R"), append = TRUE)          
 }
@@ -134,7 +140,9 @@ for(tt in external_names){
     paste0("#' @usage data(", tt, ")"),
     paste("#' @format A data frame with", nrow(dd), "rows and", ncol(dd), "variables."),
     "#' @examples",
+    "#' \\dontrun{",
     "#' browseVignettes('A4LEARN')",
+    "#' }",
     "NULL\n", sep = "\n",
     file = file.path("..", "R", "data.R"), append = TRUE)          
 }

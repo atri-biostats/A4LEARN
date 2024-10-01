@@ -99,3 +99,18 @@ SUBJINFO <- SUBJINFO %>%
     #   TRUE ~ "Dropout"))
 
 usethis::use_data(SUBJINFO, overwrite = TRUE)
+
+# Code imaging_PET_VA ----
+imaging_PET_VA <- imaging_PET_VA  %>%
+  mutate(
+    elig_vi_1 = factor(elig_vi_1, 
+      levels = c('negative', 'positive'),
+      labels = c('Negative', 'Positive')),
+    elig_vi_2 = factor(elig_vi_2, 
+      levels = c('negative', 'positive'),
+      labels = c('Negative', 'Positive')),
+    overall_score = factor(overall_score, 
+      levels = c('negative', 'positive'),
+      labels = c('Negative', 'Positive')))
+  
+usethis::use_data(imaging_PET_VA, overwrite = TRUE)

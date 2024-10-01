@@ -3,28 +3,34 @@
 
 # A4LEARN <a href="https://www.a4studydata.org/"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
-This is an R data package for the Anti-Amyloid Treatment in Asymptomatic
-Alzheimer’s (A4) and Longitudinal Evaluation of Amyloid Risk and
-Neurodegeneration (LEARN) study. All raw/derived datasets are included
-as shared on <https://www.a4studydata.org/>.
+## Overview
+
+`A4LEARN` is an R package containing data and code to reproduce results
+from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study
+(Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
+Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
+bundle of data, analysis code examples, and html and pdf documentation.
+The html documentation is viewable at
+<https://atrihub.github.io/A4LEARN>.
+
+All data, including the `A4LEARN` R package, is avalialable from
+<https://www.a4studydata.org/> after registering and agreeing to the
+[terms of use](https://www.a4studydata.org/terms-of-use).
 
 ## Installation
 
-To generate the package:
+To install `A4LEARN`:
 
-- clone this repository
-- download A4 and LEARN data from <https://www.a4studydata.org/> and
-  copy to [data-raw](data-raw)
-- `source('data-raw/data-prep.R', chdir=TRUE)` to convert
-  `data-raw/*.csv` files to `data/*.rda` files
-- `source('tools/build.R', chdir=TRUE)` to generate documentation and
-  build R package
+- Register at <https://www.a4studydata.org>
+- Download `A4LEARN_1.0.20240917.tar.gz` from
+  <https://www.a4studydata.org/>
+- In R, run
+  `install.packages("path/to/A4LEARN_1.0.20240917.tar.gz", repos = NULL, type = "source")`
 
-## Introduction
+The script to build this R package can be found in
+[tools](https://github.com/atrihub/A4LEARN/tree/main/tools).
 
-The document demonstrates how to reproduce some primary findings of the
-A4 trial (Sperling et al. 2023) using R. Data were downloaded from
-<https://www.a4studydata.org/> on 2024-09-17.
+# Reproducing A4 primary results
 
 ## Load required R packages
 
@@ -77,7 +83,7 @@ ADQS_PACC <- A4LEARN::ADQS %>%
   na.omit()
 ```
 
-## Baseline demographics
+## Baseline characteristics of the A4 trial
 
 ``` r
 A4labels <- list(TX = "Treatment group", AGEYR = "Age (y)", 
@@ -96,7 +102,7 @@ table1 <- tableby(TX ~ AGEYR + EDCCNTU + SEX + RACE + ETHNIC + MARITAL + WRKRET 
     stats.labels = list(Nmiss = "Missing")))
 
 summary(table1, labelTranslations = A4labels, digits = 1,
-  title = "Baseline characteristics.")
+  title = "Characteristics of the A4 participants by randomized treatment group (Modified Intention-to-Treat Population of those who received at least one dose of solanezumab or placebo and underwent assessment for the primary end point).")
 ```
 
 |                                      | Placebo (N=583) | Solanezumab (N=564) | Total (N=1147) | p value |
@@ -168,25 +174,27 @@ summary(table1, labelTranslations = A4labels, digits = 1,
 |    Mean (SD)                         |    0.0 (0.2)    |      0.1 (0.2)      |   0.1 (0.2)    |         |
 |    Range                             |    0.0 - 2.0    |      0.0 - 1.0      |   0.0 - 2.0    |         |
 
-Baseline characteristics.
+Characteristics of the A4 participants by randomized treatment group
+(Modified Intention-to-Treat Population of those who received at least
+one dose of solanezumab or placebo and underwent assessment for the
+primary end point).
 
-## PACC Data
+## Primary analyis of the PACC
 
-Preclinical Alzheimer Cognitive Composite (PACC,
-@donohue2014preclinical) data was modelled using natural cubic splines
-as described in @donohue2023natural. The fixed effects included the
-following terms: (i) spline basis expansion terms (two terms), (ii)
-spline basis expansion terms-by-treatment interaction (two terms), (iii)
-PACC test version administered, (iv) baseline age, (v) education, (vi)
-APOE4 Carrier Status (yes/no), and (vii) baseline florbetapir cortical
-SUVr. The model is constrained to not allow a difference between
-treatment group means at baseline. The following variance-covariance
-structures were assumed in sequence until a model converged: (i)
-heterogeneous unstructured, (ii) heterogeneous Toeplitz, (iii)
-heterogeneous autoregressive order 1, (iv) heterogeneous compound
-symmetry, and (v) compound symmetry. The first structure, heterogeneous
-unstructured, did not converge. Here we fit the second, heterogeneous
-Toeplitz, which did converge.
+Preclinical Alzheimer Cognitive Composite (PACC, Donohue et al. (2014))
+data was modeled using natural cubic splines as described in Donohue et
+al. (2023). The fixed effects included the following terms: (i) spline
+basis expansion terms (two terms), (ii) spline basis expansion
+terms-by-treatment interaction (two terms), (iii) PACC test version
+administered, (iv) baseline age, (v) education, (vi) APOE4 Carrier
+Status (yes/no), and (vii) baseline florbetapir cortical SUVr. The model
+is constrained to not allow a difference between treatment group means
+at baseline. The following variance-covariance structures were assumed
+in sequence until a model converged: (i) heterogeneous unstructured,
+(ii) heterogeneous Toeplitz, (iii) heterogeneous autoregressive order 1,
+(iv) heterogeneous compound symmetry, and (v) compound symmetry. The
+first structure, heterogeneous unstructured, did not converge. Here we
+fit the second, heterogeneous Toeplitz, which did converge.
 
 ``` r
 ggplot(ADQS_PACC, aes(x=ADURW, y=PACC, color=TX)) +
@@ -232,6 +240,7 @@ pacc_fit <- gls(PACC ~
 ref_grid(pacc_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_PACC, 
   mode = "satterthwaite") %>%
   emmeans(~ ADURW | TX) %>%
   pairs(reverse = TRUE) %>%
@@ -442,22 +451,46 @@ Shaded region depicts 95% confidence intervals.
 
 ## References
 
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-donohue2023natural" class="csl-entry">
+
 Donohue, Michael C, Oliver Langford, Philip S Insel, Christopher H van
 Dyck, Ronald C Petersen, Suzanne Craft, Gopalan Sethuraman, Rema Raman,
 Paul S Aisen, and Alzheimer’s Disease Neuroimaging Initiative. 2023.
 “Natural Cubic Splines for the Analysis of Alzheimer’s Clinical Trials.”
-*Pharmaceutical Statistics* 22 (3): 508–19.
+*Pharmaceutical Statistics*. <https://doi.org/10.1002/pst.2285>.
+
+</div>
+
+<div id="ref-donohue2014preclinical" class="csl-entry">
 
 Donohue, Michael C, Reisa A Sperling, David P Salmon, Dorene M Rentz,
-Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
+Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
 “The Preclinical Alzheimer Cognitive Composite: Measuring
 Amyloid-Related Decline.” *JAMA Neurology* 71 (8): 961–70.
+<https://doi.org/10.1001/jamaneurol.2014.803>.
 
-R Core Team. 2019. R: A Language and Environment for Statistical
-Computing. Vienna, Austria: R Foundation for Statistical Computing.
-<https://www.R-project.org>.
+</div>
+
+<div id="ref-sperling2024amyloid" class="csl-entry">
+
+Sperling, Reisa A, MC Donohue, RA Rissman, KA Johnson, DM Rentz, JD
+Grill, JL Heidebrink, et al. 2024. “Amyloid and Tau Prediction of
+Cognitive and Functional Decline in Unimpaired Older Individuals:
+Longitudinal Data from the A4 and LEARN Studies.” *The Journal of
+Prevention of Alzheimer’s Disease* 11 (4): 802–13.
+<https://doi.org/10.14283/jpad.2024.122>.
+
+</div>
+
+<div id="ref-sperling2023trial" class="csl-entry">
 
 Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
+Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
 Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
-Medicine* 389 (12): 1096–1107.
+Medicine* 389 (12): 1096–1107. <https://doi.org/10.1056/NEJMoa2305032>.
+
+</div>
+
+</div>

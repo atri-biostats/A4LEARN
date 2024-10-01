@@ -1,6 +1,4 @@
 
-The Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease (A4) study was a Phase 3, double-blind, placebo-controlled study of solanezumab in subjects with preclinical Alzheimer's Disease [@sperling2023trial]. The code below demonstrates how to reproduce some primary findings of the A4 trial [@sperling2023trial] using @R. Data were downloaded from [https://www.a4studydata.org/](https://www.a4studydata.org/) on `r A4LEARN::data_download_date`.
-
 ## Load required R packages
 
 ```{r packages, message = FALSE, warning = FALSE}
@@ -128,6 +126,7 @@ pacc_fit <- gls(PACC ~
 ref_grid(pacc_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_PACC, 
   mode = "satterthwaite") %>%
   emmeans(~ ADURW | TX) %>%
   pairs(reverse = TRUE) %>%

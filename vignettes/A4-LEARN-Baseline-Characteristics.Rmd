@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE,
 options(digits = 2, width = 150)
 ```
 
-The Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease (A4) study was a Phase 3, double-blind, placebo-controlled study of solanezumab in subjects with preclinical Alzheimer's Disease [@sperling2023trial]. The Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN) Study enrolled clinically unimpaired individuals who screen-failed for the A4 Study on the basis of not showing elevated amyloid on screening amyloid PET imaging and followed them longitudinally with all of the same assessments as A4. 
+The *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease (A4)* study was a Phase 3, double-blind, placebo-controlled study of solanezumab in subjects with preclinical Alzheimer's Disease [@sperling2023trial]. The *Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study enrolled clinically unimpaired individuals who screen-failed for the A4 Study on the basis of not showing elevated amyloid on screening amyloid PET imaging and followed them longitudinally with all of the same assessments as A4. 
 
 The code below demonstrates how to reproduce Table 1 from @sperling2020association using data in the `A4LEARN` package and @R.
 
