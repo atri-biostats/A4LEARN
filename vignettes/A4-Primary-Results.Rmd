@@ -26,3 +26,5 @@ The *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease (A4)* study wa
 
 ```{r, child='../man/rmd/A4-Primary-Results-child.Rmd'}
 ```
+
+# References

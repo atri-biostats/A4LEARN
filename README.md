@@ -9,21 +9,27 @@
 from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study
 (Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
 Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
-bundle of data, analysis code examples, and html and pdf documentation.
-The html documentation is viewable at
+bundle of clinical data, analysis code examples, and html and pdf
+documentation. The html documentation is viewable at
 <https://atrihub.github.io/A4LEARN>.
 
-All data, including the `A4LEARN` R package, is avalialable from
-<https://www.a4studydata.org/> after registering and agreeing to the
-[terms of use](https://www.a4studydata.org/terms-of-use).
+All data, including the `A4LEARN` R package, is available from either:
+
+- <https://www.a4studydata.org/> after registering and agreeing to the
+  [terms of use](https://www.a4studydata.org/terms-of-use).
+- <https://www.synapse.org/a4_learn_datasharing/> after registering an
+  account, fulfilling all actions from the ‘Access Actions Required’ tab
+  of the [download cart](https://www.synapse.org/DownloadCart:0), and
+  adding files to download.
 
 ## Installation
 
 To install `A4LEARN`:
 
-- Register at <https://www.a4studydata.org>
-- Download `A4LEARN_1.0.20240917.tar.gz` from
-  <https://www.a4studydata.org/>
+- Register at <https://www.a4studydata.org/> or
+  <https://www.synapse.org/a4_learn_datasharing/>
+- Download `A4LEARN_1.0.20240917.tar.gz` from the preferred data sharing
+  platform
 - In R, run
   `install.packages("path/to/A4LEARN_1.0.20240917.tar.gz", repos = NULL, type = "source")`
 
@@ -74,7 +80,7 @@ SUBJINFO <- A4LEARN::SUBJINFO %>%
 # Filter A4LEARN::ADQS for PACC collected in the blinded phases among mITT population
 ADQS_PACC <- A4LEARN::ADQS %>%
   dplyr::filter(MITTFL== 1) %>%
-  dplyr::filter(EPOCH == "BLINDED TREATMENT") %>%
+  dplyr::filter(EPOCH == "BLINDED TREATMENT" | AVISIT == "006") %>%
   dplyr::filter(QSTESTCD == "PACC") %>%
   rename(PACC = QSSTRESN) %>%
   select(BID, ASEQNCS, TX, ADURW, TX, AGEYR, 
@@ -226,6 +232,9 @@ ns22 <- function(t){
     Boundary.knots = c(0, max(ADQS_PACC$ADURW))), t)[,2])
 }
 
+assign("ns21", ns21, envir = .GlobalEnv)
+assign("ns22", ns22, envir = .GlobalEnv)
+
 # GLS model fit:
 pacc_fit <- gls(PACC ~ 
     I(ns21(ADURW)) + I(ns22(ADURW)) +
@@ -296,7 +305,7 @@ Placebo
 0.16
 </td>
 <td style="text-align:right;">
-10775
+10791
 </td>
 <td style="text-align:right;">
 -6.88
@@ -319,7 +328,7 @@ Solanezumab
 0.21
 </td>
 <td style="text-align:right;">
-10775
+10791
 </td>
 <td style="text-align:right;">
 -6.95
@@ -404,10 +413,10 @@ Solanezumab - Placebo
 0.26
 </td>
 <td style="text-align:right;">
-10775
+10791
 </td>
 <td style="text-align:right;">
--1.14
+-1.13
 </td>
 <td style="text-align:right;">
 -0.82
@@ -416,7 +425,7 @@ Solanezumab - Placebo
 0.22
 </td>
 <td style="text-align:left;">
-0.25
+0.26
 </td>
 </tr>
 </tbody>

@@ -4,6 +4,7 @@
 .RData
 .Ruserdata
 .csv
+.rda
 
 # Compressed data files
 *.gz

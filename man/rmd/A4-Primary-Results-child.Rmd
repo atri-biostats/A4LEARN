@@ -112,6 +112,9 @@ ns22 <- function(t){
     Boundary.knots = c(0, max(ADQS_PACC$ADURW))), t)[,2])
 }
 
+assign("ns21", ns21, envir = .GlobalEnv)
+assign("ns22", ns22, envir = .GlobalEnv)
+
 # GLS model fit:
 pacc_fit <- gls(PACC ~ 
     I(ns21(ADURW)) + I(ns22(ADURW)) +
@@ -175,5 +178,3 @@ ref_grid(pacc_fit,
   xlab("Weeks since Randomization") +
   theme(legend.position = 'inside', legend.position.inside = c(0.2, 0.2))
 ```
-
-## References

@@ -137,4 +137,4 @@ tableby(SUBSTUDY ~ .,
 ^a^ A4-randomized cohort (n=`r sum(dd$SUBSTUDY=='A4^a^', na.rm=TRUE)`) includes other participants in addition to the modified intention-to-treat population (mITT n=1147) reported in the A4 trial (Sperling et al. 2023). The modified intention-to-treat population population that was reported for the A4 trial results include those who received at least one dose of solanezumab or placebo and underwent assessment for the primary end point. Please refer to the `vignette(topic = 'A4-Primary-Results')` file for code to reproduce the baseline characteristics and primary findings of the A4 study. \
 ^b^ Refer to A4 Amyloid PET Eligibility Methods PDF document (`vignette(topic = 'imaging_PET_VA_methods')`) regarding these amyloid-related measures, the eligibility determination process and the modifications made to the SUVR algorithm.
 
-# References
+## References
