@@ -55,7 +55,7 @@ SUBJINFO <- A4LEARN::SUBJINFO %>%
 # Filter A4LEARN::ADQS for PACC collected in the blinded phases among mITT population
 ADQS_PACC <- A4LEARN::ADQS %>%
   dplyr::filter(MITTFL== 1) %>%
-  dplyr::filter(EPOCH == "BLINDED TREATMENT") %>%
+  dplyr::filter(EPOCH == "BLINDED TREATMENT" | AVISIT == "006") %>%
   dplyr::filter(QSTESTCD == "PACC") %>%
   rename(PACC = QSSTRESN) %>%
   select(BID, ASEQNCS, TX, ADURW, TX, AGEYR, 
