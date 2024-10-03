@@ -21,18 +21,18 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-`A4LEARN` is an R package containing data and code to reproduce results from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer's (A4)* study [@sperling2023trial] and *Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study [@sperling2024amyloid]. `A4LEARN` is a bundle of clinical data, analysis code examples, and html and pdf documentation. The html documentation is viewable at <https://atrihub.github.io/A4LEARN>.
+`A4LEARN` is an R package containing data and code to reproduce results from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study [@sperling2023trial] and *Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study [@sperling2024amyloid]. `A4LEARN` is a bundle of clinical data, analysis code examples, and html and pdf documentation. The html documentation is viewable at [https://atrihub.github.io/A4LEARN](https://atrihub.github.io/A4LEARN). 
 
 All data, including the `A4LEARN` R package, is available from either:
 
-* <https://www.a4studydata.org/> after registering and agreeing to the [terms of use](https://www.a4studydata.org/terms-of-use).
-* <https://www.synapse.org/a4_learn_datasharing> after registering an account and fulfilling all actions from the 'Access Actions Required' tab of the [download cart](https://www.synapse.org/DownloadCart:0) after adding any file(s) to download.
+* [https://www.a4studydata.org/](https://www.a4studydata.org/) after registering and agreeing to the [terms of use](https://www.a4studydata.org/terms-of-use).
+* [https://www.synapse.org/a4_learn_datasharing/](https://www.synapse.org/a4_learn_datasharing/) after registering an account and fulfilling all actions from the 'Access Actions Required' tab of the [download cart](https://www.synapse.org/DownloadCart:0) after adding any file(s) to download.
 
 ## Installation
 
 To install `A4LEARN`:
 
-* Register at <https://www.a4studydata.org> or <https://www.synapse.org/a4_learn_datasharing>
+* Register at [https://www.a4studydata.org/](https://www.a4studydata.org/) or [https://www.synapse.org/a4_learn_datasharing/](https://www.synapse.org/a4_learn_datasharing/)
 * Download `A4LEARN_1.0.20240917.tar.gz` from the preferred data sharing platform
 * In R, run `install.packages("path/to/A4LEARN_1.0.20240917.tar.gz", repos = NULL, type = "source")`
 
