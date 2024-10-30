@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
   fig.height = 4, 
   out.width = "100%"
 )
+
+pkgFilename <- paste0('A4LEARN_', packageVersion('A4LEARN'), '.tar.gz')
 ```
 
 # A4LEARN <a href="https://www.a4studydata.org/"><img src="man/figures/logo.png" align="right" height="138" /></a>
@@ -33,8 +35,8 @@ All data, including the `A4LEARN` R package, is available from either:
 To install `A4LEARN`:
 
 * Register at [https://www.a4studydata.org/](https://www.a4studydata.org/) or [https://www.synapse.org/a4_learn_datasharing/](https://www.synapse.org/a4_learn_datasharing/)
-* Download `A4LEARN_1.0.20240917.tar.gz` from the preferred data sharing platform
-* In R, run `install.packages("path/to/A4LEARN_1.0.20240917.tar.gz", repos = NULL, type = "source")`
+* Download ``r pkgFilename`` from the preferred data sharing platform
+* In R, run ``r paste0("install.packages(\"path/to/", pkgFilename, "\", repos = NULL, type = \"source\")")``
 
 The script to build this R package can be found in [tools](https://github.com/atrihub/A4LEARN/tree/main/tools).
 
