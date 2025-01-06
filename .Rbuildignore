@@ -1,0 +1,12 @@
+^README\.Rmd$
+^README_cache$
+^tools$
+^data-raw$
+^.*\.Rproj$
+^\.Rproj\.user$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^vignettes/A4-Primary-Results_cache$
+^man/rmd/A4-Primary-Results-child_cache$
