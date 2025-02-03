@@ -10,8 +10,8 @@ from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study
 (Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
 Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
 bundle of clinical data, analysis code examples, and html and pdf
-documentation. The html documentation is viewable at
-<https://atrihub.github.io/A4LEARN>.
+documentation. Documentation can be found at
+<https://atri-biostats.github.io/A4LEARN/>.
 
 All data, including the `A4LEARN` R package, is available from either:
 
@@ -28,10 +28,10 @@ To install `A4LEARN`:
 
 - Register at <https://www.a4studydata.org/> or
   <https://www.synapse.org/a4_learn_datasharing/>
-- Download `A4LEARN_1.0.20241030.tar.gz` from the preferred data sharing
+- Download `A4LEARN_1.1.20241030.tar.gz` from the preferred data sharing
   platform
 - In R, run
-  `install.packages("path/to/A4LEARN_1.0.20241030.tar.gz", repos = NULL, type = "source")`
+  `install.packages("path/to/A4LEARN_1.1.20241030.tar.gz", repos = NULL, type = "source")`
 
 The script to build this R package can be found in
 [tools](https://github.com/atrihub/A4LEARN/tree/main/tools).
@@ -214,6 +214,7 @@ ggplot(ADQS_PACC, aes(x=ADURW, y=PACC, color=TX)) +
 
 <img src="man/figures/README-pacc-spaghetti-plot-1.png" alt="Spaghetti plot of PACC data over time by treatment group." width="100%" />
 <p class="caption">
+
 Spaghetti plot of PACC data over time by treatment group.
 </p>
 
@@ -261,83 +262,138 @@ ref_grid(pacc_fit,
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
+
 <caption>
+
 Mean PACC change from baseline at week 240 by treatment group estimated
 from spline model.
 </caption>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 contrast
 </th>
+
 <th style="text-align:left;">
+
 TX
 </th>
+
 <th style="text-align:right;">
+
 estimate
 </th>
+
 <th style="text-align:right;">
+
 SE
 </th>
+
 <th style="text-align:right;">
+
 df
 </th>
+
 <th style="text-align:right;">
+
 t.ratio
 </th>
+
 <th style="text-align:left;">
+
 p.value
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 ADURW240 - ADURW0
 </td>
+
 <td style="text-align:left;">
+
 Placebo
 </td>
+
 <td style="text-align:right;">
+
 -1.13
 </td>
+
 <td style="text-align:right;">
+
 0.16
 </td>
+
 <td style="text-align:right;">
+
 10791
 </td>
+
 <td style="text-align:right;">
+
 -6.88
 </td>
+
 <td style="text-align:left;">
+
 p\<0.001
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 ADURW240 - ADURW0
 </td>
+
 <td style="text-align:left;">
+
 Solanezumab
 </td>
+
 <td style="text-align:right;">
+
 -1.43
 </td>
+
 <td style="text-align:right;">
+
 0.21
 </td>
+
 <td style="text-align:right;">
+
 10791
 </td>
+
 <td style="text-align:right;">
+
 -6.95
 </td>
+
 <td style="text-align:left;">
+
 p\<0.001
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
 
 ``` r
@@ -363,72 +419,119 @@ contrast240 %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
+
 <caption>
+
 Mean PACC group change from baseline at week 240 by treatment group
 estimated from spline model.
 </caption>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 contrast
 </th>
+
 <th style="text-align:right;">
+
 ADURW
 </th>
+
 <th style="text-align:right;">
+
 estimate
 </th>
+
 <th style="text-align:right;">
+
 SE
 </th>
+
 <th style="text-align:right;">
+
 df
 </th>
+
 <th style="text-align:right;">
+
 t.ratio
 </th>
+
 <th style="text-align:right;">
+
 lower.CL
 </th>
+
 <th style="text-align:right;">
+
 upper.CL
 </th>
+
 <th style="text-align:left;">
+
 p.value
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 Solanezumab - Placebo
 </td>
+
 <td style="text-align:right;">
+
 240
 </td>
+
 <td style="text-align:right;">
+
 -0.3
 </td>
+
 <td style="text-align:right;">
+
 0.26
 </td>
+
 <td style="text-align:right;">
+
 10791
 </td>
+
 <td style="text-align:right;">
+
 -1.13
 </td>
+
 <td style="text-align:right;">
+
 -0.82
 </td>
+
 <td style="text-align:right;">
+
 0.22
 </td>
+
 <td style="text-align:left;">
+
 0.26
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
 
 ``` r
@@ -452,6 +555,7 @@ ref_grid(pacc_fit,
 
 <img src="man/figures/README-pacc-mean-plot-1.png" alt="Mean PACC per treatment group over time as estimated by spline model. Shaded region depicts 95% confidence intervals." width="100%" />
 <p class="caption">
+
 Mean PACC per treatment group over time as estimated by spline model.
 Shaded region depicts 95% confidence intervals.
 </p>

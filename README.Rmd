@@ -23,7 +23,7 @@ pkgFilename <- paste0('A4LEARN_', packageVersion('A4LEARN'), '.tar.gz')
 
 ## Overview
 
-`A4LEARN` is an R package containing data and code to reproduce results from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study [@sperling2023trial] and *Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study [@sperling2024amyloid]. `A4LEARN` is a bundle of clinical data, analysis code examples, and html and pdf documentation. The html documentation is viewable at [https://atrihub.github.io/A4LEARN](https://atrihub.github.io/A4LEARN). 
+`A4LEARN` is an R package containing data and code to reproduce results from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study [@sperling2023trial] and *Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study [@sperling2024amyloid]. `A4LEARN` is a bundle of clinical data, analysis code examples, and html and pdf documentation. Documentation can be found at [https://atri-biostats.github.io/A4LEARN/](https://atri-biostats.github.io/A4LEARN/). 
 
 All data, including the `A4LEARN` R package, is available from either:
 
