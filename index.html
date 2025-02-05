@@ -84,8 +84,8 @@
 <ul>
 <li>Register at <a href="https://www.a4studydata.org/" class="external-link uri">https://www.a4studydata.org/</a> or <a href="https://www.synapse.org/a4_learn_datasharing/" class="external-link uri">https://www.synapse.org/a4_learn_datasharing/</a>
 </li>
-<li>Download <code>A4LEARN_1.1.20241030.tar.gz</code> from the preferred data sharing platform</li>
-<li>In R, run <code>install.packages("path/to/A4LEARN_1.1.20241030.tar.gz", repos = NULL, type = "source")</code>
+<li>Download <code>A4LEARN_1.0.20241030.tar.gz</code> from the preferred data sharing platform</li>
+<li>In R, run <code>install.packages("path/to/A4LEARN_1.0.20241030.tar.gz", repos = NULL, type = "source")</code>
 </li>
 </ul>
 <p>The script to build this R package can be found in <a href="https://github.com/atrihub/A4LEARN/tree/main/tools" class="external-link">tools</a>.</p>
@@ -113,7 +113,7 @@
 <span>  <span class="cn">TRUE</span> <span class="op">~</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/format.pval.html" class="external-link">format.pval</a></span><span class="op">(</span><span class="va">x</span>, digits<span class="op">=</span><span class="fl">3</span>, eps<span class="op">=</span><span class="fl">0.001</span>, nsmall<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="data-manipulations">Data manipulations<a class="anchor" aria-label="anchor" href="#data-manipulations"></a>
+<h2 id="organize-data">Organize data<a class="anchor" aria-label="anchor" href="#organize-data"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Outcomes collected at Visit 1</span></span>
@@ -174,7 +174,7 @@
 <col width="20%">
 <col width="20%">
 </colgroup>
-<thead><tr>
+<thead><tr class="header">
 <th align="left"></th>
 <th align="center">Placebo (N=583)</th>
 <th align="center">Solanezumab (N=564)</th>
@@ -182,462 +182,462 @@
 <th align="right">p value</th>
 </tr></thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td align="left"><strong>Age (y)</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.923</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Mean (SD)</td>
 <td align="center">71.9 (5.0)</td>
 <td align="center">72.0 (4.7)</td>
 <td align="center">72.0 (4.8)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Range</td>
 <td align="center">65.0 - 85.7</td>
 <td align="center">65.0 - 85.5</td>
 <td align="center">65.0 - 85.7</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>Education (y)</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.785</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Mean (SD)</td>
 <td align="center">16.6 (2.9)</td>
 <td align="center">16.6 (2.7)</td>
 <td align="center">16.6 (2.8)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Range</td>
 <td align="center">8.0 - 30.0</td>
 <td align="center">7.0 - 30.0</td>
 <td align="center">7.0 - 30.0</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>Sex</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.481</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Male</td>
 <td align="center">231 (39.6%)</td>
 <td align="center">235 (41.7%)</td>
 <td align="center">466 (40.6%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Female</td>
 <td align="center">352 (60.4%)</td>
 <td align="center">329 (58.3%)</td>
 <td align="center">681 (59.4%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>Racial categories</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.831</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   American Indian or Alaskan Native</td>
 <td align="center">0 (0.0%)</td>
 <td align="center">1 (0.2%)</td>
 <td align="center">1 (0.1%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Asian</td>
 <td align="center">13 (2.2%)</td>
 <td align="center">11 (2.0%)</td>
 <td align="center">24 (2.1%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Black or African American</td>
 <td align="center">15 (2.6%)</td>
 <td align="center">12 (2.1%)</td>
 <td align="center">27 (2.4%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   More than one race</td>
 <td align="center">3 (0.5%)</td>
 <td align="center">5 (0.9%)</td>
 <td align="center">8 (0.7%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Unknown or Not Reported</td>
 <td align="center">3 (0.5%)</td>
 <td align="center">4 (0.7%)</td>
 <td align="center">7 (0.6%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   White</td>
 <td align="center">549 (94.2%)</td>
 <td align="center">531 (94.1%)</td>
 <td align="center">1080 (94.2%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>Ethnicity</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.910</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Hispanic or Latino</td>
 <td align="center">18 (3.1%)</td>
 <td align="center">16 (2.8%)</td>
 <td align="center">34 (3.0%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Not Hispanic or Latino</td>
 <td align="center">560 (96.1%)</td>
 <td align="center">542 (96.1%)</td>
 <td align="center">1102 (96.1%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Unknown or Not reported</td>
 <td align="center">5 (0.9%)</td>
 <td align="center">6 (1.1%)</td>
 <td align="center">11 (1.0%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>Marital Status</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.208</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Divorced</td>
 <td align="center">80 (13.7%)</td>
 <td align="center">89 (15.8%)</td>
 <td align="center">169 (14.7%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Married</td>
 <td align="center">415 (71.2%)</td>
 <td align="center">405 (71.8%)</td>
 <td align="center">820 (71.5%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Never married</td>
 <td align="center">26 (4.5%)</td>
 <td align="center">14 (2.5%)</td>
 <td align="center">40 (3.5%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Unknown or Not Reported</td>
 <td align="center">12 (2.1%)</td>
 <td align="center">6 (1.1%)</td>
 <td align="center">18 (1.6%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Widowed</td>
 <td align="center">50 (8.6%)</td>
 <td align="center">50 (8.9%)</td>
 <td align="center">100 (8.7%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>Retirement Status</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.722</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   No</td>
 <td align="center">142 (24.4%)</td>
 <td align="center">126 (22.3%)</td>
 <td align="center">268 (23.4%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Not Applicable</td>
 <td align="center">9 (1.5%)</td>
 <td align="center">9 (1.6%)</td>
 <td align="center">18 (1.6%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Yes</td>
 <td align="center">432 (74.1%)</td>
 <td align="center">429 (76.1%)</td>
 <td align="center">861 (75.1%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>FBP SUVr</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.903</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Mean (SD)</td>
 <td align="center">1.3 (0.2)</td>
 <td align="center">1.3 (0.2)</td>
 <td align="center">1.3 (0.2)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Range</td>
 <td align="center">1.0 - 2.1</td>
 <td align="center">1.0 - 2.1</td>
 <td align="center">1.0 - 2.1</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>FBP Centiloid</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.903</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Mean (SD)</td>
 <td align="center">65.9 (32.1)</td>
 <td align="center">66.2 (33.5)</td>
 <td align="center">66.0 (32.8)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Range</td>
 <td align="center">0.3 - 205.4</td>
 <td align="center">0.3 - 201.7</td>
 <td align="center">0.3 - 205.4</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>APOE Genotype</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.624</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   E2/E2</td>
 <td align="center">0 (0.0%)</td>
 <td align="center">1 (0.2%)</td>
 <td align="center">1 (0.1%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   E2/E3</td>
 <td align="center">33 (5.7%)</td>
 <td align="center">28 (5.0%)</td>
 <td align="center">61 (5.3%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   E2/E4</td>
 <td align="center">22 (3.8%)</td>
 <td align="center">13 (2.3%)</td>
 <td align="center">35 (3.1%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   E3/E3</td>
 <td align="center">208 (35.7%)</td>
 <td align="center">202 (35.8%)</td>
 <td align="center">410 (35.7%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   E3/E4</td>
 <td align="center">273 (46.8%)</td>
 <td align="center">273 (48.4%)</td>
 <td align="center">546 (47.6%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   E4/E4</td>
 <td align="center">47 (8.1%)</td>
 <td align="center">47 (8.3%)</td>
 <td align="center">94 (8.2%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>APOE e4</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.896</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   No</td>
 <td align="center">241 (41.3%)</td>
 <td align="center">231 (41.0%)</td>
 <td align="center">472 (41.2%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Yes</td>
 <td align="center">342 (58.7%)</td>
 <td align="center">333 (59.0%)</td>
 <td align="center">675 (58.8%)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>PACC</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.831</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Mean (SD)</td>
 <td align="center">-0.0 (2.6)</td>
 <td align="center">0.0 (2.7)</td>
 <td align="center">0.0 (2.7)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Range</td>
 <td align="center">-12.5 - 7.8</td>
 <td align="center">-10.3 - 6.4</td>
 <td align="center">-12.5 - 7.8</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>LM Delayed Recall</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.757</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Missing</td>
 <td align="center">1</td>
 <td align="center">0</td>
 <td align="center">1</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Mean (SD)</td>
 <td align="center">12.7 (3.5)</td>
 <td align="center">12.6 (3.8)</td>
 <td align="center">12.6 (3.7)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Range</td>
 <td align="center">2.0 - 22.0</td>
 <td align="center">0.0 - 23.0</td>
 <td align="center">0.0 - 23.0</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>MMSE</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.763</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Mean (SD)</td>
 <td align="center">28.8 (1.2)</td>
 <td align="center">28.8 (1.3)</td>
 <td align="center">28.8 (1.3)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Range</td>
 <td align="center">24.0 - 30.0</td>
 <td align="center">22.0 - 30.0</td>
 <td align="center">22.0 - 30.0</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>CFI Combined</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.045</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Missing</td>
 <td align="center">2</td>
 <td align="center">0</td>
 <td align="center">2</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Mean (SD)</td>
 <td align="center">3.6 (3.3)</td>
 <td align="center">4.0 (3.6)</td>
 <td align="center">3.8 (3.5)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Range</td>
 <td align="center">0.0 - 20.0</td>
 <td align="center">0.0 - 22.0</td>
 <td align="center">0.0 - 22.0</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left"><strong>ADL Partner</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.266</td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Mean (SD)</td>
 <td align="center">43.5 (2.6)</td>
 <td align="center">43.4 (2.7)</td>
 <td align="center">43.4 (2.6)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Range</td>
 <td align="center">26.8 - 45.0</td>
 <td align="center">25.0 - 45.0</td>
 <td align="center">25.0 - 45.0</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left"><strong>CDR-SB</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.154</td>
 </tr>
-<tr>
+<tr class="odd">
 <td align="left">   Mean (SD)</td>
 <td align="center">0.0 (0.2)</td>
 <td align="center">0.1 (0.2)</td>
 <td align="center">0.1 (0.2)</td>
 <td align="right"></td>
 </tr>
-<tr>
+<tr class="even">
 <td align="left">   Range</td>
 <td align="center">0.0 - 2.0</td>
 <td align="center">0.0 - 1.0</td>
@@ -940,7 +940,7 @@ Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith Johnson
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
