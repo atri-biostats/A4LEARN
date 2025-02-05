@@ -31,9 +31,9 @@ theme_set(theme_bw() +
   theme(legend.background = element_rect(fill="transparent")))
 ```
 
-## Data manipulations
+## Organize data
 
-```{r data-manipulation}
+```{r organize-data}
 # Outcomes collected at Visit 1
 V1OUTCOME <- A4LEARN::ADQS %>%
   dplyr::filter(VISITCD == "001") %>%
