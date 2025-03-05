@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">A4LEARN</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.20241030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.20250305</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,8 +84,8 @@
 <ul>
 <li>Register at <a href="https://www.a4studydata.org/" class="external-link uri">https://www.a4studydata.org/</a> or <a href="https://www.synapse.org/a4_learn_datasharing/" class="external-link uri">https://www.synapse.org/a4_learn_datasharing/</a>
 </li>
-<li>Download <code>A4LEARN_1.0.20241030.tar.gz</code> from the preferred data sharing platform</li>
-<li>In R, run <code>install.packages("path/to/A4LEARN_1.0.20241030.tar.gz", repos = NULL, type = "source")</code>
+<li>Download <code>A4LEARN_1.0.20250305.tar.gz</code> from the preferred data sharing platform</li>
+<li>In R, run <code>install.packages("path/to/A4LEARN_1.0.20250305.tar.gz", repos = NULL, type = "source")</code>
 </li>
 </ul>
 <p>The script to build this R package can be found in <a href="https://github.com/atrihub/A4LEARN/tree/main/tools" class="external-link">tools</a>.</p>
@@ -143,6 +143,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">ASEQNCS</span>, <span class="va">TX</span>, <span class="va">ADURW</span>, <span class="va">TX</span>, <span class="va">AGEYR</span>, </span>
 <span>    <span class="va">AAPOEGNPRSNFLG</span>, <span class="va">EDCCNTU</span>, <span class="va">SUVRCER</span>, <span class="va">QSVERSION</span>, <span class="va">PACC</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">TX</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span>, <span class="st">"Solanezumab"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">ADURW</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -174,7 +175,7 @@
 <col width="20%">
 <col width="20%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="left"></th>
 <th align="center">Placebo (N=583)</th>
 <th align="center">Solanezumab (N=564)</th>
@@ -182,462 +183,462 @@
 <th align="right">p value</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left"><strong>Age (y)</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.923</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">71.9 (5.0)</td>
 <td align="center">72.0 (4.7)</td>
 <td align="center">72.0 (4.8)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Range</td>
 <td align="center">65.0 - 85.7</td>
 <td align="center">65.0 - 85.5</td>
 <td align="center">65.0 - 85.7</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>Education (y)</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.785</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">16.6 (2.9)</td>
 <td align="center">16.6 (2.7)</td>
 <td align="center">16.6 (2.8)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Range</td>
 <td align="center">8.0 - 30.0</td>
 <td align="center">7.0 - 30.0</td>
 <td align="center">7.0 - 30.0</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>Sex</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.481</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Male</td>
 <td align="center">231 (39.6%)</td>
 <td align="center">235 (41.7%)</td>
 <td align="center">466 (40.6%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Female</td>
 <td align="center">352 (60.4%)</td>
 <td align="center">329 (58.3%)</td>
 <td align="center">681 (59.4%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>Racial categories</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.831</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   American Indian or Alaskan Native</td>
 <td align="center">0 (0.0%)</td>
 <td align="center">1 (0.2%)</td>
 <td align="center">1 (0.1%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Asian</td>
 <td align="center">13 (2.2%)</td>
 <td align="center">11 (2.0%)</td>
 <td align="center">24 (2.1%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Black or African American</td>
 <td align="center">15 (2.6%)</td>
 <td align="center">12 (2.1%)</td>
 <td align="center">27 (2.4%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   More than one race</td>
 <td align="center">3 (0.5%)</td>
 <td align="center">5 (0.9%)</td>
 <td align="center">8 (0.7%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Unknown or Not Reported</td>
 <td align="center">3 (0.5%)</td>
 <td align="center">4 (0.7%)</td>
 <td align="center">7 (0.6%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   White</td>
 <td align="center">549 (94.2%)</td>
 <td align="center">531 (94.1%)</td>
 <td align="center">1080 (94.2%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>Ethnicity</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.910</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Hispanic or Latino</td>
 <td align="center">18 (3.1%)</td>
 <td align="center">16 (2.8%)</td>
 <td align="center">34 (3.0%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Not Hispanic or Latino</td>
 <td align="center">560 (96.1%)</td>
 <td align="center">542 (96.1%)</td>
 <td align="center">1102 (96.1%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Unknown or Not reported</td>
 <td align="center">5 (0.9%)</td>
 <td align="center">6 (1.1%)</td>
 <td align="center">11 (1.0%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>Marital Status</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.208</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Divorced</td>
 <td align="center">80 (13.7%)</td>
 <td align="center">89 (15.8%)</td>
 <td align="center">169 (14.7%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Married</td>
 <td align="center">415 (71.2%)</td>
 <td align="center">405 (71.8%)</td>
 <td align="center">820 (71.5%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Never married</td>
 <td align="center">26 (4.5%)</td>
 <td align="center">14 (2.5%)</td>
 <td align="center">40 (3.5%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Unknown or Not Reported</td>
 <td align="center">12 (2.1%)</td>
 <td align="center">6 (1.1%)</td>
 <td align="center">18 (1.6%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Widowed</td>
 <td align="center">50 (8.6%)</td>
 <td align="center">50 (8.9%)</td>
 <td align="center">100 (8.7%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>Retirement Status</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.722</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   No</td>
 <td align="center">142 (24.4%)</td>
 <td align="center">126 (22.3%)</td>
 <td align="center">268 (23.4%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Not Applicable</td>
 <td align="center">9 (1.5%)</td>
 <td align="center">9 (1.6%)</td>
 <td align="center">18 (1.6%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Yes</td>
 <td align="center">432 (74.1%)</td>
 <td align="center">429 (76.1%)</td>
 <td align="center">861 (75.1%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>FBP SUVr</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.903</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">1.3 (0.2)</td>
 <td align="center">1.3 (0.2)</td>
 <td align="center">1.3 (0.2)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Range</td>
 <td align="center">1.0 - 2.1</td>
 <td align="center">1.0 - 2.1</td>
 <td align="center">1.0 - 2.1</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>FBP Centiloid</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.903</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">65.9 (32.1)</td>
 <td align="center">66.2 (33.5)</td>
 <td align="center">66.0 (32.8)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Range</td>
 <td align="center">0.3 - 205.4</td>
 <td align="center">0.3 - 201.7</td>
 <td align="center">0.3 - 205.4</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>APOE Genotype</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.624</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   E2/E2</td>
 <td align="center">0 (0.0%)</td>
 <td align="center">1 (0.2%)</td>
 <td align="center">1 (0.1%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   E2/E3</td>
 <td align="center">33 (5.7%)</td>
 <td align="center">28 (5.0%)</td>
 <td align="center">61 (5.3%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   E2/E4</td>
 <td align="center">22 (3.8%)</td>
 <td align="center">13 (2.3%)</td>
 <td align="center">35 (3.1%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   E3/E3</td>
 <td align="center">208 (35.7%)</td>
 <td align="center">202 (35.8%)</td>
 <td align="center">410 (35.7%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   E3/E4</td>
 <td align="center">273 (46.8%)</td>
 <td align="center">273 (48.4%)</td>
 <td align="center">546 (47.6%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   E4/E4</td>
 <td align="center">47 (8.1%)</td>
 <td align="center">47 (8.3%)</td>
 <td align="center">94 (8.2%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>APOE e4</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.896</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   No</td>
 <td align="center">241 (41.3%)</td>
 <td align="center">231 (41.0%)</td>
 <td align="center">472 (41.2%)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Yes</td>
 <td align="center">342 (58.7%)</td>
 <td align="center">333 (59.0%)</td>
 <td align="center">675 (58.8%)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>PACC</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.831</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">-0.0 (2.6)</td>
 <td align="center">0.0 (2.7)</td>
 <td align="center">0.0 (2.7)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Range</td>
 <td align="center">-12.5 - 7.8</td>
 <td align="center">-10.3 - 6.4</td>
 <td align="center">-12.5 - 7.8</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>LM Delayed Recall</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.757</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Missing</td>
 <td align="center">1</td>
 <td align="center">0</td>
 <td align="center">1</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">12.7 (3.5)</td>
 <td align="center">12.6 (3.8)</td>
 <td align="center">12.6 (3.7)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Range</td>
 <td align="center">2.0 - 22.0</td>
 <td align="center">0.0 - 23.0</td>
 <td align="center">0.0 - 23.0</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>MMSE</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.763</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">28.8 (1.2)</td>
 <td align="center">28.8 (1.3)</td>
 <td align="center">28.8 (1.3)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Range</td>
 <td align="center">24.0 - 30.0</td>
 <td align="center">22.0 - 30.0</td>
 <td align="center">22.0 - 30.0</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>CFI Combined</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.045</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Missing</td>
 <td align="center">2</td>
 <td align="center">0</td>
 <td align="center">2</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">3.6 (3.3)</td>
 <td align="center">4.0 (3.6)</td>
 <td align="center">3.8 (3.5)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Range</td>
 <td align="center">0.0 - 20.0</td>
 <td align="center">0.0 - 22.0</td>
 <td align="center">0.0 - 22.0</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left"><strong>ADL Partner</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.266</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">43.5 (2.6)</td>
 <td align="center">43.4 (2.7)</td>
 <td align="center">43.4 (2.6)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Range</td>
 <td align="center">26.8 - 45.0</td>
 <td align="center">25.0 - 45.0</td>
 <td align="center">25.0 - 45.0</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left"><strong>CDR-SB</strong></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="right">0.154</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">   Mean (SD)</td>
 <td align="center">0.0 (0.2)</td>
 <td align="center">0.1 (0.2)</td>
 <td align="center">0.1 (0.2)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">   Range</td>
 <td align="center">0.0 - 2.0</td>
 <td align="center">0.0 - 1.0</td>
@@ -881,6 +882,252 @@ Mean PACC per treatment group over time as estimated by spline model. Shaded reg
 </div>
 </div>
 <div class="section level2">
+<h2 id="primary-analyis-of-the-cfi">Primary analyis of the CFI<a class="anchor" aria-label="anchor" href="#primary-analyis-of-the-cfi"></a>
+</h2>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Filter A4LEARN::ADQS for CFITOTAL collected in the blinded phases among mITT population</span></span>
+<span><span class="va">ADQS_CFI</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="reference/ADQS.html">ADQS</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">MITTFL</span><span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">EPOCH</span> <span class="op">==</span> <span class="st">"BLINDED TREATMENT"</span> <span class="op">|</span> <span class="va">AVISIT</span> <span class="op">==</span> <span class="st">"001"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">QSTESTCD</span> <span class="op">==</span> <span class="st">"CFITOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">ASEQNCS</span>, <span class="va">TX</span>, <span class="va">ADURW</span>, <span class="va">TX</span>, <span class="va">AGEYR</span>, </span>
+<span>    <span class="va">AAPOEGNPRSNFLG</span>, <span class="va">EDCCNTU</span>, <span class="va">SUVRCER</span>, <span class="va">QSSTRESN</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">TX</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span>, <span class="st">"Solanezumab"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">ADURW</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">ADQS_CFI</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">ADURW</span>, y<span class="op">=</span><span class="va">QSSTRESN</span>, color<span class="op">=</span><span class="va">TX</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">BID</span><span class="op">)</span>, alpha<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"inside"</span>, legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.9</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Weeks since Randomization"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"CFI Participant and Partner"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="reference/figures/README-cfi-spaghetti-plot-1.png" alt="Spaghetti plot of CFI data over time by treatment group." width="100%"><p class="caption">
+Spaghetti plot of CFI data over time by treatment group.
+</p>
+</div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(ADQS_CFI<span class="sc">$</span>ADURW), <span class="at">by =</span> <span class="dv">24</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="sc">&lt;</span>ScaleContinuousPosition<span class="sc">&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a> Range<span class="sc">:</span>  </span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a> Limits<span class="sc">:</span>    <span class="dv">0</span> <span class="sc">--</span>    <span class="dv">1</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Spline basis expansion functions</span></span>
+<span><span class="co"># CAUTION: these function depend on the ADQS_CFI data frame object in the </span></span>
+<span><span class="co"># global environment. If ADQS_CFI changes, so do these funtions</span></span>
+<span><span class="va">ns21</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="fu">splines</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">ADURW</span>, df<span class="op">=</span><span class="fl">2</span>,</span>
+<span>    Boundary.knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">ADURW</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="va">t</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">ns22</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="fu">splines</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">ADURW</span>, df<span class="op">=</span><span class="fl">2</span>,</span>
+<span>    Boundary.knots <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">ADURW</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="va">t</span><span class="op">)</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html" class="external-link">assign</a></span><span class="op">(</span><span class="st">"ns21"</span>, <span class="va">ns21</span>, envir <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/assign.html" class="external-link">assign</a></span><span class="op">(</span><span class="st">"ns22"</span>, <span class="va">ns22</span>, envir <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># GLS model fit:</span></span>
+<span><span class="va">cfi_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/gls.html" class="external-link">gls</a></span><span class="op">(</span><span class="va">QSSTRESN</span> <span class="op">~</span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu">ns21</span><span class="op">(</span><span class="va">ADURW</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu">ns22</span><span class="op">(</span><span class="va">ADURW</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu">ns21</span><span class="op">(</span><span class="va">ADURW</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu">ns22</span><span class="op">(</span><span class="va">ADURW</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">:</span><span class="va">TX</span> <span class="op">+</span> </span>
+<span>    <span class="va">AGEYR</span> <span class="op">+</span> <span class="va">AAPOEGNPRSNFLG</span> <span class="op">+</span> <span class="va">EDCCNTU</span> <span class="op">+</span> <span class="va">SUVRCER</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">ADQS_CFI</span>,</span>
+<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/varIdent.html" class="external-link">varIdent</a></span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">ASEQNCS</span><span class="op">)</span>,</span>
+<span>  correlation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/corARMA.html" class="external-link">corARMA</a></span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span> <span class="va">ASEQNCS</span> <span class="op">|</span> <span class="va">BID</span>, p <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/ref_grid.html" class="external-link">ref_grid</a></span><span class="op">(</span><span class="va">cfi_fit</span>,</span>
+<span>  at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ADURW <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">240</span><span class="op">)</span>, TX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">TX</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  vcov. <span class="op">=</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/vcovCR.html" class="external-link">vcovCR</a></span><span class="op">(</span><span class="va">cfi_fit</span>, type <span class="op">=</span> <span class="st">"CR2"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">ADQS_CFI</span>, </span>
+<span>  mode <span class="op">=</span> <span class="st">"satterthwaite"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="op">~</span> <span class="va">ADURW</span> <span class="op">|</span> <span class="va">TX</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>p.value <span class="op">=</span> <span class="fu">formatp</span><span class="op">(</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Mean CFI change from baseline at week 240 by treatment </span></span>
+<span><span class="st">    group estimated from spline model."</span>, digits <span class="op">=</span> <span class="fl">2</span>, booktabs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>latex_options <span class="op">=</span> <span class="st">"HOLD_position"</span><span class="op">)</span></span></code></pre></div>
+<table class="table table" style="margin-left: auto; margin-right: auto;">
+<caption>
+Mean CFI change from baseline at week 240 by treatment group estimated from spline model.
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+contrast
+</th>
+<th style="text-align:left;">
+TX
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+SE
+</th>
+<th style="text-align:right;">
+df
+</th>
+<th style="text-align:right;">
+t.ratio
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ADURW240 - ADURW0
+</td>
+<td style="text-align:left;">
+Placebo
+</td>
+<td style="text-align:right;">
+1.51
+</td>
+<td style="text-align:right;">
+0.19
+</td>
+<td style="text-align:right;">
+1437.56
+</td>
+<td style="text-align:right;">
+7.96
+</td>
+<td style="text-align:left;">
+p&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ADURW240 - ADURW0
+</td>
+<td style="text-align:left;">
+Solanezumab
+</td>
+<td style="text-align:right;">
+2.09
+</td>
+<td style="text-align:right;">
+0.21
+</td>
+<td style="text-align:right;">
+1768.38
+</td>
+<td style="text-align:right;">
+9.77
+</td>
+<td style="text-align:left;">
+p&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">contrast240</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/ref_grid.html" class="external-link">ref_grid</a></span><span class="op">(</span><span class="va">cfi_fit</span>, </span>
+<span>  at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ADURW <span class="op">=</span> <span class="fl">240</span>, TX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">TX</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  vcov. <span class="op">=</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/vcovCR.html" class="external-link">vcovCR</a></span><span class="op">(</span><span class="va">cfi_fit</span>, type <span class="op">=</span> <span class="st">"CR2"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">ADQS_CFI</span>, </span>
+<span>  mode <span class="op">=</span> <span class="st">"satterthwaite"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span>specs <span class="op">=</span> <span class="st">"TX"</span>, by <span class="op">=</span> <span class="st">"ADURW"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span>, adjust <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">contrast240</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">contrast240</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">contrast</span>, <span class="va">lower.CL</span>, <span class="va">upper.CL</span><span class="op">)</span>, by<span class="op">=</span><span class="st">"contrast"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span><span class="va">p.value</span>, .after <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">last_col</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>p.value <span class="op">=</span> <span class="fu">formatp</span><span class="op">(</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Mean CFI group change from baseline at week 240 by treatment </span></span>
+<span><span class="st">    group estimated from spline model."</span>, digits <span class="op">=</span> <span class="fl">2</span>, booktabs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>latex_options <span class="op">=</span> <span class="st">"HOLD_position"</span><span class="op">)</span></span></code></pre></div>
+<table class="table table" style="margin-left: auto; margin-right: auto;">
+<caption>
+Mean CFI group change from baseline at week 240 by treatment group estimated from spline model.
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+contrast
+</th>
+<th style="text-align:right;">
+ADURW
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+SE
+</th>
+<th style="text-align:right;">
+df
+</th>
+<th style="text-align:right;">
+t.ratio
+</th>
+<th style="text-align:right;">
+lower.CL
+</th>
+<th style="text-align:right;">
+upper.CL
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+</tr></thead>
+<tbody><tr>
+<td style="text-align:left;">
+Solanezumab - Placebo
+</td>
+<td style="text-align:right;">
+240
+</td>
+<td style="text-align:right;">
+0.58
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+<td style="text-align:right;">
+1769.54
+</td>
+<td style="text-align:right;">
+2.04
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+1.14
+</td>
+<td style="text-align:left;">
+0.04
+</td>
+</tr></tbody>
+</table>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/ref_grid.html" class="external-link">ref_grid</a></span><span class="op">(</span><span class="va">cfi_fit</span>, </span>
+<span>  at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ADURW <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">312</span>, by<span class="op">=</span><span class="fl">12</span><span class="op">)</span>, TX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">ADQS_CFI</span><span class="op">$</span><span class="va">TX</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  vcov. <span class="op">=</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/vcovCR.html" class="external-link">vcovCR</a></span><span class="op">(</span><span class="va">cfi_fit</span>, type <span class="op">=</span> <span class="st">"CR2"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">ADQS_CFI</span>, </span>
+<span>  mode <span class="op">=</span> <span class="st">"satterthwaite"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span>specs <span class="op">=</span> <span class="st">"TX"</span>, by <span class="op">=</span> <span class="st">"ADURW"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">ADURW</span>, y<span class="op">=</span><span class="va">emmean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color<span class="op">=</span><span class="va">TX</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span>, fill <span class="op">=</span> <span class="va">TX</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">312</span>, by<span class="op">=</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Mean CFI with 95% confidence intervals"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Weeks since Randomization"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">'inside'</span>, legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.9</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="reference/figures/README-cfi-mean-plot-1.png" alt="Mean CFI per treatment group over time as estimated by spline model. Shaded region depicts 95% confidence intervals." width="100%"><p class="caption">
+Mean CFI per treatment group over time as estimated by spline model. Shaded region depicts 95% confidence intervals.
+</p>
+</div>
+</div>
+<div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
@@ -940,7 +1187,7 @@ Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith Johnson
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
