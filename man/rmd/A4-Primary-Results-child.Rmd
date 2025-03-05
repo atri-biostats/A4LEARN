@@ -61,6 +61,7 @@ ADQS_PACC <- A4LEARN::ADQS %>%
   select(BID, ASEQNCS, TX, ADURW, TX, AGEYR, 
     AAPOEGNPRSNFLG, EDCCNTU, SUVRCER, QSVERSION, PACC) %>%
   mutate(TX = factor(TX, levels = c("Placebo", "Solanezumab"))) %>%
+  arrange(BID, ADURW) %>%
   na.omit()
 ```
 
@@ -177,4 +178,108 @@ ref_grid(pacc_fit,
   ylab("Mean PACC with 95% confidence intervals") +
   xlab("Weeks since Randomization") +
   theme(legend.position = 'inside', legend.position.inside = c(0.2, 0.2))
+```
+
+## Primary analyis of the CFI
+
+```{r ADQS-CFI}
+# Filter A4LEARN::ADQS for CFITOTAL collected in the blinded phases among mITT population
+ADQS_CFI <- A4LEARN::ADQS %>%
+  dplyr::filter(MITTFL== 1) %>%
+  dplyr::filter(EPOCH == "BLINDED TREATMENT" | AVISIT == "001") %>%
+  dplyr::filter(QSTESTCD == "CFITOTAL") %>%
+  select(BID, ASEQNCS, TX, ADURW, TX, AGEYR, 
+    AAPOEGNPRSNFLG, EDCCNTU, SUVRCER, QSSTRESN) %>%
+  mutate(TX = factor(TX, levels = c("Placebo", "Solanezumab"))) %>%
+  arrange(BID, ADURW) %>%
+  na.omit()
+```
+
+```{r cfi-spaghetti-plot, fig.cap="Spaghetti plot of CFI data over time by treatment group."}
+ggplot(ADQS_CFI, aes(x=ADURW, y=QSSTRESN, color=TX)) +
+  geom_line(aes(group = BID), alpha=0.2) +
+  theme(legend.position = "inside", legend.position.inside = c(0.2, 0.9)) +
+  xlab("Weeks since Randomization") +
+  ylab("CFI Participant and Partner")
+  scale_x_continuous(breaks = seq(0, max(ADQS_CFI$ADURW), by = 24))
+```
+
+```{r cfi-spline-model-fit}
+# Spline basis expansion functions
+# CAUTION: these function depend on the ADQS_CFI data frame object in the 
+# global environment. If ADQS_CFI changes, so do these funtions
+ns21 <- function(t){
+  as.numeric(predict(splines::ns(ADQS_CFI$ADURW, df=2,
+    Boundary.knots = c(0, max(ADQS_CFI$ADURW))), t)[,1])
+}
+ns22 <- function(t){
+  as.numeric(predict(splines::ns(ADQS_CFI$ADURW, df=2,
+    Boundary.knots = c(0, max(ADQS_CFI$ADURW))), t)[,2])
+}
+
+assign("ns21", ns21, envir = .GlobalEnv)
+assign("ns22", ns22, envir = .GlobalEnv)
+
+# GLS model fit:
+cfi_fit <- gls(QSSTRESN ~ 
+    I(ns21(ADURW)) + I(ns22(ADURW)) +
+    (I(ns21(ADURW)) + I(ns22(ADURW))):TX + 
+    AGEYR + AAPOEGNPRSNFLG + EDCCNTU + SUVRCER,
+  data = ADQS_CFI,
+  weights = varIdent(form = ~ 1 | ASEQNCS),
+  correlation = corARMA(form = ~ ASEQNCS | BID, p = 5))
+```
+
+```{r cfi-summarize-spline-model-1}
+ref_grid(cfi_fit,
+  at = list(ADURW = c(0,240), TX = levels(ADQS_CFI$TX)),
+  vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_CFI, 
+  mode = "satterthwaite") %>%
+  emmeans(~ ADURW | TX) %>%
+  pairs(reverse = TRUE) %>%
+  as_tibble() %>%
+  mutate(p.value = formatp(p.value)) %>%
+  kable(caption = "Mean CFI change from baseline at week 240 by treatment 
+    group estimated from spline model.", digits = 2, booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+```{r cfi-summarize-spline-model-2}
+contrast240 <- ref_grid(cfi_fit, 
+  at = list(ADURW = 240, TX = levels(ADQS_CFI$TX)),
+  vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_CFI, 
+  mode = "satterthwaite") %>%
+  emmeans(specs = "TX", by = "ADURW") %>%
+  pairs(reverse = TRUE, adjust = "none")
+
+contrast240 %>% 
+  as_tibble() %>%
+  left_join(contrast240 %>% 
+      confint() %>%
+      as_tibble() %>%
+      select(contrast, lower.CL, upper.CL), by="contrast") %>%
+  relocate(p.value, .after = last_col()) %>%
+  mutate(p.value = formatp(p.value)) %>%
+  kable(caption = "Mean CFI group change from baseline at week 240 by treatment 
+    group estimated from spline model.", digits = 2, booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+```{r cfi-mean-plot, fig.cap="Mean CFI per treatment group over time as estimated by spline model. Shaded region depicts 95% confidence intervals."}
+ref_grid(cfi_fit, 
+  at = list(ADURW = seq(0, 312, by=12), TX = levels(ADQS_CFI$TX)),
+  vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_CFI, 
+  mode = "satterthwaite") %>%
+  emmeans(specs = "TX", by = "ADURW") %>%
+  as_tibble() %>%
+  ggplot(aes(x=ADURW, y=emmean)) +
+  geom_line(aes(color=TX)) +
+  geom_ribbon(aes(ymin = lower.CL, ymax = upper.CL, fill = TX), alpha = 0.2) +
+  scale_x_continuous(breaks = seq(0, 312, by=24)) +
+  ylab("Mean CFI with 95% confidence intervals") +
+  xlab("Weeks since Randomization") +
+  theme(legend.position = 'inside', legend.position.inside = c(0.2, 0.9))
 ```

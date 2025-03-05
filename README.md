@@ -28,10 +28,10 @@ To install `A4LEARN`:
 
 - Register at <https://www.a4studydata.org/> or
   <https://www.synapse.org/a4_learn_datasharing/>
-- Download `A4LEARN_1.0.20241030.tar.gz` from the preferred data sharing
+- Download `A4LEARN_1.0.20250305.tar.gz` from the preferred data sharing
   platform
 - In R, run
-  `install.packages("path/to/A4LEARN_1.0.20241030.tar.gz", repos = NULL, type = "source")`
+  `install.packages("path/to/A4LEARN_1.0.20250305.tar.gz", repos = NULL, type = "source")`
 
 The script to build this R package can be found in
 [tools](https://github.com/atrihub/A4LEARN/tree/main/tools).
@@ -86,6 +86,7 @@ ADQS_PACC <- A4LEARN::ADQS %>%
   select(BID, ASEQNCS, TX, ADURW, TX, AGEYR, 
     AAPOEGNPRSNFLG, EDCCNTU, SUVRCER, QSVERSION, PACC) %>%
   mutate(TX = factor(TX, levels = c("Placebo", "Solanezumab"))) %>%
+  arrange(BID, ADURW) %>%
   na.omit()
 ```
 
@@ -214,6 +215,7 @@ ggplot(ADQS_PACC, aes(x=ADURW, y=PACC, color=TX)) +
 
 <img src="man/figures/README-pacc-spaghetti-plot-1.png" alt="Spaghetti plot of PACC data over time by treatment group." width="100%" />
 <p class="caption">
+
 Spaghetti plot of PACC data over time by treatment group.
 </p>
 
@@ -261,83 +263,138 @@ ref_grid(pacc_fit,
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
+
 <caption>
+
 Mean PACC change from baseline at week 240 by treatment group estimated
 from spline model.
 </caption>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 contrast
 </th>
+
 <th style="text-align:left;">
+
 TX
 </th>
+
 <th style="text-align:right;">
+
 estimate
 </th>
+
 <th style="text-align:right;">
+
 SE
 </th>
+
 <th style="text-align:right;">
+
 df
 </th>
+
 <th style="text-align:right;">
+
 t.ratio
 </th>
+
 <th style="text-align:left;">
+
 p.value
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 ADURW240 - ADURW0
 </td>
+
 <td style="text-align:left;">
+
 Placebo
 </td>
+
 <td style="text-align:right;">
+
 -1.13
 </td>
+
 <td style="text-align:right;">
+
 0.16
 </td>
+
 <td style="text-align:right;">
+
 10791
 </td>
+
 <td style="text-align:right;">
+
 -6.88
 </td>
+
 <td style="text-align:left;">
+
 p\<0.001
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 ADURW240 - ADURW0
 </td>
+
 <td style="text-align:left;">
+
 Solanezumab
 </td>
+
 <td style="text-align:right;">
+
 -1.43
 </td>
+
 <td style="text-align:right;">
+
 0.21
 </td>
+
 <td style="text-align:right;">
+
 10791
 </td>
+
 <td style="text-align:right;">
+
 -6.95
 </td>
+
 <td style="text-align:left;">
+
 p\<0.001
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
 
 ``` r
@@ -363,72 +420,119 @@ contrast240 %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
+
 <caption>
+
 Mean PACC group change from baseline at week 240 by treatment group
 estimated from spline model.
 </caption>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 contrast
 </th>
+
 <th style="text-align:right;">
+
 ADURW
 </th>
+
 <th style="text-align:right;">
+
 estimate
 </th>
+
 <th style="text-align:right;">
+
 SE
 </th>
+
 <th style="text-align:right;">
+
 df
 </th>
+
 <th style="text-align:right;">
+
 t.ratio
 </th>
+
 <th style="text-align:right;">
+
 lower.CL
 </th>
+
 <th style="text-align:right;">
+
 upper.CL
 </th>
+
 <th style="text-align:left;">
+
 p.value
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 Solanezumab - Placebo
 </td>
+
 <td style="text-align:right;">
+
 240
 </td>
+
 <td style="text-align:right;">
+
 -0.3
 </td>
+
 <td style="text-align:right;">
+
 0.26
 </td>
+
 <td style="text-align:right;">
+
 10791
 </td>
+
 <td style="text-align:right;">
+
 -1.13
 </td>
+
 <td style="text-align:right;">
+
 -0.82
 </td>
+
 <td style="text-align:right;">
+
 0.22
 </td>
+
 <td style="text-align:left;">
+
 0.26
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
 
 ``` r
@@ -452,7 +556,390 @@ ref_grid(pacc_fit,
 
 <img src="man/figures/README-pacc-mean-plot-1.png" alt="Mean PACC per treatment group over time as estimated by spline model. Shaded region depicts 95% confidence intervals." width="100%" />
 <p class="caption">
+
 Mean PACC per treatment group over time as estimated by spline model.
+Shaded region depicts 95% confidence intervals.
+</p>
+
+</div>
+
+## Primary analyis of the CFI
+
+``` r
+# Filter A4LEARN::ADQS for CFITOTAL collected in the blinded phases among mITT population
+ADQS_CFI <- A4LEARN::ADQS %>%
+  dplyr::filter(MITTFL== 1) %>%
+  dplyr::filter(EPOCH == "BLINDED TREATMENT" | AVISIT == "001") %>%
+  dplyr::filter(QSTESTCD == "CFITOTAL") %>%
+  select(BID, ASEQNCS, TX, ADURW, TX, AGEYR, 
+    AAPOEGNPRSNFLG, EDCCNTU, SUVRCER, QSSTRESN) %>%
+  mutate(TX = factor(TX, levels = c("Placebo", "Solanezumab"))) %>%
+  arrange(BID, ADURW) %>%
+  na.omit()
+```
+
+``` r
+ggplot(ADQS_CFI, aes(x=ADURW, y=QSSTRESN, color=TX)) +
+  geom_line(aes(group = BID), alpha=0.2) +
+  theme(legend.position = "inside", legend.position.inside = c(0.2, 0.9)) +
+  xlab("Weeks since Randomization") +
+  ylab("CFI Participant and Partner")
+```
+
+<div class="figure">
+
+<img src="man/figures/README-cfi-spaghetti-plot-1.png" alt="Spaghetti plot of CFI data over time by treatment group." width="100%" />
+<p class="caption">
+
+Spaghetti plot of CFI data over time by treatment group.
+</p>
+
+</div>
+
+``` r
+  scale_x_continuous(breaks = seq(0, max(ADQS_CFI$ADURW), by = 24))
+<ScaleContinuousPosition>
+ Range:  
+ Limits:    0 --    1
+```
+
+``` r
+# Spline basis expansion functions
+# CAUTION: these function depend on the ADQS_CFI data frame object in the 
+# global environment. If ADQS_CFI changes, so do these funtions
+ns21 <- function(t){
+  as.numeric(predict(splines::ns(ADQS_CFI$ADURW, df=2,
+    Boundary.knots = c(0, max(ADQS_CFI$ADURW))), t)[,1])
+}
+ns22 <- function(t){
+  as.numeric(predict(splines::ns(ADQS_CFI$ADURW, df=2,
+    Boundary.knots = c(0, max(ADQS_CFI$ADURW))), t)[,2])
+}
+
+assign("ns21", ns21, envir = .GlobalEnv)
+assign("ns22", ns22, envir = .GlobalEnv)
+
+# GLS model fit:
+cfi_fit <- gls(QSSTRESN ~ 
+    I(ns21(ADURW)) + I(ns22(ADURW)) +
+    (I(ns21(ADURW)) + I(ns22(ADURW))):TX + 
+    AGEYR + AAPOEGNPRSNFLG + EDCCNTU + SUVRCER,
+  data = ADQS_CFI,
+  weights = varIdent(form = ~ 1 | ASEQNCS),
+  correlation = corARMA(form = ~ ASEQNCS | BID, p = 5))
+```
+
+``` r
+ref_grid(cfi_fit,
+  at = list(ADURW = c(0,240), TX = levels(ADQS_CFI$TX)),
+  vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_CFI, 
+  mode = "satterthwaite") %>%
+  emmeans(~ ADURW | TX) %>%
+  pairs(reverse = TRUE) %>%
+  as_tibble() %>%
+  mutate(p.value = formatp(p.value)) %>%
+  kable(caption = "Mean CFI change from baseline at week 240 by treatment 
+    group estimated from spline model.", digits = 2, booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<caption>
+
+Mean CFI change from baseline at week 240 by treatment group estimated
+from spline model.
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+contrast
+</th>
+
+<th style="text-align:left;">
+
+TX
+</th>
+
+<th style="text-align:right;">
+
+estimate
+</th>
+
+<th style="text-align:right;">
+
+SE
+</th>
+
+<th style="text-align:right;">
+
+df
+</th>
+
+<th style="text-align:right;">
+
+t.ratio
+</th>
+
+<th style="text-align:left;">
+
+p.value
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+ADURW240 - ADURW0
+</td>
+
+<td style="text-align:left;">
+
+Placebo
+</td>
+
+<td style="text-align:right;">
+
+1.51
+</td>
+
+<td style="text-align:right;">
+
+0.19
+</td>
+
+<td style="text-align:right;">
+
+1437.56
+</td>
+
+<td style="text-align:right;">
+
+7.96
+</td>
+
+<td style="text-align:left;">
+
+p\<0.001
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+ADURW240 - ADURW0
+</td>
+
+<td style="text-align:left;">
+
+Solanezumab
+</td>
+
+<td style="text-align:right;">
+
+2.09
+</td>
+
+<td style="text-align:right;">
+
+0.21
+</td>
+
+<td style="text-align:right;">
+
+1768.38
+</td>
+
+<td style="text-align:right;">
+
+9.77
+</td>
+
+<td style="text-align:left;">
+
+p\<0.001
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+``` r
+contrast240 <- ref_grid(cfi_fit, 
+  at = list(ADURW = 240, TX = levels(ADQS_CFI$TX)),
+  vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_CFI, 
+  mode = "satterthwaite") %>%
+  emmeans(specs = "TX", by = "ADURW") %>%
+  pairs(reverse = TRUE, adjust = "none")
+
+contrast240 %>% 
+  as_tibble() %>%
+  left_join(contrast240 %>% 
+      confint() %>%
+      as_tibble() %>%
+      select(contrast, lower.CL, upper.CL), by="contrast") %>%
+  relocate(p.value, .after = last_col()) %>%
+  mutate(p.value = formatp(p.value)) %>%
+  kable(caption = "Mean CFI group change from baseline at week 240 by treatment 
+    group estimated from spline model.", digits = 2, booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<caption>
+
+Mean CFI group change from baseline at week 240 by treatment group
+estimated from spline model.
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+contrast
+</th>
+
+<th style="text-align:right;">
+
+ADURW
+</th>
+
+<th style="text-align:right;">
+
+estimate
+</th>
+
+<th style="text-align:right;">
+
+SE
+</th>
+
+<th style="text-align:right;">
+
+df
+</th>
+
+<th style="text-align:right;">
+
+t.ratio
+</th>
+
+<th style="text-align:right;">
+
+lower.CL
+</th>
+
+<th style="text-align:right;">
+
+upper.CL
+</th>
+
+<th style="text-align:left;">
+
+p.value
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Solanezumab - Placebo
+</td>
+
+<td style="text-align:right;">
+
+240
+</td>
+
+<td style="text-align:right;">
+
+0.58
+</td>
+
+<td style="text-align:right;">
+
+0.29
+</td>
+
+<td style="text-align:right;">
+
+1769.54
+</td>
+
+<td style="text-align:right;">
+
+2.04
+</td>
+
+<td style="text-align:right;">
+
+0.02
+</td>
+
+<td style="text-align:right;">
+
+1.14
+</td>
+
+<td style="text-align:left;">
+
+0.04
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+``` r
+ref_grid(cfi_fit, 
+  at = list(ADURW = seq(0, 312, by=12), TX = levels(ADQS_CFI$TX)),
+  vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
+  data = ADQS_CFI, 
+  mode = "satterthwaite") %>%
+  emmeans(specs = "TX", by = "ADURW") %>%
+  as_tibble() %>%
+  ggplot(aes(x=ADURW, y=emmean)) +
+  geom_line(aes(color=TX)) +
+  geom_ribbon(aes(ymin = lower.CL, ymax = upper.CL, fill = TX), alpha = 0.2) +
+  scale_x_continuous(breaks = seq(0, 312, by=24)) +
+  ylab("Mean CFI with 95% confidence intervals") +
+  xlab("Weeks since Randomization") +
+  theme(legend.position = 'inside', legend.position.inside = c(0.2, 0.9))
+```
+
+<div class="figure">
+
+<img src="man/figures/README-cfi-mean-plot-1.png" alt="Mean CFI per treatment group over time as estimated by spline model. Shaded region depicts 95% confidence intervals." width="100%" />
+<p class="caption">
+
+Mean CFI per treatment group over time as estimated by spline model.
 Shaded region depicts 95% confidence intervals.
 </p>
 
