@@ -2,7 +2,7 @@ library(tidyverse); library(devtools);
 
 # Read in csv files ----
 dir.create('../data')
-data_download_date <- as.Date("2024-09-17")
+data_download_date <- as.Date("2025-08-08")
 usethis::use_data(data_download_date, overwrite = TRUE)
 csv_files <- list.files("./", pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
 for (file_name in csv_files) {

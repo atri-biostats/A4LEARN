@@ -2,7 +2,7 @@ Package: A4LEARN
 Type: Package
 Title: A4LEARN Study Package
 Description: A4LEARN is a data package containing full A4 and LEARN dataset.
-Version: 1.0.20241030
+Version: 1.1.20250808
 Authors@R: person("ATRI Biostatistics", email = "biostat_request@atrihub.io",
   role = c("aut", "cre"))
 URL: 

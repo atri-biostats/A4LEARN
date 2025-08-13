@@ -28,10 +28,10 @@ To install `A4LEARN`:
 
 - Register at <https://www.a4studydata.org/> or
   <https://www.synapse.org/a4_learn_datasharing/>
-- Download `A4LEARN_1.0.20241030.tar.gz` from the preferred data sharing
+- Download `A4LEARN_1.1.20250808.tar.gz` from the preferred data sharing
   platform
 - In R, run
-  `install.packages("path/to/A4LEARN_1.0.20241030.tar.gz", repos = NULL, type = "source")`
+  `install.packages("path/to/A4LEARN_1.1.20250808.tar.gz", repos = NULL, type = "source")`
 
 The script to build this R package can be found in
 [tools](https://github.com/atrihub/A4LEARN/tree/main/tools).
