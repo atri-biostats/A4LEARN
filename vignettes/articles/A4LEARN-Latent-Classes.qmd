@@ -1,0 +1,2312 @@
+---
+title: "Divergent latent classes of cognitive decline in the A4 and LEARN studies"
+author:
+  - name: Runpeng Li
+    email: runpengl@usc.edu
+    affiliations: ATRI
+  - name: Oliver Langford
+    affiliations: 
+      - ref: ATRI
+  - name: Philip S. Insel
+    affiliations: 
+      - ref: UCSF
+  - name: Reisa A. Sperling
+    affiliations:
+      - ref: MGH
+  - name: Rema Raman
+    affiliations:
+      - ref: ATRI
+  - name: Paul S. Aisen
+    affiliations:
+      - ref: ATRI
+  - name: Michael C. Donohue
+    email: mdonohue@usc.edu
+    correspondingauthor: true
+    affiliations:
+      - ref: ATRI
+affiliations:
+  - id: ATRI
+    name: Alzheimer's Therapeutic Research Institute, University of Southern California
+    city: San Diego
+    state: CA
+  - id: UCSF
+    name: Department of Psychiatry, University of California, San Francisco
+    city: San Francisco
+    state: CA
+  - id: MGH
+    name: Center for Alzheimer Research and Treatment, Brigham and Women’s Hospital, Massachusetts General Hospital, Harvard Medical School
+    city: Boston
+    state: MA
+abstract: |
+  **Importance:** It has been shown that Alzheimer’s disease biomarkers in cognitively unimpaired older adults are associated with subsequent cognitive and clinical decline. However, considerable heterogeneity in the rate and pattern of decline remains unexplained.
+
+  **Objective:** To characterize subgroups of cognitive decline among biomarker-defined cognitively unimpaired adults and identify predictors of heterogeneity in preclinical Alzheimer’s disease progression.
+  
+  **Design, Setting, and Participants:** We analyzed longitudinal data from participants in the A4 Study (amyloid-positive) and the LEARN Study (amyloid-negative) who completed baseline amyloid PET, plasma p-tau217, and serial cognitive assessments. Latent Class Mixed-Effects Models (LCMMs) were used to identify distinct patterns of cognitive change over time. Associations between class membership and baseline demographic, clinical, and biomarker variables were evaluated.
+  
+  **Main Outcomes and Measures:** The primary outcome was change in the Preclinical Alzheimer’s Cognitive Composite (PACC) score over time. Secondary outcomes included class-specific rates of decline and predictors of class membership.
+  
+  **Results:** Three distinct classes of cognitive trajectories were identified, representing stable, slow decline, and fast decline. Higher baseline plasma P‐tau217 levels, greater baseline hippocampal atrophy, and higher baseline tau PET levels were associated with membership in declining subgroups. Among amyloid-positive participants, approximately 70% were classified as non-decliners over the course of observation.
+  
+  **Conclusions and Relevance:** Latent class modeling reveals marked heterogeneity in cognitive decline among individuals with and without biomarker evidence of Alzheimer’s pathology. The high proportion of non-decliners is not unexpected given that the presymptomatic phase of Alzheimer disease may span more than a decade. Identifying subgroups of decline may enhance the design of precision prevention trials and improve prognostic modeling in preclinical Alzheimer’s disease.
+keywords: 
+  - Latent Class Mixed Model
+  - Preclinical Alzheimer's Disease
+  - Cognitive decline prediction
+format: html
+editor: visual
+prefer-html: true
+always_allow_html: true
+date: "`r Sys.Date()`"
+bibliography: A4LEARN-Latent-Classes.bib
+csl: american-medical-association.csl
+nocite: | 
+      @petersen2016association, @Sperling2023, @donohue2017association, @parent2023longitudinal, @Sperling2024
+crossref:
+  custom:
+    - kind: float
+      key: suppfig
+      latex-env: suppfig
+      reference-prefix: Supplementary Figure S
+      space-before-numbering: false
+      latex-list-of-description: Supplementary Figure
+    - kind: float
+      key: supptbl
+      latex-env: supptbl
+      reference-prefix: Supplementary Table S
+      space-before-numbering: false
+      latex-list-of-description: Supplementary Table
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+# rmarkdown::render('A4LEARN-Latent-Classes.qmd')
+UPDATELCMM <- FALSE
+UPDATELCMMCV <- FALSE
+UPDATETREECV <- FALSE
+library(A4LEARN)
+library(lcmm)
+library(emmeans)
+library(tidyverse)
+library(assertr)
+library(knitr)
+library(ggforce)
+library(patchwork)
+library(pROC)
+library(PRROC)
+library(ggsci)
+library(caret)
+library(arsenal)
+library(kableExtra)
+library(gridExtra)
+library(rpart)
+library(rpart.plot)
+library(tidymodels)
+library(vip)
+
+options(htmltools.dir.version = FALSE, knitr.kable.NA = '')
+
+opts_chunk$set(
+  echo = FALSE,
+  tidy=FALSE,
+  collapse = TRUE,
+  fig.path = '',
+  fig.width = 6,
+  fig.height = 4,
+  fig.align = "center",
+  message = FALSE,
+  warning = FALSE, 
+  out.extra = '',
+  out.width='\\linewidth',
+  fig.align = 'center', 
+  crop = TRUE, 
+  fig.pos = '!h',
+  cache=TRUE,
+  comment = '')
+
+TX_level_sola <- A4LEARN::SUBJINFO %>%
+  filter(stringr::str_detect(TX, "Sola"))  %>% .$TX %>% unique()
+
+TX_level_placebo <- A4LEARN::SUBJINFO %>%
+  filter(!stringr::str_detect(TX, "Sola"))  %>% .$TX %>% unique()
+
+TX_levels <- c(TX_level_placebo, TX_level_sola)
+```
+
+```{r ggplot-setup}
+theme_jama <- function(base_size = 10) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # Overall plot settings
+      plot.title = element_text(size = base_size + 1, face = "bold", 
+                                hjust = 0, margin = margin(b = 10)),
+      plot.subtitle = element_text(size = base_size, hjust = 0, 
+                                   margin = margin(b = 10)),
+      plot.caption = element_text(size = base_size - 1, hjust = 1, 
+                                  margin = margin(t = 10)),
+      
+      # Axis settings
+      axis.title = element_text(size = base_size, face = "bold"),
+      axis.text = element_text(size = base_size - 1, color = "black"),
+      axis.line = element_line(color = "black", linewidth = 0.5),
+      axis.ticks = element_line(color = "black", linewidth = 0.5),
+      
+      # Panel settings
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      
+      # Legend settings
+      legend.title = element_text(size = base_size, face = "bold"),
+      legend.text = element_text(size = base_size - 1),
+      legend.key = element_rect(fill = "white", color = NA),
+      legend.background = element_rect(fill = "transparent", color = NA),
+      legend.position = "bottom",
+      
+      # Strip settings (for facets)
+      strip.background = element_blank(),
+      strip.text = element_text(size = base_size - 1, face = "bold", 
+                               color = "black"),
+      
+      # Remove plot background
+      plot.background = element_rect(fill = "white", color = NA)
+    )
+}
+
+# JAMA-appropriate color palette (colorblind-friendly)
+jama_colors <- c("#374E55", "#DF8F44", "#00A1D5", "#B24745", 
+                 "#79AF97", "#6A6599", "#80796B")
+
+# Scale functions for easy use
+scale_color_jama <- function(...) {
+  scale_color_manual(values = jama_colors, ...)
+}
+
+scale_fill_jama <- function(...) {
+  scale_fill_manual(values = jama_colors, ...)
+}
+
+# Example usage:
+# ggplot(data, aes(x = x, y = y, color = group)) +
+#   geom_point() +
+#   theme_jama() +
+#   scale_color_jama()
+```
+
+Elevated levels of brain amyloid in cognitively unimpaired older adults are associated with subsequent cognitive decline and increased risk of clinical progression.[@petersen2016association; @Sperling2023; @donohue2017association; @parent2023longitudinal; @Sperling2024] The Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease (A4) Study, a randomized trial of solanezumab in cognitively normal individuals with elevated amyloid PET, demonstrated group-level decline on a cognitive composite but no treatment benefit.[@Sperling2023] Follow-up analyses from A4 and its companion observational study of amyloid-negative individuals, the Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN), further confirmed that higher baseline amyloid PET and plasma phosphorylated tau (p-tau217) levels are associated with faster cognitive decline and increased functional progression.[@Sperling2024]
+
+Despite these consistent group-level associations, cognitive trajectories among amyloid-positive individuals remain highly variable. Conventional longitudinal models assume that individual cognitive trajectories are randomly scattered about a single mean trend for given covariate values, potentially obscuring meaningful heterogeneity. To better characterize this heterogeneity, we applied a Latent Class Mixed-Effects Model (LCMM) [@proust2017estimation] to A4 and LEARN data. This approach identifies unobserved subgroups of participants with distinct longitudinal patterns of change and allows for evaluation of baseline biomarkers and demographic factors as predictors of class membership.
+
+# Key points
+
+**Question:** Among cognitively unimpaired older adults with and without Alzheimer’s disease biomarkers, are there distinct subgroups of cognitive decline, and can baseline biomarkers predict subgroup membership?
+
+**Findings:** In this latent class mixed‐effects modeling analysis of participants from the A4 and LEARN studies, three subgroups of cognitive trajectories were identified, representing stable, slow decline, and fast decline. Higher baseline plasma P‐tau217 levels, greater baseline hippocampal atrophy, and higher baseline tau PET levels were associated with membership in declining subgroups. Even among amyloid-positive participants, approximately 70% were classified as non-decliners, a proportion that is not unexpected given the long presymptomatic phase of Alzheimer disease, which may span more than a decade.
+
+**Meaning:** Substantial heterogeneity exists in cognitive decline during the preclinical phase of Alzheimer’s disease. Identifying subgroups of decline may improve prognostic modeling and guide precision enrollment and outcome strategies for prevention trials.
+
+# Methods
+
+```{r tau-mri-data-prep}
+tau_pet_data <- A4LEARN::imaging_Tau_PET_Stanford %>% 
+ select(BID, bi_entorhinal, bi_inferiortemporal, bi_inferiorparietal, 
+    bi_posteriorcingulate, bi_caudalmiddlefrontal,
+    bi_middletemporal, bi_superiorparietal, bi_frontalpole) %>%
+  assertr::verify(!duplicated(BID)) %>%
+  rowwise() %>%
+  mutate(Tau_PET = mean(c(bi_entorhinal, bi_inferiortemporal,
+    bi_inferiorparietal, bi_posteriorcingulate, bi_caudalmiddlefrontal,
+    bi_middletemporal, bi_superiorparietal, bi_frontalpole), na.rm=TRUE)) %>%
+  ungroup()
+
+mri_data <- A4LEARN::imaging_volumetric_mri %>% 
+  filter((VISCODE == 4 | is.na(VISCODE))) %>% 
+  filter(!is.na(RightHippocampus)) %>%
+  filter(!duplicated(BID, fromLast = TRUE)) %>%
+  select(BID, VISCODE, SUBSTUDY, 
+    LeftEntorhinal, RightEntorhinal, 
+    LeftHippocampus, RightHippocampus, IntraCranialVolume) %>% 
+  filter(LeftEntorhinal != -4, RightEntorhinal != -4,
+    LeftHippocampus != -4, RightHippocampus != -4) %>%
+  mutate(
+    Entorhinal = LeftEntorhinal + RightEntorhinal,
+    Hippocampus = LeftHippocampus + RightHippocampus)
+
+# "Residualize" hippocampus relative to ICV
+# Y ~ int + scale(ICV) * beta + e
+# Y - scale(ICV)*beta
+# int + e
+mri_icv_mod <- lm(Hippocampus ~ scale(IntraCranialVolume), data = mri_data)
+mri_data$Hipp_res <- mri_icv_mod$coefficients[["(Intercept)"]] + 
+  mri_icv_mod$residuals
+mri_data$Hipp_atrophy <- scale(-mri_data$Hipp_res)[,1]
+# with(mri_data, plot(Hippocampus, Hipp_res))
+# with(mri_data, plot(Hippocampus, Hipp_atrophy))
+```
+
+```{r pacc-prep-data, include = FALSE}
+## A4 data prep ----
+qs_pacc <- A4LEARN::ADQS %>% filter(QSTESTCD %in% "PACC") %>%
+  left_join(A4LEARN::ptdemog %>% select(BID, Sex = PTGENDER, PTRACE, PTETHNIC),
+    by='BID') %>%
+  mutate(Y = QSSTRESN, Y.ch = QSCHANGE,
+    QSVERSION = as.factor(QSVERSION),
+    Group = case_when(
+      SUBSTUDY == 'LEARN' ~ 'LEARN',
+      TRUE ~ as.character(TX)) %>% 
+        factor(levels = c('LEARN', as.character(TX_levels))),
+    APOEe4 = factor(AAPOEGNPRSNFLG, levels = 0:1, 
+      labels = c('non-carrier', 'carrier')),
+    Female = case_when(
+      Sex == 'Female' ~ 1,
+      TRUE ~ 0),
+    Race = factor(PTRACE,
+      levels = 1:6,
+      labels = c(
+        "Am. Indian or Alaska Native",
+        "Asian",
+        "Native Hawaiian or Other PI",
+        "Black or African Am.",
+        "White",
+        "Unknown or Not Reported")),
+    Ethnicity = PTETHNIC,
+    Sola = case_when(
+      TX == "Solanezumab" ~ 1,
+      TRUE ~ 0)) %>%
+  left_join(A4LEARN::biomarker_pTau217 %>% 
+      filter(TESTCD == 'PTAU217' & !is.na(ORRESRAW)) %>%
+      arrange(BID, VISCODE) %>%
+      filter(!duplicated(BID)) %>%
+      select(BID, Ptau217 = ORRESRAW), by = 'BID') %>%
+  left_join(tau_pet_data, by = 'BID') %>%
+  left_join(mri_data %>% 
+    select(BID, IntraCranialVolume, Entorhinal, Hippocampus, Hipp_atrophy), 
+    by = 'BID') %>%
+  arrange(BID, ADURW) %>%
+  select(BID, SUBSTUDY, VISITCD, ASEQNCS, AVISIT, ADURW, AMYLCENT, Y, TX, 
+    Group, AGEYR, Sex, Female, Race, Ethnicity, AAPOEGNPRSNFLG, APOEe4,
+    EDCCNTU, SUVRCER, Ptau217, QSVERSION, Sola, Tau_PET, IntraCranialVolume,
+    Entorhinal, Hippocampus, Hipp_atrophy) %>%
+  ungroup() %>%
+  mutate(id = as.numeric(as.factor(BID))) %>%
+  filter(!is.na(Y), !is.na(ADURW), !is.na(Ptau217), 
+    !is.na(APOEe4), !is.na(Hipp_atrophy))
+
+# PACC scores can be negative. Do a shift before boxcox
+min_Y <- min(qs_pacc$Y, na.rm = TRUE)
+
+shift_constant <- abs(min_Y) + 1
+
+qs_pacc <- qs_pacc %>%
+  mutate(Y_shifted = Y + shift_constant)
+
+boxcox_result <- MASS::boxcox(Y_shifted ~ 1, data = qs_pacc, plotit = TRUE)
+lambda_optimal <- boxcox_result$x[which.max(boxcox_result$y)]
+boxcox_f <- function(y) ((y+shift_constant)^lambda_optimal - 1) / lambda_optimal
+
+qs_pacc <- qs_pacc %>%
+  mutate(Y_boxcox = (Y_shifted^lambda_optimal - 1) / lambda_optimal)
+
+reverse_boxcox <- function(pred_boxcox, lambda=lambda_optimal, 
+  shift = shift_constant, center = 0, scale = 1) {
+  pred_boxcox <- (pred_boxcox * scale) + center
+  if (lambda == 0) {
+    return(exp(pred_boxcox) - shift)
+  } else {
+    return((pred_boxcox * lambda + 1)^(1 / lambda) - shift)
+  }
+}
+
+if(min(abs(qs_pacc$Y - reverse_boxcox(qs_pacc$Y_boxcox)))>0){
+  stop("reverse_boxcox not working properly")
+}
+
+bl_summaries <- qs_pacc %>% filter(AVISIT == "006") %>%
+  select(SUBSTUDY, TX, AGEYR, AAPOEGNPRSNFLG, EDCCNTU, SUVRCER, Ptau217, 
+    Hipp_atrophy, Tau_PET, Sola, Female) %>%
+  pivot_longer(cols = c(AGEYR, AAPOEGNPRSNFLG, EDCCNTU, SUVRCER, Ptau217, 
+    Hipp_atrophy, Tau_PET, Sola, Female), 
+    names_to = 'variable') %>%
+  filter(!is.na(value)) %>%
+  group_by(variable) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value)
+  )
+
+qs_pacc <- qs_pacc %>%
+  mutate(
+    Z = scale(Y_boxcox),
+    AGEYR_z = scale(AGEYR),
+    EDCCNTU_z = scale(EDCCNTU),
+    Hipp_atrophy_z = scale(Hipp_atrophy),
+    Ptau217_z = scale(Ptau217),
+    SUVRCER_z = scale(SUVRCER),
+    Tau_PET_z = scale(Tau_PET))
+
+if(min(abs(qs_pacc$Y - reverse_boxcox(qs_pacc$Z, 
+  center = attr(qs_pacc$Z, "scaled:center"),
+  scale = attr(qs_pacc$Z, "scaled:scale"))))>0)
+{
+  stop("reverse_boxcox not working properly")
+}
+
+base_model_data <- qs_pacc %>%
+  select(id, Z, ADURW, Female, AAPOEGNPRSNFLG, QSVERSION, Sola,
+  AGEYR_z, EDCCNTU_z, SUVRCER_z, Ptau217_z, Hipp_atrophy_z)
+
+if(nrow(base_model_data) != nrow(base_model_data %>% na.omit())) 
+  stop("Unexpected missing data")
+
+tau_model_data <- qs_pacc %>%
+  select(id, Y_boxcox, ADURW, Female, AAPOEGNPRSNFLG, QSVERSION, Sola,
+  AGEYR, EDCCNTU, SUVRCER, Ptau217, Hipp_atrophy, Tau_PET) %>%
+  na.omit() %>%
+  mutate(
+    Z = scale(Y_boxcox),
+    AGEYR_z = scale(AGEYR),
+    EDCCNTU_z = scale(EDCCNTU),
+    Hipp_atrophy_z = scale(Hipp_atrophy),
+    Ptau217_z = scale(Ptau217),
+    SUVRCER_z = scale(SUVRCER),
+    Tau_PET_z = scale(Tau_PET)) %>%
+  select(id, Z, ADURW, Female, AAPOEGNPRSNFLG, QSVERSION, Sola,
+  AGEYR_z, EDCCNTU_z, SUVRCER_z, Ptau217_z, Hipp_atrophy_z, Tau_PET_z)
+
+timeby_cont <- seq(0, max(qs_pacc$ADURW), by=24)
+timeby_cont_plot <- seq(0, max(qs_pacc$ADURW), by=8)
+xlimit_cont <- c(min(timeby_cont) - 5, max(timeby_cont) + 5)
+```
+
+```{r spline_functions, warning=FALSE}
+## spline functions 2df ----
+ns21 <- function(t){
+  as.numeric(predict(splines::ns(qs_pacc$ADURW, df=2,
+    Boundary.knots = c(0, max(qs_pacc$ADURW))), t)[,1])
+}
+ns22 <- function(t){
+  as.numeric(predict(splines::ns(qs_pacc$ADURW, df=2,
+    Boundary.knots = c(0, max(qs_pacc$ADURW))), t)[,2])
+}
+
+# required for mclapply
+assign("ns21", ns21, envir = .GlobalEnv)
+assign("ns22", ns22, envir = .GlobalEnv)
+
+## spline functions 3df ----
+ns31 <- function(t){
+  as.numeric(predict(splines::ns(qs_pacc$ADURW, df=3,
+    Boundary.knots = c(0, max(qs_pacc$ADURW))), t)[,1])
+}
+ns32 <- function(t){
+  as.numeric(predict(splines::ns(qs_pacc$ADURW, df=3,
+    Boundary.knots = c(0, max(qs_pacc$ADURW))), t)[,2])
+}
+ns33 <- function(t){
+  as.numeric(predict(splines::ns(qs_pacc$ADURW, df=3,
+    Boundary.knots = c(0, max(qs_pacc$ADURW))), t)[,3])
+}
+
+# required for mclapply
+assign("ns31", ns21, envir = .GlobalEnv)
+assign("ns32", ns22, envir = .GlobalEnv)
+assign("ns33", ns22, envir = .GlobalEnv)
+```
+
+## Statistical Analysis
+
+Latent class mixed-effects models (LCMMs) extend traditional mixed-effects models by identifying unobserved subgroups, or latent classes, of individuals who follow distinct longitudinal trajectories. In the context of cognitive decline in Alzheimer’s disease, LCMMs allow for the estimation of population-level trends while capturing individual variability and uncovering hidden subpopulations that may progress at different rates.
+
+Analyses were conducted using harmonized data from the A4 and LEARN studies, accessed through the `A4LEARN` R data package (version 1.1.20250808 @donohue2025alzheimer), available at <https://github.com/atri-biostats/A4LEARN>. This package provides curated datasets and metadata derived from the A4 and LEARN clinical studies for reproducible statistical analysis. Code to reproduce the results from this paper are available from <https://github.com/atri-biostats/A4LEARN/tree/main/vignettes/articles>.
+
+The dependent variable was the Box-Cox-transformed Preclinical Alzheimer’s Cognitive Composite (PACC) score at each visit. The Box-Cox transformation parameter ($\lambda$) was selected to maximize the likelihood that the transformed data approximated normality. Time was modeled as a continuous variable representing years since baseline.
+
+Natural cubic spline basis functions with one, two or three degrees of freedom were evaluated to model nonlinear trajectories, with boundary knots at baseline and the maximum follow-up time and an interior knots at the median or tertiles of observation time. The choice of degrees of freedom and the number of classes (also one, two, or three) was determined by model fit criteria (Bayesian Information Criterion \[BIC\] and Integrated Complete Likelihood \[ICL\]). Each model included class-specific spline-based time effects, as well as subject-specific random intercepts. The effect of baseline covariates were shared across latent classes and included: randomized treatment group (solanezumab vs placebo), plasma P-tau217 concentration, florbetapir cortical standardized uptake value ratio (SUVr), APOE $\epsilon 4$ carrier status, sex, age, education, hippocampal atrophy, and PACC test stimulus version administered (which alternated per study protocol). Plasma P-tau217 concentrations were measured using an immunoassay developed by Eli Lilly and reported in arbitrary units per milliliter (U/mL), where "U" denotes a generic assay unit proportional to signal intensity. Absolute calibration against mass concentration (e.g., pg/mL) was not available. Hippocampal atrophy measures were derived by first residualizing with respect to intracranial volume, and then standardizing to mean zero and variance one (i.e. z-scoring).
+
+The LCMM includes two linked submodels. The longitudinal submodel captures within-class trajectories of cognitive change over time. Each class had its own set of spline coefficients, allowing class-specific shapes of decline. The class membership submodel defines the probability of belonging to each latent class as a multinomial logistic function of baseline covariates (which includes all covariates listed above except spline terms and PACC test version).
+
+In a secondary analysis, we fit the model to the subset of participants with baseline flortaucipir (tau) PET imaging. Tau PET was summarized as the mean SUVr across eight cortical regions: entorhinal cortex, inferior temporal, inferior parietal, posterior cingulate, caudal middle frontal, middle temporal, superior parietal, and frontal pole. This composite measure was included as an additional covariate in both the longitudinal and class membership submodels to assess whether tau pathology improved prediction of cognitive decline patterns or latent class assignment.
+
+## Ten-fold cross-validation of latent class predictions
+
+To assess the reliability and potential predictive utility of the latent class membership model, we examined the posterior probabilities of class assignment for each participant. High posterior probabilities indicate greater certainty in latent class classification. We summarized these distributions across classes and computed the mean posterior probability within each group as an index of classification confidence. To further evaluate prospective discrimination, we performed ten-fold cross-validation. For each of the ten folds, 90% of the data were used to re-train the LCMM, and the re-trained model was used to predict latent classes for the 10% held-out test set using only baseline data. Model performance was summarized using the area under the precision-recall curve (AUPRC) for discrimination of each class versus all others. This approach is preferred over area under the receiver operating characteristic (ROC) curve when group sizes are imbalance.
+
+## Regression Tree Analysis for Latent Class Characterization
+
+To evaluate whether latent classes could be distinguished by baseline characteristics through a combination of binary decision rules, we conducted a post-hoc classification tree analysis [@rpart; @breiman2017classification]. Class assignments from the optimal latent class mixed model were used as the outcome variable, with baseline demographic and clinical characteristics as predictors (randomized treatment group, plasma P-tau217 concentration, florbetapir PET, APOE $\epsilon 4$ carrier status, sex, age, education, hippocampal atrophy, and PACC). We separately considered a regression tree with tau PET as an additional predictor.
+
+Hyperparameter tuning was performed using 10-fold cross-validation. The optimal hyperparameters were selected based on maximum cross-validated accuracy. The final tree structure was visualized to illustrate the hierarchy of decision rules for class assignment. Variable importance was calculated based on the total reduction in node impurity attributed to splits on each predictor. This approach provides an interpretable framework for understanding the multivariate profile of each latent class and assessing whether classes can be reliably separated using clinically available baseline information.
+
+All analyses were conducted using R (version 4.5.2; R Foundation for Statistical Computing) with the `lcmm` package (version 2.2.1).
+
+# Results
+
+## Study Participants
+
+A total of $N=1,629$ participants were included in the analytic sample for the base model (without tau PET), comprising $N=1,110$ from the A4 Study and $N=519$ from the LEARN study. The mean (standard deviation \[SD\]) age at baseline was 71.46 (4.69) years, and 60.2% were female. The median follow-up time was 6.0 years (interquartile range 3.9 to 7.0). Baseline characteristics stratified by latent class membership are presented in @tbl-baseline-base-characteristics. A total of $N=427$ individuals had tau PET data and were submitted to the tau PET model. The tau PET subset included $N=372$ from the A4 Study and $N=55$ from the LEARN study. Baseline characteristics for the tau PET subset are presented in @supptbl-baseline-tau-characteristics .
+
+```{r lcmm-mri, eval = UPDATELCMM}
+## 2 df spline ----
+m1 <- hlme(Z ~ I(ns21(ADURW)) + I(ns22(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  random =  ~ 1, subject = 'id', ng = 1,
+  data = base_model_data)
+
+m2 <- hlme(Z ~  I(ns21(ADURW)) + I(ns22(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  mixture = ~ (I(ns21(ADURW)) + I(ns22(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 2, B = m1,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG + 
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  data = base_model_data)
+
+m3 <- hlme(Z ~  I(ns21(ADURW)) + I(ns22(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  mixture = ~ (I(ns21(ADURW)) + I(ns22(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 3, B = m1,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG + 
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  data = base_model_data)
+
+## 3 df spline ----
+m31 <- hlme(Z ~ I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  random =  ~ 1, subject = 'id', ng = 1,
+  data = base_model_data)
+
+m32 <- hlme(Z ~  I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  mixture = ~ (I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 2, B = m31,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG + 
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  data = base_model_data)
+
+m33 <- hlme(Z ~  I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  mixture = ~ (I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 3, B = m31,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG + 
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+  data = base_model_data)
+
+## save ----
+save(m1, m2, m3, m31, m32, m33,
+  file='a4learn-pacc-lcmm-base.rdata')
+```
+
+```{r lcmm-tau, eval = UPDATELCMM}
+## 2 df spline ----
+mt1 <- hlme(Z ~ I(ns21(ADURW)) + I(ns22(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  random =  ~ 1, subject = 'id', ng = 1,
+  data = tau_model_data)
+
+mt2 <- hlme(Z ~  I(ns21(ADURW)) + I(ns22(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  mixture = ~ (I(ns21(ADURW)) + I(ns22(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 2, B = mt1,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  data = tau_model_data)
+
+mt3 <- hlme(Z ~  I(ns21(ADURW)) + I(ns22(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  mixture = ~ (I(ns21(ADURW)) + I(ns22(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 3, B = mt1,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  data = tau_model_data)
+
+## 3 df spline ----
+mt31 <- hlme(Z ~ I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  random =  ~ 1, subject = 'id', ng = 1,
+  data = tau_model_data)
+
+mt32 <- hlme(Z ~  I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  mixture = ~ (I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 2, B = mt31,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  data = tau_model_data)
+
+mt33 <- hlme(Z ~  I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW)) +
+    Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  mixture = ~ (I(ns31(ADURW)) + I(ns32(ADURW)) + I(ns33(ADURW))),
+  random =  ~ 1, subject = 'id', ng = 3, B = mt31,
+  classmb = ~ Female + Sola + AAPOEGNPRSNFLG +
+    Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+  data = tau_model_data)
+
+## save ----
+save(mt1, mt2, mt3, mt31, mt32, mt33,
+  file='a4learn-pacc-lcmm-tau.rdata')
+```
+
+```{r load-lcmm-results, include = FALSE}
+load('a4learn-pacc-lcmm-base.rdata')
+
+summarytable(m1, m2, m3, m31, m32, m33,
+  which = c("G", "loglik", "conv", "AIC", "BIC", "entropy", "ICL", "%class"))
+
+summaryplot(m1, m2, m3, which = "BIC")
+summaryplot(m31, m32, m33, which = "BIC")
+
+# make non-decliner last so that it is the reference group
+plot(predictY(m3, newdata = base_model_data,
+  var.time="ADURW"),legend.loc="right",bty="l")
+m.best.mri <- permut(m3, order=c(2,1,3))
+plot(predictY(m.best.mri, newdata = base_model_data,
+   var.time="ADURW"),legend.loc="right",bty="l")
+
+load('a4learn-pacc-lcmm-tau.rdata')
+
+summarytable(mt1, mt2, mt3, mt31, mt32, mt33,
+  which = c("G", "loglik", "conv", "AIC", "BIC", "entropy", "ICL", "%class"))
+
+summaryplot(mt1, mt2, mt3, which = "BIC")
+summaryplot(mt31, mt32, mt33, which = "BIC")
+
+# make non-decliner last so that it is the reference group
+plot(predictY(mt3, newdata = tau_model_data,
+  var.time="ADURW"),legend.loc="right",bty="l")
+m.best.tau <- permut(mt3, order=c(3,1,2))
+plot(predictY(m.best.tau, newdata = tau_model_data,
+   var.time="ADURW"),legend.loc="right",bty="l")
+```
+
+```{r attach-class-labels}
+qs_pacc <- qs_pacc %>%
+  left_join(m.best.mri$pprob %>% as_tibble() %>% select(id, class),
+    by = 'id') %>%
+  mutate(`Class (Base)` =
+    case_when(
+      class == 1 ~ 'Slow decliner',
+      class == 2 ~ 'Fast decliner',
+      class == 3 ~ 'Non-decliner',) %>% 
+      factor(levels = c('Non-decliner', 'Slow decliner', 'Fast decliner'))) %>%
+  select(-class) %>%
+  left_join(m.best.tau$pprob %>% as_tibble() %>% select(id, class),
+    by = 'id') %>%
+  mutate(`Class (Tau PET)` =
+    case_when(
+      class == 1 ~ 'Slow decliner',
+      class == 2 ~ 'Fast decliner',
+      class == 3 ~ 'Non-decliner',) %>% 
+      factor(levels = c('Non-decliner', 'Slow decliner', 'Fast decliner'))) %>%
+  select(-class)
+```
+
+```{r tbl-baseline-base-characteristics}
+#| results: asis
+#| tbl-cap: "**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: non-decliners, slow decliners, and fast decliners. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling."
+
+mylabels <- list(Y = "PACC, mean (SD)", AMYLCENT = "Amyloid PET, mean (SD), CL", 
+  EDCCNTU = 'Education, mean (SD), y', TX = 'Group, No. (%)', AGEYR = 'Age, mean (SD), y',
+  Ptau217 = "P-tau217, mean (SD), U/ml", Tau_PET = "Tau PET, mean (SD), SUVr",
+  Hipp_atrophy_z = "Hipp. atrophy, mean (SD), z-score", Sex = "Sex, No. (%)", Race = "Race, No. (%)", Ethnicity = "Ethnicity, No. (%)", APOEe4 = "APOEε4, No. (%)")
+
+tableby(`Class (Base)` ~ Group + AGEYR + Sex + Race + Ethnicity + EDCCNTU + 
+    APOEe4 + Y + AMYLCENT + Ptau217 + Hipp_atrophy_z + Tau_PET,
+  data = qs_pacc %>% filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)), 
+  digits = 2, test.always = TRUE, numeric.stats = c("Nmiss", "meansd"),
+  numeric.simplify = TRUE, cat.simplify = FALSE) %>%
+  summary(labelTranslations = mylabels, stats.labels = list(Nmiss = 'N missing'), text = TRUE) %>%
+  as.data.frame() %>%
+  kbl("pipe", booktabs = T)
+```
+
+```{r followup-summary, include = FALSE}
+base_model_data %>%
+  arrange(id, desc(ADURW)) %>%
+  filter(!duplicated(id)) %>% mutate(Years = ADURW * 7 / 365.25) %>%
+  pull(Years) %>% 
+  summary()
+```
+
+## Identification and Prediction of Latent Classes
+
+```{r fig-long-spaghetti-pacc-mri}
+#| fig-cap: "**Individual and Mean PACC Trajectories by Latent Class.** Left panel (A): Spaghetti plot of individual participant trajectories on the Preclinical Alzheimer Cognitive Composite (PACC), colored by latent class derived from the latent class mixed model (LCMM). Each line represents one participant’s observed scores over time. Right panel (B): Estimated mean PACC trajectories for each latent class, with shaded regions indicating 95% confidence intervals. Higher PACC scores indicate better cognitive performance."
+
+data_pred <- bl_summaries %>%
+  select(variable, mean) %>%
+  pivot_wider(names_from = variable, values_from = mean) %>%
+  mutate(
+    TX = factor('Placebo', levels = levels(qs_pacc$TX)),
+    QSVERSION = factor("A", levels = levels(qs_pacc$QSVERSION)),
+    Sola = 0, Ptau217_z = 0, SUVRCER_z = 0, AGEYR_z = 0, EDCCNTU_z = 0,
+    Hipp_atrophy_z = 0, Tau_PET_z = 0) %>%
+  cross_join(tibble(ADURW = seq(0, 456, by = 24)))
+
+pred <- predictY(m.best.mri, data_pred, var.time = "ADURW", draws = TRUE)$pred %>%
+  as_tibble() %>%
+  mutate(Week = data_pred$ADURW) %>%
+  pivot_longer(Ypred_class1:upper.Ypred_class3, 
+    names_to = 'name', values_to = 'prediction') %>%
+  mutate(
+    class = case_when(
+      grepl('class1', name) ~ 'Slow decliner',
+      grepl('class2', name) ~ 'Fast decliner',
+      grepl('class3', name) ~ 'Non-decliner') %>% 
+      factor(levels = c('Non-decliner', 'Slow decliner', 'Fast decliner')),
+    estimate = case_when(
+      grepl('lower', name) ~ 'lower',
+      grepl('upper', name) ~ 'upper',
+      TRUE ~ 'prediction'),
+  ) %>%
+  select(-name) %>%
+  pivot_wider(id_cols = Week:class, 
+    names_from = estimate, values_from = prediction) %>%
+  mutate(
+    prediction_raw = reverse_boxcox(prediction,
+      center = attr(base_model_data$Z, "scaled:center"),
+      scale = attr(base_model_data$Z, "scaled:scale")),
+    lower_raw = reverse_boxcox(lower,
+      center = attr(base_model_data$Z, "scaled:center"),
+      scale = attr(base_model_data$Z, "scaled:scale")),
+    upper_raw = reverse_boxcox(upper,
+      center = attr(base_model_data$Z, "scaled:center"),
+      scale = attr(base_model_data$Z, "scaled:scale")))
+
+p1 <- ggplot(pred, aes(x=Week, y=prediction_raw, group = class)) +
+  geom_line(aes(color = class)) +
+  geom_ribbon(aes(ymin = lower_raw, ymax = upper_raw, fill = class), alpha = 0.2) +
+  xlab('Weeks') + 
+  ylab('Predicted PACC (95% CI)') + 
+  scale_x_continuous(breaks = seq(0, max(pred$Week), by = 100)) + 
+  guides(color = guide_legend(title = "PACC class", override.aes = list(size = 5)), fill = "none") +
+  theme_jama() +
+  theme(legend.position = 'inside', legend.position.inside = c(0.3, 0.2)) +
+  scale_color_jama() +
+  scale_fill_jama()
+
+p2 <- qs_pacc %>% filter(!is.na(`Class (Base)`)) %>%
+  ggplot(aes(x = ADURW, y=Y, group = id)) +
+  geom_line(aes(color = `Class (Base)`), alpha = 0.2) +
+  ylab('PACC') +
+  xlab('Weeks') + 
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))+
+  guides(color = "none") +
+  theme_jama() +
+  scale_color_jama() +
+  scale_fill_jama()
+
+p2 + p1 + plot_annotation(tag_levels = "A")
+```
+
+```{r prediction-results-for-text, include = FALSE}
+pred %>% 
+  mutate(Year = Week * 7 / 365.25) %>%
+  filter(Week %in% c(0, 312))
+```
+
+```{r fig-sina-baseline, results='asis', fig.width = 6, fig.height = 5}
+#| fig-cap: "**Distribution of Baseline Demographic and Biomarker Variables by Latent Class of Cognitive Decline.** Sina plots show the distribution of selected baseline variables among latent classes identified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories: non-decliners, slow decliners, and fast decliners. Variables include age, baseline PACC score, plasma phosphorylated tau 217 (P-tau217), amyloid positron emission tomography (PET) standardized uptake value ratio (SUVr), tau PET SUVr (subset with tau PET available), and hippocampal atrophy (volume normalized to intracranial volume). Each dot represents an individual participant; box plots represent quartiles. Higher PACC scores indicate better cognitive performance. **Abbreviations:** PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal."
+
+pd <- qs_pacc %>% 
+  filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)) %>%
+  select(`PACC Class` = `Class (Base)`, Y, Ptau217, AMYLCENT, AGEYR, Tau_PET,
+    Hipp_atrophy_z) %>%
+  filter(!is.na(`PACC Class`)) %>%
+  pivot_longer(Y:Hipp_atrophy_z) %>%
+  mutate(
+    name = case_when(
+      name == 'Y' ~ "PACC",
+      name == 'AMYLCENT' ~ "Amyloid PET (CL)",
+      name == 'EDCCNTU' ~ 'Education (years)',
+      name == 'AGEYR' ~ 'Age (years)',
+      name == 'Ptau217' ~ "P-tau217 (U/ml)",
+      name == 'Tau_PET' ~ "Tau PET (SUVr)",
+      name == 'Hipp_atrophy_z' ~ "Hipp. atrophy (z-score)") %>%
+      factor(levels = c('Age (years)', 'PACC', 'P-tau217 (U/ml)', 
+        'Amyloid PET (CL)', 'Tau PET (SUVr)', 'Hipp. atrophy (z-score)')))
+
+ggplot(pd, aes(y=value, x=`PACC Class`, color=`PACC Class`)) +
+  geom_sina() +
+  geom_boxplot(width = 0.3, alpha = 0.3, outlier.shape = NA, 
+    color = "black", linewidth = 0.6) +
+  facet_wrap(vars(name), scales = 'free_y') +
+  theme_jama() +
+  theme(legend.position = 'none', 
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+  scale_color_jama() +
+  xlab('') + ylab('')
+```
+
+```{r lcmm-summary-function}
+summarize_lcmm <- function(x) {
+  # Get indices
+  NPROB <- x$N[1]
+  NEF   <- x$N[2]
+  NVC   <- x$N[3]
+  NW    <- x$N[4]
+  ncor <- x$N[5]
+  NPM   <- length(x$best)
+  
+  # Get parameter estimates
+  id <- 1:NPM
+  indice <- rep(id*(id+1)/2)
+  se <- sqrt(x$V[indice])
+  coef <- x$best
+
+  # Calculate statistics
+  z_stat <- coef / se
+  p_value <- 2 * (1 - pnorm(abs(z_stat)))
+  ci_lower <- coef - 1.96 * se
+  ci_upper <- coef + 1.96 * se
+  
+  # Parameter names
+  param_names <- names(coef)
+  
+  tmp <- tibble(
+    Parameter = param_names,
+    Estimate = coef,
+    SE = se,
+    lwr = ci_lower,
+    upr = ci_upper,
+    OR = exp(coef),
+    OR.lwr = exp(ci_lower),
+    OR.upr = exp(ci_upper),
+    `P Value` = p_value)
+  
+  # Identify longitudinal parameters (adjust based on your model)
+
+  memb_indices <- 1:NPROB
+  long_indices <- (NPROB+1):(NPROB+NEF)
+  
+  list(
+    memb_sum = tmp[memb_indices, ] %>%
+      select(Parameter, OR, OR.lwr, OR.upr, `P Value`),
+    long_sum = tmp[long_indices, ] %>%
+      select(Parameter, Estimate, SE, lwr, upr, `P Value`))
+}
+```
+
+```{r fig-lcmm-coefs, fig.width = 7, fig.height = 6}
+#| fig-cap: "**Association of Baseline Predictors With Latent Class Membership and Longitudinal Cognitive Decline in Models With and Without Tau PET.** Panels A and B display results from the latent class mixed model (LCMM) excluding tau PET; panels C and D show corresponding results from the model including tau PET as an additional predictor. (A, C) Odds ratios (95% CIs) from the LCMM class-membership submodel represent the relative likelihood of belonging to the slow- or fast-declining classes relative to non-declining class. (B, D) Standardized coefficients (95% CIs) from the LCMM longitudinal submodel show associations between baseline predictors and rate of change in the Preclinical Alzheimer’s Cognitive Composite (PACC). All continuous predictors and the PACC outcome were standardized (z-scored) before analysis to enable comparison of effect magnitudes. Higher PACC scores indicate better cognitive performance; thus, larger positive coefficients correspond to slower decline or better preservation of cognition over time."
+
+## mri model ----
+raw_names <- c('Hipp_atrophy', 'Ptau217', 'SUVRCER', 'AGEYR',
+  'EDCCNTU', 'AAPOEGNPRSNFLG', 'Female', 'Sola')
+out_names <- c("Hipp. atrophy", "P-tau217", "Amyloid PET", 'Age',
+  'Education', "APOE e4", 'Female', 'Solanezumab')
+
+tmp.or <- summarize_lcmm(m.best.mri)$memb_sum %>%
+  mutate(
+    Parameter = gsub(' class1', ' (slow)', Parameter),
+    Parameter = gsub(' class2', ' (fast)', Parameter),
+    Parameter = gsub('_z', '', Parameter)) %>%
+  filter(!grepl("intercept", Parameter)) %>%
+  mutate(
+    Parameter = factor(Parameter,
+      levels = paste(rep(raw_names, each=2), c('(fast)', '(slow)')),
+      labels = paste(rep(out_names, each=2), c('(fast)', '(slow)'))))
+
+tmp.long <- summarize_lcmm(m.best.mri)$long_sum %>%
+  mutate(
+    Parameter = gsub(' class1', ' (slow)', Parameter),
+    Parameter = gsub(' class2', ' (fast)', Parameter),
+    Parameter = gsub(' class3', ' (non)', Parameter),
+    Parameter = gsub('_z', '', Parameter)) %>%
+  filter(!grepl("intercept", Parameter)) %>%
+  filter(!grepl("I(ns", Parameter, fixed = TRUE)) %>%
+  filter(!grepl("QSVERSION", Parameter, fixed = TRUE)) %>%
+  mutate(
+    Parameter = factor(Parameter,
+      levels = raw_names,
+      labels = out_names))
+
+pA <- ggplot(tmp.or, aes(x = OR, y = Parameter)) +
+  geom_vline(xintercept = 1, linetype = "solid", 
+    color = "black", linewidth = 0.5) +
+  geom_segment(aes(x = OR.lwr, xend = OR.upr, 
+    y = Parameter, yend = Parameter),
+    linewidth = 0.8, color = "black") +
+  geom_point(size = 3, shape = 15, color = "black") +
+  labs(x = "OR (95% CI)",
+    y = NULL,
+    title = NULL) +
+  theme_jama() +
+  xlim(0,7)
+
+pB <- ggplot(tmp.long, aes(x = Estimate, y = Parameter)) +
+  geom_vline(xintercept = 0, linetype = "solid", 
+    color = "black", linewidth = 0.5) +
+  geom_segment(aes(x = lwr, xend = upr, 
+    y = Parameter, yend = Parameter),
+    linewidth = 0.8, color = "black") +
+  geom_point(size = 3, shape = 15, color = "black") +
+  labs(x = "Standardized Coefficient (95% CI)",
+    y = NULL,
+    title = NULL) +
+  theme_jama() +
+  xlim(-0.3, 0.5)
+
+## tau pet model ----
+raw_names <- c('Tau_PET', 'Hipp_atrophy', 'Ptau217', 'SUVRCER', 'AGEYR',
+  'EDCCNTU', 'AAPOEGNPRSNFLG', 'Female', 'Sola')
+out_names <- c('Tau PET', "Hipp. atrophy", "P-tau217", "Amyloid PET", 'Age',
+  'Education', "APOE e4", 'Female', 'Solanezumab')
+tmp.or <- summarize_lcmm(m.best.tau)$memb_sum %>%
+  mutate(
+    Parameter = gsub(' class1', ' (slow)', Parameter),
+    Parameter = gsub(' class2', ' (fast)', Parameter),
+    Parameter = gsub('_z', '', Parameter)) %>%
+  filter(!grepl("intercept", Parameter)) %>%
+  mutate(
+    Parameter = factor(Parameter,
+      levels = paste(rep(raw_names, each=2), c('(fast)', '(slow)')),
+      labels = paste(rep(out_names, each=2), c('(fast)', '(slow)'))))
+
+tmp.long <- summarize_lcmm(m.best.tau)$long_sum %>%
+  mutate(
+    Parameter = gsub(' class1', ' (slow)', Parameter),
+    Parameter = gsub(' class2', ' (fast)', Parameter),
+    Parameter = gsub(' class3', ' (non)', Parameter),
+    Parameter = gsub('_z', '', Parameter)) %>%
+  filter(!grepl("intercept", Parameter)) %>%
+  filter(!grepl("I(ns", Parameter, fixed = TRUE)) %>%
+  filter(!grepl("QSVERSION", Parameter, fixed = TRUE)) %>%
+  mutate(
+    Parameter = factor(Parameter,
+      levels = raw_names,
+      labels = out_names))
+
+pC <- ggplot(tmp.or, aes(x = OR, y = Parameter)) +
+  geom_vline(xintercept = 1, linetype = "solid", 
+    color = "black", linewidth = 0.5) +
+  geom_segment(aes(x = OR.lwr, xend = OR.upr, 
+    y = Parameter, yend = Parameter),
+    linewidth = 0.8, color = "black") +
+  geom_point(size = 3, shape = 15, color = "black") +
+  labs(x = "OR (95% CI)",
+    y = NULL,
+    title = NULL) +
+  theme_jama() +
+  xlim(0,7)
+
+pD <- ggplot(tmp.long, aes(x = Estimate, y = Parameter)) +
+  geom_vline(xintercept = 0, linetype = "solid", 
+    color = "black", linewidth = 0.5) +
+  geom_segment(aes(x = lwr, xend = upr, 
+    y = Parameter, yend = Parameter),
+    linewidth = 0.8, color = "black") +
+  geom_point(size = 3, shape = 15, color = "black") +
+  labs(x = "Standardized Coefficient (95% CI)",
+    y = NULL,
+    title = NULL) +
+  theme_jama() +
+  xlim(-0.3, 0.5)
+
+## arrange plot ----  
+pA + pB + pC + pD +
+  plot_annotation(
+    tag_levels = "A",
+    tag_prefix = "",
+    tag_suffix = ""
+  )
+```
+
+Individual and base LCMM (excluding Tau PET) mean trajectories are shown in @fig-long-spaghetti-pacc-mri. Model selection criteria identified the model with two degrees of freedom and three latent classes, which we labeled as non-decliners (77%), slow decliners (16%), and fast decliners (7%). The next best fitting model had three classes and three degrees of freedom ($\Delta$ BIC = 22.2, $\Delta$ ICL = 22.2). The best fitting Tau PET LCMM had two degrees of freedom and three latent classes (@suppfig-long-spaghetti-pacc-tau-pet) and the next best fitting model had two classes and two degrees of freedom ($\Delta$ BIC = 376.4, $\Delta$ ICL = 336.9). The two models largerly agreed on individual classifications. Only 7/427 (1.6%) individuals were reclassified from one model to the next, and none of those were fast decliners. Posterior class probabilities (@suppfig-postprobs) indicated good separation (mean posterior probability, 0.94), indicating model confidence in class assignment.
+
+The three classes are significantly separated starting immediately at baseline. From the base model, participants classified as fast decliners started with a mean -0.98 (95% confidence interval \[CI\] -1.44 to -0.52) PACC points and declined to a mean of -15.8 (95% CI -16.7 to -15.0) at six years. In contrast non-decliners started with a mean 0.52 (95% CI 0.37 to 0.67) PACC points and improved to a mean of 1.16 (95% CI 1.00 to 1.31) at six years. Slow decliners were intermediate between the other two classes starting with a mean -0.13 (95% CI -0.44 to 0.17) PACC points and declining to a mean -4.74 (95% CI -5.22 to -4.26).
+
+The distribution of continuous baseline variables by latent class is shown in @fig-sina-baseline and @fig-lcmm-coefs summarizes standardized coefficients and 95% CIs from both components of the LCMM. @fig-lcmm-coefs Panels A and C depicts odds ratios (ORs) for the class membership submodels from the base model and tau PET model. Continuous predictors are standardized so that ORs reflect the change in odds of belonging to the fast- or slow declining class compared with the non-declining class per one SD increase in each continuous baseline predictor.
+
+From the base model (Panel A), higher plasma P-tau217 levels (OR 3.2, 95% CI 2.4 to 4.1), elevated amyloid PET centiloid (OR 1.4, 95% CI 1.0 to 1.9), and greater hippocampal atrophy scores (OR 3.9, 95% CI 2.7 to 5.6) were each associated with increased odds of belonging to faster-declining classes. Interestingly, P-tau217 and hippocampal atrophy had numerically stronger effects than amyloid PET. Also of interest, fast decliners were numerically younger (mean 73.1 years, SD 4.7), on average, than slow decliners (mean 74.1 years, SD 5.2) and increased age was associated with membership in the slow declining group (OR 1.4, 95% CI 1.1 to 1.7) but not the fast declining group (OR 0.93, 95% CI 0.69 to 1.2). Tau PET model results are largely similar, but confidence intervals are wider, likely due to smaller available sample ($N=427$ vs $N=1,629$). Increased tau PET was associated with increased odds of slow- (OR = 1.8, 95% CI 1.2 to 2.8) and fast-declining groups (OR = 3.6, 95% CI 2.1 to 6.1).
+
+@fig-lcmm-coefs Panels B and D presents standardized coefficients from the longitudinal submodel, representing associations between each covariate and the PACC outcome. Higher PACC scores correspond to better cognitive performance and continuous variables are standardized and oriented so that positive coefficients indicate better performance. We see that females had increased risk of being fast decliners (OR 2.5, 95% CI 1.5 to 4.4), but had better PACC performance for a given class membership (0.30 PACC points, 95% CI 0.24 to 0.35). APOE $\epsilon 4$ carriage was associated with increased risk of both slow (OR 1.9, 95% CI 1.3 to 2.8) and fast (OR 2.9, 95% CI 1.6 to 5.3) declining class versus non-declining class, but negligible remaining effect on PACC. Education had no effect on class membership, but was associated with better PACC performance (0.12 PACC points per SD of education, 95% CI 0.095 to 0.15).
+
+## Predictive Performance and Cross-Validation
+
+The overall cross-validated accuracy was 0.80 (95% CI 0.79 to 0.82) for the base model and 0.756 (95% CI 0.73 to 0.78) for the tau PET model. However, this accuracy rate is inflated by the large number of non-decliners (1,257/1,629 = 77.2%), which are relatively easy for the model to identify. AUPRCs from the base model were 0.95, 0.41, and 0.49 for non-, slow-, and fast decliners versus the rest; and 0.70 for either slow- or fast decliner vs non-decliner (@suppfig-cross-val-base-pr). AUPRCs from the tau PET model were 0.92, 0.31, and 0.56 for non-, slow-, and fast decliners versus the rest; and 0.71 for either slow- or fast decliner vs non-decliner (@suppfig-cross-val-tau-pet-pr).
+
+## Post-hoc Regression Tree
+
+The optimally-tuned classification tree without tau PET achieved a mean balanced accuracy of 0.63 (standard error 0.013) in 10-fold cross-validation (@fig-tree-base). Variable importance analysis identified baseline P-tau217 (56.1%), baseline PACC (15.5%), amyloid PET (13.1%), and hippocampal atrophy (10.0%) as most important; though amyloid PET was not included in the tree, likely due to its correlation with P-tau217. The tree structure revealed a hierarchical decision process with participants with baseline P-tau217 \< 0.29 were classified as non-decliners, though this miss-classifies $N=155$ decliners. Those with P-tau217 $\geq$ 0.29 are further parsed by hippocampal atrophy, PACC, and P-tau217. Only one leaf contains a majority of fast decliners, and it contains only 1% of the initial sample. While the tree demonstrates the relative importance and utility of the predictors, it also demonstrates a high degree of miss-classification (18.6%). Cross-validated balanced accuracy is improved by the addition of tau PET (mean 0.70, standard error 0.011; @suppfig-tree-tau-pet). Tau PET has the second largest variable importance (22.5%), between P-tau217 (29.8%) and hippocampal atrophy (17.4%).
+
+::: {#fig-tree-base}
+
+```{r fig-tree-base} 
+if(file.exists('tree_cv_base_results.rdata')){
+  load('tree_cv_base_results.rdata')
+  knitr::include_graphics("fig-tree-base.png")
+}else{
+  tree_model <- list(frame = list(var = NA))
+  top_models <- tibble(mean = NA, std_err = NA)
+}
+```
+
+Classification tree analysis for latent class assignment from Base Model. (A) Relative importance of baseline predictors for class separation. (B) Classification tree showing binary decision rules for assigning subjects to latent classes based on predictors. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with `{r} sum(tree_model$frame$var != '<leaf>')` splits (mean balanced accuracy = `{r} format(round(top_models[[1, 'mean']], 2), nsmall = 2)`, standard error `{r} round(top_models[[1, 'std_err']], 3)`)
+
+:::
+
+# Discussion
+
+In this latent class mixed-model analysis of cognitively unimpaired older adults, we identified distinct trajectories of PACC performance and evaluated the extent to which plasma and imaging biomarkers prospectively distinguished individuals who remained cognitively stable from those who showed slow or rapid decline. Several findings highlight challenges for prognostic modeling in the preclinical stage of Alzheimer disease and have direct implications for secondary prevention trial design.
+
+## Available Predictors Only Partially Discriminate Future Decline
+
+Although plasma P-tau217 and amyloid PET were each associated with latent class membership, neither biomarker alone, or in combination, achieved adequately accurate prediction of cognitive decline. A key observation was the high frequency of cognitive stability among amyloid-positive participants. As shown in @tbl-baseline-base-characteristics, 776 of 1,110 amyloid-positive A4 participants (69.9%) were classified as non-decliners, indicating that substantial amyloid burden does not necessarily translate into measurable cognitive change over the timescales typical of prevention trials. However, this is consistent with a pre-symptomatic phase of disease believed to last as long as 15 years.
+
+Compared to the 30.1% of amyloid-positive individuals classified as decliners, a small minority of amyloid-negative LEARN participants were classified as decliners. Thirty-eight of 519 (7.3%) amyloid-negative individuals were classified as slow or fast decliners, suggesting that some causes of decline may reflect non–AD processes, early AD pathology below PET detection thresholds at baseline that accumulated over the 5 year period, or cognitive measurement variability. These findings reinforce that amyloid positivity, while necessary for defining the AD pathophysiologic continuum, is an insufficient standalone predictor of short- to intermediate-term cognitive decline.
+
+## Relative Contributions of Plasma P-tau217 and Tau PET
+
+Plasma P-tau217 demonstrated stronger prognostic associations than amyloid PET, consistent with biomarker models positioning tau abnormalities closer to symptom onset. This observation aligns with prior reports, showing improved prognostic accuracy with plasma tau markers.[@Sperling2024] However, classification tree analyses indicated that no single P-tau217 threshold meaningfully enriched for decliners without simultaneously excluding many true decliners, underscoring the limitations of threshold-based enrichment strategies.
+
+Tau PET provided incremental predictive value beyond plasma P-tau217 and amyloid PET, although gains were modest. Because tau PET captures later-stage pathologic changes, these results are biologically plausible. Nevertheless, the logistical and financial limitations of tau PET constrain its feasibility as a routine screening tool in large-scale prevention trials.
+
+## Implications for Secondary Prevention Trial Design
+
+These findings have several implications for the design and interpretation of secondary prevention trials in preclinical Alzheimer disease.
+
+**Participant Selection.** Because the majority of amyloid-positive individuals remained cognitively stable, restricting eligibility based solely on amyloid positivity will invariably enroll many non-decliners, reducing statistical power for cognitive endpoints. Plasma P-tau217 may aid enrichment but is insufficient to isolate a predominantly decliner cohort. More complex multimodal strategies or repeated biomarker assessments may be required to achieve adequate prognostic discrimination.
+
+**Modeling Treatment Effects in Heterogeneous Cohorts.** Latent class distinctions complicate assumptions about expected treatment benefit. Fast decliners may show larger measurable benefit yet may represent individuals further along the disease continuum. Non-decliners present an additional challenge: their stability limits the detectable cognitive benefit even if biological effects occur. Power simulations and trial analyses may therefore need to incorporate class-specific trajectories or assume differential treatment effects across latent classes.
+
+**Added Value of Tau PET.** Although tau PET contributed additional predictive information, its incremental value must be interpreted in the context of feasibility. For future enrichment, tau-PET-based staging may offer a more specific approach to identifying individuals closer to clinical transition, though widespread implementation in prevention trials remains challenging.
+
+**Outcome Selection.** The limited cognitive change observed in non-decliners raises important questions about the sensitivity of traditional cognitive outcomes at this very early stage of AD. In such individuals, early synaptic dysfunction, measured with learning curves assessed by daily digital testing,[@papp2024early] and/or biological endpoints (e.g., plasma or tau PET measures) may provide more responsive markers of treatment effect and may serve as important secondary or exploratory outcomes. Nonetheless, given evidence that tau PET is more closely linked to concurrent and future cognitive decline than amyloid biomarkers, it is plausible that longitudinal tau PET, or plasma P-tau217, may offer greater utility for monitoring treatment response or detecting early trajectory divergence. Future work applying latent class or related trajectory models to longitudinal biomarker measures may help clarify whether biomarker-defined progressors can be identified earlier or more reliably than cognitive progressors.
+
+**Early Intervention.** In symptomatic disease, it has been observed that anti-amyloid therapies can demonstrate larger benefits in those with less tau pathology [@sims2023donanemab], supporting the theory that earlier intervention should yield greater benefit. If presymptomatic decline unfolds gradually over a decade or more, treatment trials beginning relatively early in this trajectory may struggle to demonstrate delay of cognitive change within feasible trial windows. Accordingly, refining and validating more sensitive digital and/or biomarker-based endpoints will be essential for advancing preclinical therapy development. Sensitive, reproducible measures of target engagement and disease progression could improve enrichment, increase statistical power, and enable detection of treatment effects even among participants who remain cognitively stable.
+
+## Overall Interpretation
+
+In summary, data-driven cognitive trajectories among initially unimpaired older adults exhibited substantial heterogeneity, and widely used biomarkers, including plasma P-tau217 and amyloid PET, were only partially effective in predicting who would decline over the time frame of a prevention trial. These limitations highlight the need for improved prognostic tools, potentially incorporating longitudinal biomarker dynamics, multimodal risk models, or digital assessments. Until then, secondary prevention trials must account for substantial heterogeneity in cognitive trajectories when planning enrollment, power calculations, trial simulations, and analytic strategies.
+
+## Strengths and Limitations
+
+This study has several strengths. We leveraged a large, deeply phenotyped cohort of cognitively unimpaired older adults with longitudinal cognitive assessments and harmonized biomarker data, using the A4LEARN R package to standardize and reproducibly analyze data across the A4 and LEARN cohorts. The latent class mixed-model approach allowed us to identify data-driven cognitive trajectories rather than relying on predefined thresholds or single-outcome definitions of decline. The inclusion of plasma P-tau217, amyloid PET, and, within a subset, tau PET enabled evaluation of multiple biomarkers spanning distinct phases of Alzheimer disease pathophysiology.
+
+This study also has limitations. First, although latent class methods improve characterization of heterogeneity, class assignments are probabilistic and sensitive to model specification. Second, follow-up duration, while substantial, may still be insufficient to capture long-term cognitive change among stable individuals. Third, tau PET was available only in a subset, limiting statistical power for comparisons involving this biomarker and potentially reducing generalizability. Fourth, although we examined a broad panel of covariates, unmeasured factors, including comorbidities, lifestyle variables, and scanner-related differences, may influence both biomarker levels and cognitive outcomes. Finally, this is highly selected sample of individuals who were either eligible for the A4 study, or ineligible owing only to low amyloid PET signal, and may not fully represent community-dwelling older adults.
+
+# Conclusions
+
+Among cognitively unimpaired older adults, cognitive trajectories showed marked heterogeneity, and widely used biomarkers, including plasma P-tau217 and amyloid PET, were only partially effective in distinguishing who would decline. Tau PET provided modest additional predictive value but remains impractical for widespread enrichment. These findings highlight the challenge of prospectively identifying decliners in preclinical Alzheimer disease and underscore the need for improved multimodal prognostic tools. Secondary prevention trials should account for substantial heterogeneity in cognitive trajectories when developing enrollment strategies, powering cognitive endpoints, and interpreting treatment effects.
+
+\clearpage
+
+# Acknowledgements
+
+The authors would like to thank the A4 and LEARN Study Teams and site principal investigators and staff. Special gratitude to the A4 and LEARN participants and their study partners, without whom these studies would not be possible. Funding: The A4 and LEARN Studies were supported by a public-private-philanthropic partnership which included funding from the National Institute of Aging of the National Institutes of Health (R01 AG063689, U19AG010483 and U24AG057437), Eli Lilly (also the supplier of active medication and placebo), the Alzheimer’s Association, the Accelerating Medicines Partnership through the Foundation for the National Institutes of Health, the GHR Foundation, the Davis Alzheimer Prevention Program, the Yugilbar Foundation, an anonymous foundation, and additional private donors to Brigham and Women’s Hospital, with in-kind support from Avid Radiopharmaceuticals, Cogstate, Albert Einstein College of Medicine and the Foundation for Neurologic Diseases.
+
+# Supplementary Material
+
+::: {#supptbl-baseline-tau-characteristics}
+
+```{r supptbl-baseline-tau-characteristics}
+#| results: asis
+
+tableby(`Class (Tau PET)` ~ Group + AGEYR + Sex + Race + Ethnicity + EDCCNTU + 
+    APOEe4 + Y + AMYLCENT + Ptau217 + Hipp_atrophy_z + Tau_PET,
+  data = qs_pacc %>% filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)), 
+  digits = 2, test.always = TRUE, numeric.stats = c("Nmiss", "meansd"),
+  numeric.simplify = TRUE, cat.simplify = FALSE) %>%
+  summary(labelTranslations = mylabels, stats.labels = list(Nmiss = 'N missing'), text = TRUE) %>%
+  as.data.frame() %>%
+  kbl("pipe", booktabs = T)
+```
+
+**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline with Tau PET.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: non-decliners, slow decliners, and fast decliners. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling.
+
+:::
+
+::: {#suppfig-long-spaghetti-pacc-tau-pet}
+
+```{r suppfig-long-spaghetti-pacc-tau-pet}
+pred <- predictY(m.best.tau, data_pred, var.time = "ADURW", draws = TRUE)$pred %>%
+  as_tibble() %>%
+  mutate(Week = data_pred$ADURW) %>%
+  pivot_longer(Ypred_class1:upper.Ypred_class3, 
+    names_to = 'name', values_to = 'prediction') %>%
+  mutate(
+    class = case_when(
+      grepl('class1', name) ~ 'Slower decliner',
+      grepl('class2', name) ~ 'Faster decliner',
+      grepl('class3', name) ~ 'Non-decliner') %>% 
+      factor(levels = c('Non-decliner', 'Slower decliner', 'Faster decliner')),
+    estimate = case_when(
+      grepl('lower', name) ~ 'lower',
+      grepl('upper', name) ~ 'upper',
+      TRUE ~ 'prediction'),
+  ) %>%
+  select(-name) %>%
+  pivot_wider(id_cols = Week:class, 
+    names_from = estimate, values_from = prediction) %>%
+  mutate(
+    prediction_raw = reverse_boxcox(prediction,
+      center = attr(tau_model_data$Z, "scaled:center"),
+      scale = attr(tau_model_data$Z, "scaled:scale")),
+    lower_raw = reverse_boxcox(lower,
+      center = attr(tau_model_data$Z, "scaled:center"),
+      scale = attr(tau_model_data$Z, "scaled:scale")),
+    upper_raw = reverse_boxcox(upper,
+      center = attr(tau_model_data$Z, "scaled:center"),
+      scale = attr(tau_model_data$Z, "scaled:scale")))
+
+p1 <- ggplot(pred, aes(x=Week, y=prediction_raw, group = class)) +
+  geom_line(aes(color = class)) +
+  geom_ribbon(aes(ymin = lower_raw, ymax = upper_raw, fill = class), alpha = 0.2) +
+  xlab('Weeks') + 
+  ylab('Predicted PACC (95% CI)') + 
+  scale_x_continuous(breaks = seq(0, max(pred$Week), by = 100)) + 
+  guides(color = guide_legend(title = "PACC class", override.aes = list(size = 5)), fill = "none") +
+  theme_jama() +
+  theme(legend.position = 'inside', legend.position.inside = c(0.3, 0.2)) +
+  scale_color_jama() +
+  scale_fill_jama()
+
+p2 <- qs_pacc %>% filter(!is.na(`Class (Tau PET)`)) %>%
+  ggplot(aes(x = ADURW, y=Y, group = id)) +
+  geom_line(aes(color = `Class (Tau PET)`), alpha = 0.2) +
+  ylab('PACC') +
+  xlab('Weeks') + 
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))+
+  guides(color = "none") +
+  theme_jama() +
+  scale_color_jama() +
+  scale_fill_jama()
+
+(p2 | p1) + plot_annotation(tag_levels = "A")
+```
+
+**Latent class mixed model identifies distinct cognitive decliner trajectories.** (a) Predicted PACC scores for participants classified as cognitive decliners (red) or non-decliners (blue) over time using a latent class mixed model. Shaded regions represent 95% confidence intervals. Vertical dashed line at week 240 marks the start of Open Label Extension. (b) Individual participant trajectories colored by decliner classification, showing heterogeneity within each group.
+
+:::
+
+::: {#suppfig-postprobs}
+
+```{r postprobs-cap}
+posterior_probs <- m.best.mri$pprob %>%
+  pivot_longer(prob1:prob3) %>%
+  filter(name == paste0("prob", class)) %>%
+  mutate(
+    `PACC class` = case_when(
+      name == 'prob1' ~ 'Slow decliner',
+      name == 'prob2' ~ 'Fast decliner',
+      name == 'prob3' ~ 'Non-decliner') %>% 
+      factor(levels = c('Non-decliner', 'Slow decliner', 'Fast decliner')))
+
+pp_sum <- posterior_probs %>%
+  group_by(`PACC class`) %>%
+  summarise(mean = mean(value)) %>%
+  mutate(mean = format(round(mean, digits = 2)))
+
+pp_sum_overall <- posterior_probs %>%
+  summarise(mean = mean(value)) %>%
+  mutate(mean = format(round(mean, digits = 2)))
+```
+
+```{r suppfig-postprobs, results='asis'}
+ggplot(posterior_probs, aes(x = `PACC class`,  y = value, color = `PACC class`)) +
+  geom_sina() +
+  geom_boxplot(width = 0.3, alpha = 0.3, outlier.shape = NA, 
+    color = "black", linewidth = 0.6) +
+  theme_jama() +
+  theme(legend.position = 'none', 
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+  scale_color_jama() +
+  xlab('') +
+  ylab('Posterior class membership probability') + 
+  ylim(0,1)
+```
+
+**Distribution of posterior class membership probabilities by assigned latent class, indicating model confidence in class assignment.** This plot shows the degree of certainty in class assignments, a good indicator of model reliability. Mean posterior probabilities were `{r}pp_sum[[1,2]]`, `{r}pp_sum[[2,2]]`, and `{r}pp_sum[[3,2]]` for non-, slow-, and fast decliners. With most participants having high posterior probabilities ($>0.8$) for their assigned class, class separation is strong and predictive discrimination is good.
+
+:::
+
+\clearpage
+
+```{r cross-val-base-setup}
+# Cross-Validated Classification Performance for LCMM
+
+# Create strata ----
+subject_ids <- qs_pacc %>% 
+  select(id, Ptau217, `Class (Base)`) %>%
+  distinct() %>%
+  mutate(
+    Ptau217_f = case_when(
+      Ptau217 < 0.192 ~ 'low ptau',
+      TRUE ~ 'high ptau'),
+    strata = paste(Ptau217_f, `Class (Base)`))
+
+# 10-FOLD CROSS-VALIDATION SETUP ----
+
+n_folds <- 10
+n_classes <- 3
+
+# Create folds ----
+set.seed(20251111)
+folds <- createFolds(subject_ids$strata, k = n_folds, list = TRUE)
+```
+
+```{r cross-val-base-model-fits, eval = UPDATELCMMCV}
+model_fits <- parallel::mclapply(1:n_folds, function(fold){
+  train_subjects <- subject_ids$id[-folds[[fold]]]
+  train_data <- base_model_data %>% filter(id %in% train_subjects)
+  hlme(Z ~  I(ns21(ADURW)) + I(ns22(ADURW)) +
+        Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+        Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+      mixture = ~ (I(ns21(ADURW)) + I(ns22(ADURW))),
+      random =  ~ 1, subject = 'id', ng = 3, B = m1,
+      classmb = ~ Female + Sola + AAPOEGNPRSNFLG + 
+        Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z,
+      data = train_data)},
+  mc.cores = 5)
+save(model_fits, file = 'cross-val-base-model-fits.rdata')
+```
+
+```{r cross-val-base-aggregate, include = FALSE}
+load('cross-val-base-model-fits.rdata')
+
+# Initialize storage for results ----
+cv_results <- list()
+all_predictions <- data.frame()
+roc_data <- list()
+
+for(fold in 1:n_folds) {
+  # Split data by subjects (not observations)
+  test_subjects <- subject_ids$id[folds[[fold]]]
+  train_subjects <- subject_ids$id[-folds[[fold]]]
+  
+  train_data <- base_model_data %>% filter(id %in% train_subjects)
+  # Use only baseline for test data ----
+  test_data <- base_model_data %>% filter(id %in% test_subjects) %>%
+    arrange(id, ADURW) %>%
+    filter(!duplicated(id))
+  
+  lcmm_train <- model_fits[[fold]]
+  
+  # Predict on test set
+  # Get predictions for test subjects ----
+  test_post <- predictClass(lcmm_train, newdata = test_data)
+  # Label classes non, slow, fast decliners ----
+  labs_data <- predictY(lcmm_train, 
+    newdata = base_model_data[1, ] %>% mutate(ADURW = 240),
+    var.time="ADURW")$pred
+  fast <- which.min(labs_data[1,])
+  non <- which.max(labs_data[1,])
+  slow <- setdiff(1:3, c(fast, non))
+  labs <- tibble(
+    class_raw = colnames(labs_data)[c(non, slow, fast)],
+    class_number = gsub('Ypred_class', '', class_raw) %>% as.numeric(),
+    predicted_class = factor(levels(qs_pacc$`Class (Base)`),
+      levels = levels(qs_pacc$`Class (Base)`)))
+  
+  # Extract predictions
+  fold_predictions <- test_post %>%
+    rename(class_number = class) %>%
+    left_join(labs, by = 'class_number') %>%
+    left_join(qs_pacc %>% 
+        select(id, `Class (Base)`) %>%
+        distinct(), by = 'id') %>%
+    mutate(fold = fold)
+  
+  # with(fold_predictions, table(`Class (Base)`, predicted_class))
+  
+  # Store results
+  all_predictions <- bind_rows(all_predictions, fold_predictions)
+  
+  # Calculate fold-specific metrics
+  prob_cols <- grep("^prob", names(fold_predictions), value = TRUE)
+  
+  # Store for ROC data (one-vs-rest approach)
+  for(k in 1:n_classes) {
+    roc_data[[length(roc_data) + 1]] <- data.frame(
+      fold = fold,
+      class_number = k,
+      class_label = labs %>% filter(class_number == k) %>% 
+        pull(predicted_class),
+      predicted_class = fold_predictions$predicted_class,
+      true_class = fold_predictions$`Class (Base)`,
+      predicted_prob = fold_predictions[[paste0("prob", k)]]
+    )
+  }
+  
+  # Calculate accuracy for this fold
+  accuracy <- mean(fold_predictions$predicted_class == fold_predictions$`Class (Base)`)
+  
+  cv_results[[fold]] <- list(
+    fold = fold,
+    accuracy = accuracy,
+    n_test = nrow(test_post)
+  )
+}
+
+# Convert results to data frame ----
+cv_summary <- do.call(rbind, lapply(cv_results, as.data.frame))
+
+cat("=== Overall Performance Metrics ===\n")
+cat(sprintf("Mean Accuracy: %.3f (SD = %.3f)\n", 
+            mean(cv_summary$accuracy), sd(cv_summary$accuracy)))
+cat(sprintf("95%% CI: [%.3f, %.3f]\n",
+            mean(cv_summary$accuracy) - 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds),
+            mean(cv_summary$accuracy) + 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds)))
+
+# Confusion matrix
+confusion_matrix <- table(
+  Predicted = all_predictions$predicted_class,
+  Actual = all_predictions$`Class (Base)`
+)
+
+cat("\n=== Confusion Matrix ===\n")
+print(confusion_matrix)
+
+# Calculate per-class metrics
+cat("\n=== Per-Class Metrics ===\n")
+for(k in 1:n_classes) {
+  tp <- confusion_matrix[k, k]
+  fp <- sum(confusion_matrix[k, ]) - tp
+  fn <- sum(confusion_matrix[, k]) - tp
+  tn <- sum(confusion_matrix) - tp - fp - fn
+  
+  sensitivity <- tp / (tp + fn)
+  specificity <- tn / (tn + fp)
+  ppv <- tp / (tp + fp)
+  npv <- tn / (tn + fn)
+  
+  cat(sprintf("\nClass %d:\n", k))
+  cat(sprintf("  Sensitivity: %.3f\n", sensitivity))
+  cat(sprintf("  Specificity: %.3f\n", specificity))
+  cat(sprintf("  PPV: %.3f\n", ppv))
+  cat(sprintf("  NPV: %.3f\n", npv))
+}
+```
+
+::: {#suppfig-cross-val-base-pr}
+
+```{r suppfig-cross-val-base-pr}
+pr_df <- do.call(rbind, roc_data)
+
+# Calculate PR curves and AUCs for each class
+pr_list <- list()
+pr_auc_values <- numeric(n_classes)
+
+for(k in 1:n_classes) {
+  lab <- levels(pr_df$class_label)[k]
+  bin_class_data <- pr_df %>% 
+    filter(class_label == lab) %>%
+    mutate(
+      pred_bin_class = case_when(
+        predicted_class == lab ~ 1,
+        TRUE ~ 0),
+      true_bin_class = case_when(
+        true_class == lab ~ 1,
+        TRUE ~ 0))
+  pr_obj <- pr.curve(
+    scores.class0 = bin_class_data %>% pull(predicted_prob), 
+    weights.class0 = bin_class_data %>% pull(true_bin_class),
+    curve = TRUE)
+  pr_list[[k]] <- data.frame(
+    recall = pr_obj$curve[,1],
+    precision = pr_obj$curve[,2],
+    threshold = pr_obj$curve[,3],
+    class = lab,
+    auc = pr_obj$auc.integral)
+  pr_auc_values[k] <- pr_obj$auc.integral
+}
+
+# Either fast- or slow ----
+bin_class_data <- pr_df %>% 
+  filter(class_label == "Non-decliner") %>%
+  mutate(
+    pred_bin_class = case_when(
+      predicted_class == "Non-decliner" ~ 0,
+      TRUE ~ 1),
+    true_bin_class = case_when(
+      true_class == "Non-decliner" ~ 0,
+      TRUE ~ 1))
+pr_obj <- pr.curve(
+  scores.class0 = 1-bin_class_data %>% pull(predicted_prob), 
+  weights.class0 = bin_class_data %>% pull(true_bin_class),
+  curve = TRUE)
+pr_either <- data.frame(
+    recall = pr_obj$curve[,1],
+    precision = pr_obj$curve[,2],
+    threshold = pr_obj$curve[,3],
+    class = "Either decliner",
+    auc = pr_obj$auc.integral)
+
+pr_plot_data <- do.call(rbind, pr_list) %>%
+  bind_rows(pr_either) %>%
+  mutate(Class = paste0(class, " (AUPRC = ",
+    format(round(auc, 3), nsmall = 3), ")"))
+pr_plot_data$Class <- factor(pr_plot_data$Class,
+  levels = unique(pr_plot_data$Class))
+
+ggplot(pr_plot_data, 
+  aes(x = recall, y = precision, color = Class)) +
+  geom_line(linewidth = 1.2) +
+  geom_abline(intercept = 1, slope = -1, linetype = "dashed", 
+              color = "gray50", linewidth = 0.5) +
+  theme_jama() +
+  theme(legend.position = 'right') +
+  scale_color_jama() +
+  labs(
+    x = "Recall (TP/(TP+FN))",
+    y = "Precision (TP/(TP+FP))",
+    title = "Cross-Validated PR Curves for LCMM Class Prediction",
+    subtitle = sprintf("10-fold cross-validation (N = %d subjects)", 
+                      length(unique(base_model_data$id)))) +
+  coord_equal()
+```
+
+**Cross-validated Precision-Recall Curves for Latent Class Membership Model Without Tau PET.** Precision-recall curves summarizing 10-fold cross-validated classification performance of the latent class membership submodel based on baseline demographics and biomarkers, excluding tau PET. Curves depict the ability to distinguish the given class from the other two. The area under the precision-recall curve (AUPRC) quantifies overall predictive performance, emphasizing recall (or sensitivity, TP/(TP+FN)) and precision (TP/(TP+FP)) for less prevalent classes. **Abbreviations:** AUPRC = area under the precision-recall curve; TP = true positive rate; FN = false negative rate; FP = false positive rate.
+
+:::
+
+```{r cross-val-base-roc, eval = FALSE}
+roc_df <- do.call(rbind, roc_data)
+
+# Calculate ROC curves and AUCs for each class
+roc_list <- list()
+auc_values <- numeric(n_classes)
+
+for(k in 1:n_classes) {
+  lab <- levels(roc_df$class_label)[k]
+  bin_class_data <- roc_df %>% 
+    filter(class_label == lab) %>%
+    mutate(
+      pred_bin_class = case_when(
+        predicted_class == lab ~ 1,
+        TRUE ~ 0),
+      true_bin_class = case_when(
+        true_class == lab ~ 1,
+        TRUE ~ 0))
+  roc_obj <- roc(bin_class_data$true_bin_class, bin_class_data$predicted_prob, 
+                 quiet = TRUE)
+  roc_list[[k]] <- data.frame(
+    sensitivity = roc_obj$sensitivities,
+    specificity = roc_obj$specificities,
+    class = lab,
+    auc = as.numeric(auc(roc_obj))
+  )
+  auc_values[k] <- as.numeric(auc(roc_obj))
+}
+
+roc_plot_data <- do.call(rbind, roc_list) %>%
+  mutate(Class = paste0(class, " (AUC = ",
+    format(round(auc, 3), nsmall = 3), ")"))
+roc_plot_data$Class <- factor(roc_plot_data$Class,
+  levels = unique(roc_plot_data$Class))
+
+ggplot(roc_plot_data, 
+  aes(x = 1 - specificity, y = sensitivity, color = Class)) +
+  geom_line(linewidth = 1.2) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", 
+              color = "gray50", linewidth = 0.5) +
+  theme_jama() +
+  theme(legend.position = 'inside', legend.position.inside = c(0.8, 0.2)) +
+  scale_color_jama() +
+  labs(
+    x = "1 - Specificity (False Positive Rate)",
+    y = "Sensitivity (True Positive Rate)",
+    title = "Cross-Validated ROC Curves for LCMM Class Prediction",
+    subtitle = sprintf("10-fold cross-validation (N = %d subjects)", 
+                      length(unique(base_model_data$id)))) +
+  coord_equal()
+```
+
+```{r cross-val-base-accuracy, eval = FALSE}
+ggplot(cv_summary, aes(x = factor(fold), y = accuracy)) +
+  geom_point(size = 3, shape = 15, color = "black") +
+  geom_hline(yintercept = mean(cv_summary$accuracy), 
+             linetype = "dashed", color = "darkred", linewidth = 1) +
+  # Add text labels
+  geom_text(aes(label = sprintf("%.2f", accuracy)), 
+            vjust = -0.8, size = 3) +
+  # Add mean accuracy annotation
+  annotate("text", x = n_folds - 1, y = mean(cv_summary$accuracy) - 0.1,
+           label = sprintf("Mean = %.3f", mean(cv_summary$accuracy)),
+           color = "darkred", fontface = "bold") +
+  labs(
+    x = "Cross-Validation Fold",
+    y = "Classification Accuracy",
+    title = "Classification Accuracy Across 10 Cross-Validation Folds",
+    subtitle = sprintf("Overall accuracy: %.3f (95%% CI: %.3f-%.3f)",
+                      mean(cv_summary$accuracy),
+                      mean(cv_summary$accuracy) - 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds),
+                      mean(cv_summary$accuracy) + 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds))
+  ) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  theme_jama()
+```
+
+```{r cross-val-base-confusion-heatmap, eval = FALSE}
+confusion_df <- as.data.frame(confusion_matrix) %>%
+  mutate(
+    Proportion = Freq / sum(Freq),
+    RowProp = ave(Freq, Predicted, FUN = function(x) x / sum(x))
+  )
+
+ggplot(confusion_df, 
+                      aes(x = Actual, y = Predicted, fill = RowProp)) +
+  geom_tile(color = "white", linewidth = 1) +
+  geom_text(aes(label = Freq), size = 5, fontface = "bold") +
+  
+  scale_fill_gradient(low = "white", high = "#56B4E9", 
+                      name = "Proportion\n(by row)",
+                      labels = scales::percent) +
+  
+  labs(
+    x = "Actual Class",
+    y = "Predicted Class",
+    title = "Confusion Matrix: Cross-Validated LCMM Class Predictions",
+    subtitle = sprintf("Overall accuracy: %.1f%%", 
+                      100 * mean(cv_summary$accuracy))
+  ) +
+  
+  coord_equal() +
+  
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 10, face = "bold"),
+    legend.position = "right",
+    panel.grid = element_blank()
+  )
+```
+
+```{r cross-val-base-pre-class-perf, eval = FALSE}
+# Calculate per-class metrics for plotting
+class_metrics <- data.frame()
+
+for(k in 1:n_classes) {
+  tp <- confusion_matrix[k, k]
+  fp <- sum(confusion_matrix[k, ]) - tp
+  fn <- sum(confusion_matrix[, k]) - tp
+  tn <- sum(confusion_matrix) - tp - fp - fn
+  
+  class_metrics <- rbind(class_metrics, data.frame(
+    Class = colnames(confusion_matrix)[k],
+    Metric = c("Sensitivity", "Specificity", "PPV", "NPV"),
+    Value = c(
+      tp / (tp + fn),
+      tn / (tn + fp),
+      tp / (tp + fp),
+      tn / (tn + fn)
+    )
+  ))
+}
+
+class_metrics$Class <- factor(class_metrics$Class,
+  levels = colnames(confusion_matrix))
+
+ggplot(class_metrics, 
+  aes(x = Class, y = Value, fill = Metric)) +
+  geom_col(position = "dodge", color = "black", width = 0.7) +
+  geom_hline(yintercept = 0.8, linetype = "dashed", 
+    color = "darkred", linewidth = 0.5) +
+  scale_fill_manual(values = c("Sensitivity" = "#E69F00",
+    "Specificity" = "#56B4E9",
+    "PPV" = "#009E73",
+    "NPV" = "#F0E442")) +
+  labs(
+    x = "Latent Class",
+    y = "Metric Value",
+    title = "Per-Class Performance Metrics from Cross-Validation",
+    fill = "Metric"
+  ) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  theme_jama() +
+  theme(legend.position = "top")
+```
+
+\clearpage
+
+```{r cross-val-tau-pet-setup}
+# Cross-Validated Classification Performance for LCMM
+
+# Create strata ----
+subject_ids <- qs_pacc %>% 
+  filter(!is.na(Tau_PET)) %>%
+  select(id, Tau_PET, `Class (Base)`) %>%
+  distinct() %>%
+  mutate(
+    Tau_PET_f = case_when(
+      Tau_PET < 1.091732 ~ 'low ptau',
+      TRUE ~ 'high ptau'),
+    strata = paste(Tau_PET_f, `Class (Base)`))
+
+# 10-FOLD CROSS-VALIDATION SETUP ----
+
+n_folds <- 10
+n_classes <- 3
+
+# Create folds ----
+set.seed(20251111)
+folds <- createFolds(subject_ids$strata, k = n_folds, list = TRUE)
+```
+
+```{r cross-val-tau-model-fits, eval = UPDATELCMMCV}
+model_fits_tau <- parallel::mclapply(1:n_folds, function(fold){
+  train_subjects <- subject_ids$id[-folds[[fold]]]
+  train_data <- tau_model_data %>% filter(id %in% train_subjects)
+  hlme(Z ~  I(ns21(ADURW)) + I(ns22(ADURW)) +
+      Female + Sola + AAPOEGNPRSNFLG + QSVERSION +
+      Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+    mixture = ~ (I(ns21(ADURW)) + I(ns22(ADURW))),
+    random =  ~ 1, subject = 'id', ng = 3, B = mt1,
+    classmb = ~ Female + Sola + AAPOEGNPRSNFLG +
+      Ptau217_z + SUVRCER_z + AGEYR_z + EDCCNTU_z + Hipp_atrophy_z + Tau_PET_z,
+    data = train_data)},
+  mc.cores = 5)
+save(model_fits_tau, file = 'cross-val-tau-pet-model-fits.rdata')
+```
+
+```{r cross-val-tau-aggregate, include = FALSE}
+load('cross-val-tau-pet-model-fits.rdata')
+
+# Initialize storage for results ----
+cv_results <- list()
+all_predictions <- data.frame()
+roc_data <- list()
+
+for(fold in 1:n_folds) {
+  # Split data by subjects (not observations)
+  test_subjects <- subject_ids$id[folds[[fold]]]
+  train_subjects <- subject_ids$id[-folds[[fold]]]
+  
+  train_data <- tau_model_data %>% filter(id %in% train_subjects)
+  # Use only baseline for test data ----
+  test_data <- tau_model_data %>% filter(id %in% test_subjects) %>%
+    arrange(id, ADURW) %>%
+    filter(!duplicated(id))
+  
+  lcmm_train <- model_fits_tau[[fold]]
+  
+  # Predict on test set
+  # Get predictions for test subjects ----
+  test_post <- predictClass(lcmm_train, newdata = test_data)
+  # Label classes non, slow, fast decliners ----
+  labs_data <- predictY(lcmm_train, 
+    newdata = tau_model_data[1, ] %>% mutate(ADURW = 240),
+    var.time="ADURW")$pred
+  fast <- which.min(labs_data[1,])
+  non <- which.max(labs_data[1,])
+  slow <- setdiff(1:3, c(fast, non))
+  labs <- tibble(
+    class_raw = colnames(labs_data)[c(non, slow, fast)],
+    class_number = gsub('Ypred_class', '', class_raw) %>% as.numeric(),
+    predicted_class = factor(c('Non-decliner', 'Slow decliner', 'Fast decliner'),
+      levels = levels(qs_pacc$`Class (Base)`)))
+  
+  # Extract predictions
+  fold_predictions <- test_post %>%
+    rename(class_number = class) %>%
+    left_join(labs, by = 'class_number') %>%
+    left_join(qs_pacc %>% 
+        select(id, `Class (Base)`) %>%
+        distinct(), by = 'id') %>%
+    mutate(fold = fold)
+  
+  # with(fold_predictions, table(`Class (Base)`, predicted_class))
+  
+  # Store results
+  all_predictions <- bind_rows(all_predictions, fold_predictions)
+  
+  # Calculate fold-specific metrics
+  prob_cols <- grep("^prob", names(fold_predictions), value = TRUE)
+  
+  # Store for ROC data (one-vs-rest approach)
+  for(k in 1:n_classes) {
+    roc_data[[length(roc_data) + 1]] <- data.frame(
+      fold = fold,
+      class_number = k,
+      class_label = labs %>% filter(class_number == k) %>% 
+        pull(predicted_class),
+      predicted_class = fold_predictions$predicted_class,
+      true_class = fold_predictions$`Class (Base)`,
+      predicted_prob = fold_predictions[[paste0("prob", k)]]
+    )
+  }
+  
+  # Calculate accuracy for this fold
+  accuracy <- mean(fold_predictions$predicted_class == fold_predictions$`Class (Base)`)
+  
+  cv_results[[fold]] <- list(
+    fold = fold,
+    accuracy = accuracy,
+    n_test = nrow(test_post)
+  )
+}
+
+# Convert results to data frame ----
+cv_summary <- do.call(rbind, lapply(cv_results, as.data.frame))
+
+cat("=== Overall Performance Metrics ===\n")
+cat(sprintf("Mean Accuracy: %.3f (SD = %.3f)\n", 
+            mean(cv_summary$accuracy), sd(cv_summary$accuracy)))
+cat(sprintf("95%% CI: [%.3f, %.3f]\n",
+            mean(cv_summary$accuracy) - 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds),
+            mean(cv_summary$accuracy) + 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds)))
+
+# Confusion matrix
+confusion_matrix <- table(
+  Predicted = all_predictions$predicted_class,
+  Actual = all_predictions$`Class (Base)`
+)
+
+cat("\n=== Confusion Matrix ===\n")
+print(confusion_matrix)
+
+# Calculate per-class metrics
+cat("\n=== Per-Class Metrics ===\n")
+for(k in 1:n_classes) {
+  tp <- confusion_matrix[k, k]
+  fp <- sum(confusion_matrix[k, ]) - tp
+  fn <- sum(confusion_matrix[, k]) - tp
+  tn <- sum(confusion_matrix) - tp - fp - fn
+  
+  sensitivity <- tp / (tp + fn)
+  specificity <- tn / (tn + fp)
+  ppv <- tp / (tp + fp)
+  npv <- tn / (tn + fn)
+  
+  cat(sprintf("\nClass %d:\n", k))
+  cat(sprintf("  Sensitivity: %.3f\n", sensitivity))
+  cat(sprintf("  Specificity: %.3f\n", specificity))
+  cat(sprintf("  PPV: %.3f\n", ppv))
+  cat(sprintf("  NPV: %.3f\n", npv))
+}
+```
+
+::: {#suppfig-cross-val-tau-pet-pr}
+
+```{r suppfig-cross-val-tau-pet-pr}
+pr_df <- do.call(rbind, roc_data)
+
+# Calculate PR curves and AUCs for each class
+pr_list <- list()
+pr_auc_values <- numeric(n_classes)
+
+for(k in 1:n_classes) {
+  lab <- levels(pr_df$class_label)[k]
+  bin_class_data <- pr_df %>% 
+    filter(class_label == lab) %>%
+    mutate(
+      pred_bin_class = case_when(
+        predicted_class == lab ~ 1,
+        TRUE ~ 0),
+      true_bin_class = case_when(
+        true_class == lab ~ 1,
+        TRUE ~ 0))
+  pr_obj <- pr.curve(
+    scores.class0 = bin_class_data %>% pull(predicted_prob), 
+    weights.class0 = bin_class_data %>% pull(true_bin_class),
+    curve = TRUE)
+  pr_list[[k]] <- data.frame(
+    recall = pr_obj$curve[,1],
+    precision = pr_obj$curve[,2],
+    threshold = pr_obj$curve[,3],
+    class = lab,
+    auc = pr_obj$auc.integral)
+  pr_auc_values[k] <- pr_obj$auc.integral
+}
+
+# Either fast- or slow ----
+bin_class_data <- pr_df %>% 
+  filter(class_label == "Non-decliner") %>%
+  mutate(
+    pred_bin_class = case_when(
+      predicted_class == "Non-decliner" ~ 0,
+      TRUE ~ 1),
+    true_bin_class = case_when(
+      true_class == "Non-decliner" ~ 0,
+      TRUE ~ 1))
+pr_obj <- pr.curve(
+  scores.class0 = 1-bin_class_data %>% pull(predicted_prob), 
+  weights.class0 = bin_class_data %>% pull(true_bin_class),
+  curve = TRUE)
+pr_either <- data.frame(
+    recall = pr_obj$curve[,1],
+    precision = pr_obj$curve[,2],
+    threshold = pr_obj$curve[,3],
+    class = "Either decliner",
+    auc = pr_obj$auc.integral)
+
+pr_plot_data <- do.call(rbind, pr_list) %>%
+  bind_rows(pr_either) %>%
+  mutate(Class = paste0(class, " (AUPRC = ",
+    format(round(auc, 3), nsmall = 3), ")"))
+pr_plot_data$Class <- factor(pr_plot_data$Class,
+  levels = unique(pr_plot_data$Class))
+
+ggplot(pr_plot_data, 
+  aes(x = recall, y = precision, color = Class)) +
+  geom_line(linewidth = 1.2) +
+  geom_abline(intercept = 1, slope = -1, linetype = "dashed", 
+              color = "gray50", linewidth = 0.5) +
+  theme_jama() +
+  theme(legend.position = 'right') +
+  scale_color_jama() +
+  labs(
+    x = "Recall (TP/(TP+FN))",
+    y = "Precision (TP/(TP+FP))",
+    title = "Cross-Validated PR Curves for LCMM Class Prediction",
+    subtitle = sprintf("10-fold cross-validation (N = %d subjects)", 
+                      length(unique(tau_model_data$id)))) +
+  coord_equal()
+```
+
+**Cross-validated Precision-Recall Curves for Latent Class Membership Model With Tau PET.** Precision-recall curves summarizing 10-fold cross-validated classification performance of the latent class membership submodel based on baseline demographics and biomarkers, excluding tau PET. Curves depict the ability to distinguish the given class from the other two. The area under the precision-recall curve (AUPRC) quantifies overall predictive performance, emphasizing recall (or sensitivity, TP/(TP+FN)) and precision (TP/(TP+FP)) for less prevalent classes. **Abbreviations:** AUPRC = area under the precision-recall curve; TP = true positive rate; FN = false negative rate; FP = false positive rate.
+:::
+
+\clearpage
+
+```{r cross-val-tau-roc, eval = FALSE}
+roc_df <- do.call(rbind, roc_data)
+
+# Calculate ROC curves and AUCs for each class
+roc_list <- list()
+auc_values <- numeric(n_classes)
+
+for(k in 1:n_classes) {
+  lab <- unique(roc_df$class_label)[k]
+  bin_class_data <- roc_df %>% 
+    filter(class_label == lab) %>%
+    mutate(
+      pred_bin_class = case_when(
+        predicted_class == lab ~ 1,
+        TRUE ~ 0),
+      true_bin_class = case_when(
+        true_class == lab ~ 1,
+        TRUE ~ 0))
+  roc_obj <- roc(bin_class_data$true_bin_class, bin_class_data$predicted_prob, 
+                 quiet = TRUE)
+  roc_list[[k]] <- data.frame(
+    sensitivity = roc_obj$sensitivities,
+    specificity = roc_obj$specificities,
+    class = lab,
+    auc = as.numeric(auc(roc_obj))
+  )
+  auc_values[k] <- as.numeric(auc(roc_obj))
+}
+
+roc_plot_data <- do.call(rbind, roc_list) %>%
+  # mutate(Class = paste0(class, " (AUC = ", 
+  #   format(round(auc, 3), nsmall = 3), ")"))
+  # table(roc_plot_data$Class)
+  mutate(Class = factor(paste0(class, " (AUC = ", 
+    format(round(auc, 3), nsmall = 3), ")"),
+    levels = c("Non-decliner (AUC = 0.841)",
+      "Slow decliner (AUC = 0.730)",
+      "Fast decliner (AUC = 0.872)")))
+
+ggplot(roc_plot_data, 
+  aes(x = 1 - specificity, y = sensitivity, color = Class)) +
+  geom_line(linewidth = 1.2) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", 
+              color = "gray50", linewidth = 0.5) +
+  theme_jama() +
+  theme(legend.position = 'inside', legend.position.inside = c(0.8, 0.2)) +
+  scale_color_jama() +
+  labs(
+    x = "1 - Specificity (False Positive Rate)",
+    y = "Sensitivity (True Positive Rate)",
+    title = "Cross-Validated ROC Curves for LCMM Class Prediction",
+    subtitle = sprintf("10-fold cross-validation (N = %d subjects)", 
+                      length(unique(tau_model_data$id)))) +
+  coord_equal()
+```
+
+```{r cross-val-tau-accuracy, eval = FALSE}
+ggplot(cv_summary, aes(x = factor(fold), y = accuracy)) +
+  geom_point(size = 3, shape = 15, color = "black") +
+  geom_hline(yintercept = mean(cv_summary$accuracy), 
+             linetype = "dashed", color = "darkred", linewidth = 1) +
+  # Add text labels
+  geom_text(aes(label = sprintf("%.2f", accuracy)), 
+            vjust = -0.8, size = 3) +
+  # Add mean accuracy annotation
+  annotate("text", x = n_folds - 1, y = mean(cv_summary$accuracy) - 0.1,
+           label = sprintf("Mean = %.3f", mean(cv_summary$accuracy)),
+           color = "darkred", fontface = "bold") +
+  labs(
+    x = "Cross-Validation Fold",
+    y = "Classification Accuracy",
+    title = "Classification Accuracy Across 10 Cross-Validation Folds",
+    subtitle = sprintf("Overall accuracy: %.3f (95%% CI: %.3f-%.3f)",
+                      mean(cv_summary$accuracy),
+                      mean(cv_summary$accuracy) - 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds),
+                      mean(cv_summary$accuracy) + 1.96 * sd(cv_summary$accuracy) / sqrt(n_folds))
+  ) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  theme_jama()
+```
+
+```{r cross-val-tau-confusion-heatmap, eval = FALSE}
+confusion_df <- as.data.frame(confusion_matrix) %>%
+  mutate(
+    Proportion = Freq / sum(Freq),
+    RowProp = ave(Freq, Predicted, FUN = function(x) x / sum(x))
+  )
+
+ggplot(confusion_df, 
+                      aes(x = Actual, y = Predicted, fill = RowProp)) +
+  geom_tile(color = "white", linewidth = 1) +
+  geom_text(aes(label = Freq), size = 5, fontface = "bold") +
+  
+  scale_fill_gradient(low = "white", high = "#56B4E9", 
+                      name = "Proportion\n(by row)",
+                      labels = scales::percent) +
+  
+  labs(
+    x = "Actual Class",
+    y = "Predicted Class",
+    title = "Confusion Matrix: Cross-Validated LCMM Class Predictions",
+    subtitle = sprintf("Overall accuracy: %.1f%%", 
+                      100 * mean(cv_summary$accuracy))
+  ) +
+  
+  coord_equal() +
+  
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 10, face = "bold"),
+    legend.position = "right",
+    panel.grid = element_blank()
+  )
+```
+
+```{r cross-val-tau-pre-class-perf, eval = FALSE}
+# Calculate per-class metrics for plotting
+class_metrics <- data.frame()
+
+for(k in 1:n_classes) {
+  tp <- confusion_matrix[k, k]
+  fp <- sum(confusion_matrix[k, ]) - tp
+  fn <- sum(confusion_matrix[, k]) - tp
+  tn <- sum(confusion_matrix) - tp - fp - fn
+  
+  class_metrics <- rbind(class_metrics, data.frame(
+    Class = colnames(confusion_matrix)[k],
+    Metric = c("Sensitivity", "Specificity", "PPV", "NPV"),
+    Value = c(
+      tp / (tp + fn),
+      tn / (tn + fp),
+      tp / (tp + fp),
+      tn / (tn + fn)
+    )
+  ))
+}
+
+class_metrics$Class <- factor(class_metrics$Class,
+  levels = colnames(confusion_matrix))
+
+ggplot(class_metrics, 
+  aes(x = Class, y = Value, fill = Metric)) +
+  geom_col(position = "dodge", color = "black", width = 0.7) +
+  geom_hline(yintercept = 0.8, linetype = "dashed", 
+    color = "darkred", linewidth = 0.5) +
+  scale_fill_manual(values = c("Sensitivity" = "#E69F00",
+    "Specificity" = "#56B4E9",
+    "PPV" = "#009E73",
+    "NPV" = "#F0E442")) +
+  labs(
+    x = "Latent Class",
+    y = "Metric Value",
+    title = "Per-Class Performance Metrics from Cross-Validation",
+    fill = "Metric"
+  ) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  theme_jama() +
+  theme(legend.position = "top")
+```
+
+```{r rpart_tune_setup, include=FALSE}
+# Tuning Tree Hyperparameters with tidymodels ----
+tree_data <- qs_pacc %>% 
+  filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)) %>%
+  select(Class = `Class (Base)`, Group, Age = AGEYR, Sex, Edu. = EDCCNTU,
+    APOEe4, PACC = Y, `Amyloid PET` = AMYLCENT, Ptau217, 
+    `Hipp atrophy` = Hipp_atrophy_z)
+
+# Set seed for reproducibility
+set.seed(20251113)
+
+# Create cross-validation folds (stratified by class)
+cv_folds <- vfold_cv(tree_data, v = 10, strata = Class)
+
+# Define the model specification with tuning parameters
+tree_spec <- decision_tree(
+  cost_complexity = tune(),  # cp parameter
+  tree_depth = tune(),       # maxdepth parameter
+  min_n = tune()            # minsplit parameter
+) %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+# Create recipe (preprocessing)
+tree_recipe <- recipe(
+  Class ~ Group + Age + Sex + Edu. + APOEe4 + 
+    PACC + `Amyloid PET` + Ptau217 + `Hipp atrophy`,
+  data = tree_data
+) %>%
+  step_zv(all_predictors())  # Remove zero-variance predictors if any
+
+# Create workflow
+tree_workflow <- workflow() %>%
+  add_model(tree_spec) %>%
+  add_recipe(tree_recipe)
+
+# Define tuning grid
+# Option 1: Regular grid
+tree_grid <- grid_regular(
+  cost_complexity(range = c(-5, -1)),  # log10 scale: 0.00001 to 0.1
+  tree_depth(range = c(1, 4)),
+  min_n(range = c(5, 40)),
+  levels = 5  # 5 values per parameter = 125 combinations
+)
+```
+
+```{r rpart_tune, eval = UPDATETREECV}
+# Perform tuning ----
+tune_results <- tree_workflow %>%
+  tune_grid(
+    resamples = cv_folds,
+    grid = tree_grid,
+    metrics = metric_set(yardstick::accuracy, roc_auc, f_meas, bal_accuracy),
+    control = control_grid(save_pred = TRUE, verbose = FALSE)
+  )
+
+# Best models ----
+top_models <- show_best(tune_results, metric = "bal_accuracy", n = 5)
+
+# Select best model (by accuracy)
+best_params <- select_best(tune_results, metric = "bal_accuracy")
+
+# Finalize workflow with best parameters
+final_workflow <- tree_workflow %>%
+  finalize_workflow(best_params)
+
+# Fit final model on full dataset
+# final_fit <- final_workflow %>%
+#   fit(data = tree_data)
+
+# Extract the fitted model for plotting
+tree_model <- rpart(Class ~ Group + Age + Sex + Edu. + APOEe4 +
+    PACC + `Amyloid PET` + Ptau217 + `Hipp atrophy`,
+  data = tree_data,
+  method = "class",
+  control = rpart.control(
+    cp = best_params$cost_complexity,
+    minsplit = best_params$min_n,
+    minbucket = 10,   # Minimum observations in terminal node
+    maxdepth = best_params$tree_depth)
+  )
+
+save(tune_results, top_models, best_params, final_workflow, tree_model,
+  file = 'tree_cv_base_results.rdata')
+```
+
+```{r rpart_acc}
+load('tree_cv_base_results.rdata')
+tree_predictions <- predict(tree_model, type = "class")
+tree_probs <- predict(tree_model, type = "prob")
+
+# Calculate accuracy
+tree_accuracy <- mean(tree_predictions == tree_data$Class)
+```
+
+```{r Variable_importance}
+# Variable importance ----
+var_imp <- tree_model$variable.importance
+if(length(var_imp) > 0) {
+  var_imp_df <- data.frame(
+    Variable = names(var_imp),
+    Importance = var_imp,
+    Relative_Importance = 100 * var_imp / sum(var_imp)
+  ) %>%
+    arrange(desc(Importance))
+  
+  # print(var_imp_df, row.names = FALSE)
+} else {
+  cat("No splits in tree - all subjects assigned to single class\n")
+}
+```
+
+```{r Confusion_matrix, include=FALSE}
+# Confusion matrix
+conf_matrix <- confusionMatrix(tree_predictions, tree_data$Class)
+print(conf_matrix$table)
+
+print(conf_matrix$byClass[, c("Sensitivity", "Specificity", "Pos Pred Value")])
+```
+
+```{r make-fig-tree-base, include=FALSE}
+png("fig-tree-base.png", width = 4.5*1.25, height = 5.75*1.2, units = "in", res = 300)
+# Set up 2-panel layout
+layout(matrix(c(1, 2.5, 2.5), nrow = 3, ncol = 1))
+  
+# Panel A: Variable Importance (left panel - narrower)
+par(mar = c(5, 7, 4, 1))
+
+# Sort by importance
+var_order <- order(var_imp_df$Importance, decreasing = FALSE)
+var_names <- var_imp_df$Variable[var_order]
+var_values <- var_imp_df$Relative_Importance[var_order]
+
+# Create horizontal barplot
+bp <- barplot(var_values,
+  horiz = TRUE,
+  names.arg = var_names,
+  las = 1,
+  col = "#56B4E9",
+  border = "black",
+  xlim = c(0, max(var_values) * 1.1),
+  xlab = "Relative Importance (%)",
+  main = "A. Variable Importance",
+  cex.main = 1,
+  cex.lab = 1.1,
+  cex.axis = 1,
+  cex.names = 1)
+
+# Add value labels
+text(var_values + max(var_values) * 0.02, bp,
+  labels = sprintf("%.1f%%", var_values),
+  pos = 4, cex = 0.9)
+
+# Add gridlines
+abline(v = seq(0, max(var_values), by = 10), col = "gray90", lty = 1)
+
+# Panel B: Classification Tree (right panel)
+par(mar = c(2, 1, 4, 2))
+rpart.plot(
+  tree_model,
+  type = 4,                    # All labels, beneath nodes
+  extra = 101,                 # Show class and probability
+  under = TRUE,
+  fallen.leaves = TRUE,
+  branch = 0.5,
+  box.palette = as.list(c("lightgrey", jama_colors[2:3])),  # Color by class
+  cex = 0.75,
+  family = "sans",
+  faclen = 0,
+  split.cex = 0.8,
+  split.box.col = "white",
+  split.border.col = "black",
+  main = "B. Classification Tree",
+  cex.main = 1
+)
+
+dev.off()
+```
+
+```{r rpart_tau_pet_tune_setup, include=FALSE}
+# Tuning Tree Hyperparameters with tidymodels ----
+tree_data <- qs_pacc %>% 
+  filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)) %>%
+  select(Class = `Class (Tau PET)`, Group, Age = AGEYR, Sex, Edu. = EDCCNTU,
+    APOEe4, PACC = Y, `Amyloid PET` = AMYLCENT, Ptau217, 
+    `Hipp atrophy` = Hipp_atrophy_z, `Tau PET` = Tau_PET) %>%
+  na.omit()
+
+# Set seed for reproducibility
+set.seed(20251113)
+
+# Create cross-validation folds (stratified by class)
+cv_folds <- vfold_cv(tree_data, v = 10, strata = Class)
+
+# Define the model specification with tuning parameters
+tree_spec <- decision_tree(
+  cost_complexity = tune(),  # cp parameter
+  tree_depth = tune(),       # maxdepth parameter
+  min_n = tune()            # minsplit parameter
+) %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+# Create recipe (preprocessing)
+tree_recipe <- recipe(
+  Class ~ Group + Age + Sex + Edu. + APOEe4 + 
+    PACC + `Amyloid PET` + Ptau217 + `Hipp atrophy` + `Tau PET`,
+  data = tree_data
+) %>%
+  step_zv(all_predictors())  # Remove zero-variance predictors if any
+
+# Create workflow
+tree_workflow <- workflow() %>%
+  add_model(tree_spec) %>%
+  add_recipe(tree_recipe)
+
+# Define tuning grid
+# Option 1: Regular grid
+tree_grid <- grid_regular(
+  cost_complexity(range = c(-5, -1)),  # log10 scale: 0.00001 to 0.1
+  tree_depth(range = c(1, 4)),
+  min_n(range = c(5, 40)),
+  levels = 5  # 5 values per parameter = 125 combinations
+)
+```
+
+```{r rpart_tau_pet_tune, eval = UPDATETREECV}
+# Perform tuning ----
+tune_results <- tree_workflow %>%
+  tune_grid(
+    resamples = cv_folds,
+    grid = tree_grid,
+    metrics = metric_set(yardstick::accuracy, roc_auc, f_meas, bal_accuracy),
+    control = control_grid(save_pred = TRUE, verbose = FALSE)
+  )
+
+# Best models ----
+top_models <- show_best(tune_results, metric = "bal_accuracy", n = 5)
+
+# Select best model (by accuracy)
+best_params <- select_best(tune_results, metric = "bal_accuracy")
+
+# Finalize workflow with best parameters
+final_workflow <- tree_workflow %>%
+  finalize_workflow(best_params)
+
+# Fit final model on full dataset
+# final_fit <- final_workflow %>%
+#   fit(data = tree_data)
+
+# Extract the fitted model for plotting
+tree_model <- rpart(Class ~ Group + Age + Sex + Edu. + APOEe4 +
+    PACC + `Amyloid PET` + Ptau217 + `Hipp atrophy` + `Tau PET`,
+  data = tree_data,
+  method = "class",
+  control = rpart.control(
+    cp = best_params$cost_complexity,
+    minsplit = best_params$min_n,
+    minbucket = 10,   # Minimum observations in terminal node
+    maxdepth = best_params$tree_depth)
+  )
+save(tune_results, top_models, best_params, final_workflow, tree_model,
+  file = 'tree_cv_tau_pet_results.rdata')
+```
+
+```{r rpart_tau_pet_acc}
+load('tree_cv_tau_pet_results.rdata')
+
+tree_predictions <- predict(tree_model, type = "class")
+tree_probs <- predict(tree_model, type = "prob")
+
+# Calculate accuracy
+tree_accuracy <- mean(tree_predictions == tree_data$Class)
+```
+
+```{r rpart_tau_pet_Variable_importance}
+# Variable importance ----
+var_imp <- tree_model$variable.importance
+if(length(var_imp) > 0) {
+  var_imp_df <- data.frame(
+    Variable = names(var_imp),
+    Importance = var_imp,
+    Relative_Importance = 100 * var_imp / sum(var_imp)
+  ) %>%
+    arrange(desc(Importance))
+  
+  # print(var_imp_df, row.names = FALSE)
+} else {
+  cat("No splits in tree - all subjects assigned to single class\n")
+}
+```
+
+```{r rpart_tau_pet_Confusion_matrix, include=FALSE}
+# Confusion matrix
+conf_matrix <- confusionMatrix(tree_predictions, tree_data$Class)
+print(conf_matrix$table)
+
+print(conf_matrix$byClass[, c("Sensitivity", "Specificity", "Pos Pred Value")])
+
+tree_tau_pet_fig_caption <- paste0("**Classification tree analysis for latent class assignment from Tau PET Model.** (A) Relative importance of baseline characteristics for class separation. (B) Classification tree showing binary decision rules for assigning subjects to latent classes based on baseline characteristics. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with ",
+sum(tree_model$frame$var != '<leaf>'), " splits (mean balanced accuracy = ",
+format(round(top_models[[1, 'mean']], 2), nsmall = 2), 
+", standard error ", 
+round(top_models[[1, 'std_err']], 3), ").")
+```
+
+::: {#suppfig-tree-tau-pet}
+
+```{r suppfig-tree-tau-pet, fig.width = 4.5*1.1, fig.height = 5.75*1.1}
+# Set up 2-panel layout
+layout(matrix(c(1, 2, 2), nrow = 3, ncol = 1))
+  
+# Panel A: Variable Importance (left panel - narrower)
+par(mar = c(5, 7, 4, 1))
+
+# Sort by importance
+var_order <- order(var_imp_df$Importance, decreasing = FALSE)
+var_names <- var_imp_df$Variable[var_order]
+var_values <- var_imp_df$Relative_Importance[var_order]
+
+# Create horizontal barplot
+bp <- barplot(var_values,
+  horiz = TRUE,
+  names.arg = var_names,
+  las = 1,
+  col = "#56B4E9",
+  border = "black",
+  xlim = c(0, max(var_values) * 1.1),
+  xlab = "Relative Importance (%)",
+  main = "A. Variable Importance",
+  cex.main = 1,
+  cex.lab = 1.1,
+  cex.axis = 1,
+  cex.names = 1)
+
+# Add value labels
+text(var_values + max(var_values) * 0.02, bp,
+  labels = sprintf("%.1f%%", var_values),
+  pos = 4, cex = 0.9)
+
+# Add gridlines
+abline(v = seq(0, max(var_values), by = 10), col = "gray90", lty = 1)
+
+# Panel B: Classification Tree (right panel)
+par(mar = c(2, 1, 4, 2))
+rpart.plot(
+  tree_model,
+  type = 4,                    # All labels, beneath nodes
+  extra = 101,                 # Show class and probability
+  under = TRUE,
+  fallen.leaves = TRUE,
+  digits = 3,
+  branch = 0.5,
+  box.palette = as.list(c("lightgrey", jama_colors[2:3])),  # Color by class
+  cex = 0.75,
+  family = "sans",
+  faclen = 0,
+  split.cex = 0.8,
+  split.box.col = "white",
+  split.border.col = "black",
+  main = "B. Classification Tree",
+  cex.main = 1
+)
+```
+
+**Classification tree analysis for latent class assignment from Tau PET Model.** (A) Relative importance of baseline characteristics for class separation. (B) Classification tree showing binary decision rules for assigning subjects to latent classes based on baseline characteristics. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with 6 splits (mean balanced accuracy = 0.70, standard error 0.011).
+
+:::
+
+\clearpage
+
+# References {.unnumbered}
+
+::: {#refs}
+:::

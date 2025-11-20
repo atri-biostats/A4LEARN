@@ -21,3 +21,4 @@ data-raw/*.csv
 # Rendering outputs
 *.html
 docs
+**/.quarto/
