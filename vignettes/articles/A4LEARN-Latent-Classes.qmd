@@ -1,12 +1,5 @@
 ---
 title: "Divergent latent classes of cognitive decline in the A4 and LEARN studies"
-resource_files:
-  - a4learn-pacc-lcmm-base.rdata
-  - a4learn-pacc-lcmm-tau.rdata
-  - cross-val-base-model-fits.rdata
-  - cross-val-tau-pet-model-fits.rdata
-  - tree_cv_base_results.rdata
-  - tree_cv_tau_pet_results.rdata
 author:
   - name: Runpeng Li
     email: runpengl@usc.edu
@@ -61,7 +54,7 @@ keywords:
   - Preclinical Alzheimer's Disease
   - Cognitive decline prediction
 format: html
-editor: visual
+editor: source
 prefer-html: true
 always_allow_html: true
 date: "`r Sys.Date()`"
