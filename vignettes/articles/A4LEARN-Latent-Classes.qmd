@@ -1,5 +1,12 @@
 ---
 title: "Divergent latent classes of cognitive decline in the A4 and LEARN studies"
+resource_files:
+  - a4learn-pacc-lcmm-base.rdata
+  - a4learn-pacc-lcmm-tau.rdata
+  - cross-val-base-model-fits.rdata
+  - cross-val-tau-pet-model-fits.rdata
+  - tree_cv_base_results.rdata
+  - tree_cv_tau_pet_results.rdata
 author:
   - name: Runpeng Li
     email: runpengl@usc.edu
@@ -140,11 +147,11 @@ theme_jama <- function(base_size = 10) {
     theme(
       # Overall plot settings
       plot.title = element_text(size = base_size + 1, face = "bold", 
-                                hjust = 0, margin = margin(b = 10)),
+        hjust = 0, margin = margin(b = 10)),
       plot.subtitle = element_text(size = base_size, hjust = 0, 
-                                   margin = margin(b = 10)),
+        margin = margin(b = 10)),
       plot.caption = element_text(size = base_size - 1, hjust = 1, 
-                                  margin = margin(t = 10)),
+        margin = margin(t = 10)),
       
       # Axis settings
       axis.title = element_text(size = base_size, face = "bold"),
@@ -167,8 +174,8 @@ theme_jama <- function(base_size = 10) {
       
       # Strip settings (for facets)
       strip.background = element_blank(),
-      strip.text = element_text(size = base_size - 1, face = "bold", 
-                               color = "black"),
+      strip.text = element_text(size = base_size - 2, face = "bold",
+        vjust = 1, color = "black"),
       
       # Remove plot background
       plot.background = element_rect(fill = "white", color = NA)
@@ -177,7 +184,7 @@ theme_jama <- function(base_size = 10) {
 
 # JAMA-appropriate color palette (colorblind-friendly)
 jama_colors <- c("#374E55", "#DF8F44", "#00A1D5", "#B24745", 
-                 "#79AF97", "#6A6599", "#80796B")
+  "#79AF97", "#6A6599", "#80796B")
 
 # Scale functions for easy use
 scale_color_jama <- function(...) {
@@ -208,6 +215,14 @@ Despite these consistent group-level associations, cognitive trajectories among 
 **Meaning:** Substantial heterogeneity exists in cognitive decline during the preclinical phase of Alzheimer’s disease. Identifying subgroups of decline may improve prognostic modeling and guide precision enrollment and outcome strategies for prevention trials.
 
 # Methods
+
+## Conduct of the A4 and LEARN Studies
+
+The A4 and LEARN studies have been previously described[@Sperling2023; @Sperling2024], but we briefly summarize key elements. The A4 Study was a multicenter, randomized, double-blind, placebo-controlled secondary prevention trial enrolling cognitively unimpaired older adults aged 65–85 years with elevated brain amyloid on florbetapir PET. Participants were recruited from 67 sites in the United States, Canada, Australia, and Japan and underwent standardized screening, baseline clinical assessment, biomarker acquisition, and neuropsychological testing. After eligibility confirmation, participants were randomized to receive solanezumab or placebo and were assessed longitudinally with regular cognitive evaluations, safety monitoring, and follow-up imaging and fluid biomarker collection per protocol.
+
+The LEARN study was conducted in parallel as an observational cohort enrolling individuals who met all A4 screening criteria except for amyloid PET positivity. LEARN participants completed identical clinical and cognitive assessments, allowing direct comparison of trajectories between amyloid-positive and amyloid-negative individuals. Both studies followed harmonized procedures for data collection, visit scheduling, and quality control to ensure comparability of longitudinal outcomes. 
+
+All participants of both studies provided written informed consent, and study protocols were approved by the institutional review boards or ethics committees at each participating site.
 
 ```{r tau-mri-data-prep}
 tau_pet_data <- A4LEARN::imaging_Tau_PET_Stanford %>% 
@@ -249,8 +264,11 @@ mri_data$Hipp_atrophy <- scale(-mri_data$Hipp_res)[,1]
 ```{r pacc-prep-data, include = FALSE}
 ## A4 data prep ----
 qs_pacc <- A4LEARN::ADQS %>% filter(QSTESTCD %in% "PACC") %>%
-  left_join(A4LEARN::ptdemog %>% select(BID, Sex = PTGENDER, PTRACE, PTETHNIC),
-    by='BID') %>%
+  left_join(A4LEARN::ptdemog %>% 
+    select(BID, Sex = PTGENDER, PTRACE, PTETHNIC), by='BID') %>%
+  left_join(A4LEARN::cdr %>% 
+    select(BID, CDOLEEVENT) %>%
+    filter(!is.na(CDOLEEVENT)), by = 'BID') %>%
   mutate(Y = QSSTRESN, Y.ch = QSCHANGE,
     QSVERSION = as.factor(QSVERSION),
     Group = case_when(
@@ -274,7 +292,11 @@ qs_pacc <- A4LEARN::ADQS %>% filter(QSTESTCD %in% "PACC") %>%
     Ethnicity = PTETHNIC,
     Sola = case_when(
       TX == "Solanezumab" ~ 1,
-      TRUE ~ 0)) %>%
+      TRUE ~ 0),
+    `CDR Progressor` = case_when(
+      CDOLEEVENT == 1 ~ 'CDR Progressor',
+      TRUE ~ 'CDR Non-progressor') %>%
+      factor(levels = c('CDR Non-progressor', 'CDR Progressor'))) %>%
   left_join(A4LEARN::biomarker_pTau217 %>% 
       filter(TESTCD == 'PTAU217' & !is.na(ORRESRAW)) %>%
       arrange(BID, VISCODE) %>%
@@ -288,7 +310,7 @@ qs_pacc <- A4LEARN::ADQS %>% filter(QSTESTCD %in% "PACC") %>%
   select(BID, SUBSTUDY, VISITCD, ASEQNCS, AVISIT, ADURW, AMYLCENT, Y, TX, 
     Group, AGEYR, Sex, Female, Race, Ethnicity, AAPOEGNPRSNFLG, APOEe4,
     EDCCNTU, SUVRCER, Ptau217, QSVERSION, Sola, Tau_PET, IntraCranialVolume,
-    Entorhinal, Hippocampus, Hipp_atrophy) %>%
+    Entorhinal, Hippocampus, Hipp_atrophy, `CDR Progressor`) %>%
   ungroup() %>%
   mutate(id = as.numeric(as.factor(BID))) %>%
   filter(!is.na(Y), !is.na(ADURW), !is.na(Ptau217), 
@@ -423,17 +445,19 @@ Analyses were conducted using harmonized data from the A4 and LEARN studies, acc
 
 The dependent variable was the Box-Cox-transformed Preclinical Alzheimer’s Cognitive Composite (PACC) score at each visit. The Box-Cox transformation parameter ($\lambda$) was selected to maximize the likelihood that the transformed data approximated normality. Time was modeled as a continuous variable representing years since baseline.
 
-Natural cubic spline basis functions with one, two or three degrees of freedom were evaluated to model nonlinear trajectories, with boundary knots at baseline and the maximum follow-up time and an interior knots at the median or tertiles of observation time. The choice of degrees of freedom and the number of classes (also one, two, or three) was determined by model fit criteria (Bayesian Information Criterion \[BIC\] and Integrated Complete Likelihood \[ICL\]). Each model included class-specific spline-based time effects, as well as subject-specific random intercepts. The effect of baseline covariates were shared across latent classes and included: randomized treatment group (solanezumab vs placebo), plasma P-tau217 concentration, florbetapir cortical standardized uptake value ratio (SUVr), APOE $\epsilon 4$ carrier status, sex, age, education, hippocampal atrophy, and PACC test stimulus version administered (which alternated per study protocol). Plasma P-tau217 concentrations were measured using an immunoassay developed by Eli Lilly and reported in arbitrary units per milliliter (U/mL), where "U" denotes a generic assay unit proportional to signal intensity. Absolute calibration against mass concentration (e.g., pg/mL) was not available. Hippocampal atrophy measures were derived by first residualizing with respect to intracranial volume, and then standardizing to mean zero and variance one (i.e. z-scoring).
+Natural cubic spline basis functions with one, two or three degrees of freedom were evaluated to model nonlinear trajectories, with boundary knots at baseline and the maximum follow-up time and an interior knots at the median or tertiles of observation time. The choice of degrees of freedom and the number of classes (also one, two, or three) was determined by model fit criteria (Bayesian Information Criterion \[BIC\] and Integrated Complete Likelihood \[ICL\]).[@biernacki2002assessing] Each model included class-specific spline-based time effects, as well as subject-specific random intercepts. The effect of baseline covariates were shared across latent classes and included: randomized treatment group (solanezumab vs placebo), plasma P-tau217 concentration, florbetapir cortical standardized uptake value ratio (SUVr), APOE $\epsilon 4$ carrier status, sex, age, education, hippocampal atrophy, and PACC test stimulus version administered (which alternated per study protocol). Plasma P-tau217 concentrations were measured using an immunoassay developed by Eli Lilly and reported in arbitrary units per milliliter (U/mL), where "U" denotes a generic assay unit proportional to signal intensity. Absolute calibration against mass concentration (e.g., pg/mL) was not available. Hippocampal atrophy measures were derived by first residualizing with respect to intracranial volume, and then standardizing to mean zero and variance one (i.e. z-scoring).
 
 The LCMM includes two linked submodels. The longitudinal submodel captures within-class trajectories of cognitive change over time. Each class had its own set of spline coefficients, allowing class-specific shapes of decline. The class membership submodel defines the probability of belonging to each latent class as a multinomial logistic function of baseline covariates (which includes all covariates listed above except spline terms and PACC test version).
 
 In a secondary analysis, we fit the model to the subset of participants with baseline flortaucipir (tau) PET imaging. Tau PET was summarized as the mean SUVr across eight cortical regions: entorhinal cortex, inferior temporal, inferior parietal, posterior cingulate, caudal middle frontal, middle temporal, superior parietal, and frontal pole. This composite measure was included as an additional covariate in both the longitudinal and class membership submodels to assess whether tau pathology improved prediction of cognitive decline patterns or latent class assignment.
 
-## Ten-fold cross-validation of latent class predictions
+To assess the reliability and potential predictive utility of the latent class membership model, we examined the posterior probabilities of class assignment for each participant. High posterior probabilities indicate greater certainty in latent class classification. We summarized these distributions across classes and computed the mean posterior probability within each group as an index of classification confidence. 
 
-To assess the reliability and potential predictive utility of the latent class membership model, we examined the posterior probabilities of class assignment for each participant. High posterior probabilities indicate greater certainty in latent class classification. We summarized these distributions across classes and computed the mean posterior probability within each group as an index of classification confidence. To further evaluate prospective discrimination, we performed ten-fold cross-validation. For each of the ten folds, 90% of the data were used to re-train the LCMM, and the re-trained model was used to predict latent classes for the 10% held-out test set using only baseline data. Model performance was summarized using the area under the precision-recall curve (AUPRC) for discrimination of each class versus all others. This approach is preferred over area under the receiver operating characteristic (ROC) curve when group sizes are imbalance.
+### Ten-fold cross-validation of latent class predictions
 
-## Regression Tree Analysis for Latent Class Characterization
+To further evaluate prospective discrimination, we performed ten-fold cross-validation stratified by P-tau217 and latent class. For each of the ten folds, 90% of the data were used to re-train the LCMM, and the re-trained model was used to predict latent classes for the 10% held-out test set using only baseline data. Model performance was summarized using the area under the precision-recall curve (AUPRC) for discrimination of each class versus all others. This approach can be more informative than receiver operating characteristic (ROC) curves when group sizes are imbalance.[@saito2015precision]
+
+### Regression Tree Analysis for Latent Class Characterization
 
 To evaluate whether latent classes could be distinguished by baseline characteristics through a combination of binary decision rules, we conducted a post-hoc classification tree analysis [@rpart; @breiman2017classification]. Class assignments from the optimal latent class mixed model were used as the outcome variable, with baseline demographic and clinical characteristics as predictors (randomized treatment group, plasma P-tau217 concentration, florbetapir PET, APOE $\epsilon 4$ carrier status, sex, age, education, hippocampal atrophy, and PACC). We separately considered a regression tree with tau PET as an additional predictor.
 
@@ -445,7 +469,7 @@ All analyses were conducted using R (version 4.5.2; R Foundation for Statistical
 
 ## Study Participants
 
-A total of $N=1,629$ participants were included in the analytic sample for the base model (without tau PET), comprising $N=1,110$ from the A4 Study and $N=519$ from the LEARN study. The mean (standard deviation \[SD\]) age at baseline was 71.46 (4.69) years, and 60.2% were female. The median follow-up time was 6.0 years (interquartile range 3.9 to 7.0). Baseline characteristics stratified by latent class membership are presented in @tbl-baseline-base-characteristics. A total of $N=427$ individuals had tau PET data and were submitted to the tau PET model. The tau PET subset included $N=372$ from the A4 Study and $N=55$ from the LEARN study. Baseline characteristics for the tau PET subset are presented in @supptbl-baseline-tau-characteristics .
+A total of $N=1,629$ participants were included in the analytic sample for the base model (without tau PET), comprising $N=1,110$ from the A4 Study and $N=519$ from the LEARN study. The mean (standard deviation \[SD\]) age at baseline was 71.46 (4.69) years, and 60.2% were female. The median follow-up time was 6.0 years (interquartile range 3.9 to 7.0). Baseline characteristics stratified by latent class membership are presented in @tbl-baseline-base-characteristics. A total of $N=427$ individuals had tau PET data and were submitted to the tau PET model. The tau PET subset included $N=372$ from the A4 Study and $N=55$ from the LEARN study. Baseline characteristics for the tau PET subset are presented in @supptbl-baseline-tau-characteristics.
 
 ```{r lcmm-mri, eval = UPDATELCMM}
 ## 2 df spline ----
@@ -615,15 +639,19 @@ qs_pacc <- qs_pacc %>%
 
 ```{r tbl-baseline-base-characteristics}
 #| results: asis
-#| tbl-cap: "**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: non-decliners, slow decliners, and fast decliners. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling."
+#| tbl-cap: "**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: non-decliners, slow decliners, and fast decliners. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander; CDR = Clinical Dementia Rating; Prog. = Progressor. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling. CDR Progressors were observed to have a CDR Global score greater than zero at two consecutive visits, or their last visit."
 
 mylabels <- list(Y = "PACC, mean (SD)", AMYLCENT = "Amyloid PET, mean (SD), CL", 
-  EDCCNTU = 'Education, mean (SD), y', TX = 'Group, No. (%)', AGEYR = 'Age, mean (SD), y',
-  Ptau217 = "P-tau217, mean (SD), U/ml", Tau_PET = "Tau PET, mean (SD), SUVr",
-  Hipp_atrophy_z = "Hipp. atrophy, mean (SD), z-score", Sex = "Sex, No. (%)", Race = "Race, No. (%)", Ethnicity = "Ethnicity, No. (%)", APOEe4 = "APOEε4, No. (%)")
+  EDCCNTU = 'Education, mean (SD), y', TX = 'Group, No. (%)', 
+  AGEYR = 'Age, mean (SD), y', Ptau217 = "P-tau217, mean (SD), U/ml", 
+  Tau_PET = "Tau PET, mean (SD), SUVr", 
+  Hipp_atrophy_z = "Hipp. atrophy, mean (SD), z-score", Sex = "Sex, No. (%)",
+  Race = "Race, No. (%)", Ethnicity = "Ethnicity, No. (%)", 
+  APOEe4 = "APOEε4, No. (%)", 'CDR Progressor' = "CDR Prog., No. (%)")
 
 tableby(`Class (Base)` ~ Group + AGEYR + Sex + Race + Ethnicity + EDCCNTU + 
-    APOEe4 + Y + AMYLCENT + Ptau217 + Hipp_atrophy_z + Tau_PET,
+    APOEe4 + Y + AMYLCENT + Ptau217 + Hipp_atrophy_z + Tau_PET + 
+    `CDR Progressor`,
   data = qs_pacc %>% filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)), 
   digits = 2, test.always = TRUE, numeric.stats = c("Nmiss", "meansd"),
   numeric.simplify = TRUE, cat.simplify = FALSE) %>%
@@ -640,7 +668,7 @@ base_model_data %>%
   summary()
 ```
 
-## Identification and Prediction of Latent Classes
+## Characterization and Prediction of Latent Classes
 
 ```{r fig-long-spaghetti-pacc-mri}
 #| fig-cap: "**Individual and Mean PACC Trajectories by Latent Class.** Left panel (A): Spaghetti plot of individual participant trajectories on the Preclinical Alzheimer Cognitive Composite (PACC), colored by latent class derived from the latent class mixed model (LCMM). Each line represents one participant’s observed scores over time. Right panel (B): Estimated mean PACC trajectories for each latent class, with shaded regions indicating 95% confidence intervals. Higher PACC scores indicate better cognitive performance."
@@ -717,7 +745,7 @@ pred %>%
   filter(Week %in% c(0, 312))
 ```
 
-```{r fig-sina-baseline, results='asis', fig.width = 6, fig.height = 5}
+```{r fig-sina-baseline, results='asis', fig.width = 6, fig.height = 6.5}
 #| fig-cap: "**Distribution of Baseline Demographic and Biomarker Variables by Latent Class of Cognitive Decline.** Sina plots show the distribution of selected baseline variables among latent classes identified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories: non-decliners, slow decliners, and fast decliners. Variables include age, baseline PACC score, plasma phosphorylated tau 217 (P-tau217), amyloid positron emission tomography (PET) standardized uptake value ratio (SUVr), tau PET SUVr (subset with tau PET available), and hippocampal atrophy (volume normalized to intracranial volume). Each dot represents an individual participant; box plots represent quartiles. Higher PACC scores indicate better cognitive performance. **Abbreviations:** PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal."
 
 pd <- qs_pacc %>% 
@@ -745,7 +773,8 @@ ggplot(pd, aes(y=value, x=`PACC Class`, color=`PACC Class`)) +
   facet_wrap(vars(name), scales = 'free_y') +
   theme_jama() +
   theme(legend.position = 'none', 
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    strip.text = element_text(size = 7, vjust = 1)) +
   scale_color_jama() +
   xlab('') + ylab('')
 ```
@@ -924,9 +953,11 @@ pA + pB + pC + pD +
   )
 ```
 
-Individual and base LCMM (excluding Tau PET) mean trajectories are shown in @fig-long-spaghetti-pacc-mri. Model selection criteria identified the model with two degrees of freedom and three latent classes, which we labeled as non-decliners (77%), slow decliners (16%), and fast decliners (7%). The next best fitting model had three classes and three degrees of freedom ($\Delta$ BIC = 22.2, $\Delta$ ICL = 22.2). The best fitting Tau PET LCMM had two degrees of freedom and three latent classes (@suppfig-long-spaghetti-pacc-tau-pet) and the next best fitting model had two classes and two degrees of freedom ($\Delta$ BIC = 376.4, $\Delta$ ICL = 336.9). The two models largerly agreed on individual classifications. Only 7/427 (1.6%) individuals were reclassified from one model to the next, and none of those were fast decliners. Posterior class probabilities (@suppfig-postprobs) indicated good separation (mean posterior probability, 0.94), indicating model confidence in class assignment.
+Individual and base LCMM (excluding Tau PET) mean trajectories are shown in @fig-long-spaghetti-pacc-mri. Model selection criteria identified the model with two degrees of freedom and three latent classes, which we labeled as non-decliners (77%), slow decliners (16%), and fast decliners (7%). The next best fitting model had three classes and three degrees of freedom ($\Delta$ BIC = 22.2, $\Delta$ ICL = 22.2). The best fitting Tau PET LCMM had two degrees of freedom and three latent classes (@suppfig-long-spaghetti-pacc-tau-pet) and the next best fitting model had two classes and two degrees of freedom ($\Delta$ BIC = 376.4, $\Delta$ ICL = 336.9). The two models largely agreed on individual classifications. Only 7/427 (1.6%) individuals were reclassified from one model to the next, and none of those were fast decliners. Posterior class probabilities (@suppfig-postprobs) indicated good separation (mean posterior probability, 0.94), indicating model confidence in class assignment.
 
 The three classes are significantly separated starting immediately at baseline. From the base model, participants classified as fast decliners started with a mean -0.98 (95% confidence interval \[CI\] -1.44 to -0.52) PACC points and declined to a mean of -15.8 (95% CI -16.7 to -15.0) at six years. In contrast non-decliners started with a mean 0.52 (95% CI 0.37 to 0.67) PACC points and improved to a mean of 1.16 (95% CI 1.00 to 1.31) at six years. Slow decliners were intermediate between the other two classes starting with a mean -0.13 (95% CI -0.44 to 0.17) PACC points and declining to a mean -4.74 (95% CI -5.22 to -4.26).
+
+Clinical relevance of the PACC latent classes was supported by differences in functional outcomes. The proportion of participants who were observed to progress on the Clinical Dementia Rating (CDR) Global score increased monotonically across latent classes, with the lowest rate among non-decliners (22.8%) and progressively higher rates among slow- (71.9%) and fast-decliners (88.2%) (@tbl-baseline-base-characteristics). However, discordance between PACC latent class labels and observed CDR progression is common.
 
 The distribution of continuous baseline variables by latent class is shown in @fig-sina-baseline and @fig-lcmm-coefs summarizes standardized coefficients and 95% CIs from both components of the LCMM. @fig-lcmm-coefs Panels A and C depicts odds ratios (ORs) for the class membership submodels from the base model and tau PET model. Continuous predictors are standardized so that ORs reflect the change in odds of belonging to the fast- or slow declining class compared with the non-declining class per one SD increase in each continuous baseline predictor.
 
@@ -964,7 +995,7 @@ In this latent class mixed-model analysis of cognitively unimpaired older adults
 
 ## Available Predictors Only Partially Discriminate Future Decline
 
-Although plasma P-tau217 and amyloid PET were each associated with latent class membership, neither biomarker alone, or in combination, achieved adequately accurate prediction of cognitive decline. A key observation was the high frequency of cognitive stability among amyloid-positive participants. As shown in @tbl-baseline-base-characteristics, 776 of 1,110 amyloid-positive A4 participants (69.9%) were classified as non-decliners, indicating that substantial amyloid burden does not necessarily translate into measurable cognitive change over the timescales typical of prevention trials. However, this is consistent with a pre-symptomatic phase of disease believed to last as long as 15 years.
+Although plasma P-tau217 and amyloid PET were each associated with latent class membership, neither biomarker alone, or in combination, achieved high accuracy in predicting of cognitive decline. A key observation was the high frequency of cognitive stability among amyloid-positive participants. As shown in @tbl-baseline-base-characteristics, 776 of 1,110 amyloid-positive A4 participants (69.9%) were classified as non-decliners, indicating that substantial amyloid burden does not necessarily translate into measurable cognitive change over the timescales typical of prevention trials. However, this is consistent with a pre-symptomatic phase of disease believed to last as long as 15 years.
 
 Compared to the 30.1% of amyloid-positive individuals classified as decliners, a small minority of amyloid-negative LEARN participants were classified as decliners. Thirty-eight of 519 (7.3%) amyloid-negative individuals were classified as slow or fast decliners, suggesting that some causes of decline may reflect non–AD processes, early AD pathology below PET detection thresholds at baseline that accumulated over the 5 year period, or cognitive measurement variability. These findings reinforce that amyloid positivity, while necessary for defining the AD pathophysiologic continuum, is an insufficient standalone predictor of short- to intermediate-term cognitive decline.
 
@@ -984,7 +1015,7 @@ These findings have several implications for the design and interpretation of se
 
 **Added Value of Tau PET.** Although tau PET contributed additional predictive information, its incremental value must be interpreted in the context of feasibility. For future enrichment, tau-PET-based staging may offer a more specific approach to identifying individuals closer to clinical transition, though widespread implementation in prevention trials remains challenging.
 
-**Outcome Selection.** The limited cognitive change observed in non-decliners raises important questions about the sensitivity of traditional cognitive outcomes at this very early stage of AD. In such individuals, early synaptic dysfunction, measured with learning curves assessed by daily digital testing,[@papp2024early] and/or biological endpoints (e.g., plasma or tau PET measures) may provide more responsive markers of treatment effect and may serve as important secondary or exploratory outcomes. Nonetheless, given evidence that tau PET is more closely linked to concurrent and future cognitive decline than amyloid biomarkers, it is plausible that longitudinal tau PET, or plasma P-tau217, may offer greater utility for monitoring treatment response or detecting early trajectory divergence. Future work applying latent class or related trajectory models to longitudinal biomarker measures may help clarify whether biomarker-defined progressors can be identified earlier or more reliably than cognitive progressors.
+**Outcome Selection.** The limited cognitive change observed in non-decliners raises important questions about the sensitivity of traditional cognitive outcomes at this very early stage of AD. In such individuals, early synaptic dysfunction, measured with learning curves assessed by daily digital testing,[@papp2024early] and/or biological endpoints (e.g., plasma or tau PET measures) may provide more responsive markers of treatment effect and may serve as important secondary or exploratory outcomes. Nonetheless, given evidence that tau PET is more closely linked to concurrent and future cognitive decline than amyloid biomarkers,[@insel2025concurrent] it is plausible that longitudinal tau PET, or plasma P-tau217, may offer greater utility for monitoring treatment response or detecting early trajectory divergence. Future work applying latent class or related trajectory models to longitudinal biomarker measures may help clarify whether biomarker-defined progressors can be identified earlier or more reliably than cognitive progressors.
 
 **Early Intervention.** In symptomatic disease, it has been observed that anti-amyloid therapies can demonstrate larger benefits in those with less tau pathology [@sims2023donanemab], supporting the theory that earlier intervention should yield greater benefit. If presymptomatic decline unfolds gradually over a decade or more, treatment trials beginning relatively early in this trajectory may struggle to demonstrate delay of cognitive change within feasible trial windows. Accordingly, refining and validating more sensitive digital and/or biomarker-based endpoints will be essential for advancing preclinical therapy development. Sensitive, reproducible measures of target engagement and disease progression could improve enrichment, increase statistical power, and enable detection of treatment effects even among participants who remain cognitively stable.
 
@@ -1016,7 +1047,8 @@ The authors would like to thank the A4 and LEARN Study Teams and site principal 
 #| results: asis
 
 tableby(`Class (Tau PET)` ~ Group + AGEYR + Sex + Race + Ethnicity + EDCCNTU + 
-    APOEe4 + Y + AMYLCENT + Ptau217 + Hipp_atrophy_z + Tau_PET,
+    APOEe4 + Y + AMYLCENT + Ptau217 + Hipp_atrophy_z + Tau_PET + 
+    `CDR Progressor`,
   data = qs_pacc %>% filter(VISITCD == '006' & !is.na(Ptau217) & !is.na(APOEe4)), 
   digits = 2, test.always = TRUE, numeric.stats = c("Nmiss", "meansd"),
   numeric.simplify = TRUE, cat.simplify = FALSE) %>%
@@ -1025,7 +1057,7 @@ tableby(`Class (Tau PET)` ~ Group + AGEYR + Sex + Race + Ethnicity + EDCCNTU +
   kbl("pipe", booktabs = T)
 ```
 
-**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline with Tau PET.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: non-decliners, slow decliners, and fast decliners. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling.
+**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline with Tau PET.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer’s Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: non-decliners, slow decliners, and fast decliners. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander; CDR = Clinical Dementia Rating; Prog. = Progressor. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling. CDR Progressors were observed to have a CDR Global score greater than zero at two consecutive visits, or their last visit.
 
 :::
 
