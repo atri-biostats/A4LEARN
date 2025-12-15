@@ -10,3 +10,6 @@
 ^\.github$
 ^vignettes/A4-Primary-Results_cache$
 ^man/rmd/A4-Primary-Results-child_cache$
+^vignettes/articles$
+^vignettes/articles/\.quarto$
+^vignettes/articles/*_files$

@@ -12,7 +12,7 @@ URL:
 License: https://www.a4studydata.org/terms-of-use
 Encoding: UTF-8
 LazyData: true
-LazyDataCompression:bzip2
+LazyDataCompression: bzip2
 RoxygenNote: 7.3.2
 Collate:
     'data.R'
@@ -29,7 +29,9 @@ Suggests:
     splines,
     clubSandwich,
     Hmisc,
-    dplyr
+    dplyr,
+    quarto
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.5.0)
+Config/Needs/website: rmarkdown, quarto
