@@ -132,7 +132,8 @@ opts_chunk$set(
   crop = TRUE, 
   fig.pos = '!h',
   cache=TRUE,
-  comment = '')
+  comment = '',
+  fig.dpi = 300)
 
 TX_level_sola <- A4LEARN::SUBJINFO %>%
   filter(stringr::str_detect(TX, "Sola"))  %>% .$TX %>% unique()
@@ -444,7 +445,7 @@ assign("ns33", ns22, envir = .GlobalEnv)
 
 Latent class mixed-effects models (LCMMs) extend traditional mixed-effects models by identifying unobserved subgroups, or latent classes, of individuals who follow distinct longitudinal trajectories. In the context of cognitive decline in Alzheimer’s disease, LCMMs allow for the estimation of population-level trends while capturing individual variability and uncovering hidden subpopulations that may progress at different rates.
 
-Analyses were conducted using harmonized data from the A4 and LEARN studies, accessed through the `A4LEARN` R data package (version 1.1.20250808 @donohue2025alzheimer), available at <https://github.com/atri-biostats/A4LEARN>. This package provides curated datasets and metadata derived from the A4 and LEARN clinical studies for reproducible statistical analysis. Code to reproduce the results from this paper are available from <https://github.com/atri-biostats/A4LEARN/tree/main/vignettes/articles>.
+Analyses were conducted using harmonized data from the A4 and LEARN studies, accessed through the `A4LEARN` R data package (version 1.1.20250808 [@a4studydata; @donohue2025alzheimer]). This package provides curated datasets and metadata derived from the A4 and LEARN clinical studies for reproducible statistical analysis. Code to reproduce the results from this paper are available from the `A4LEARN` GitHub repository [@a4learn_vignettes].
 
 The dependent variable was the Box-Cox-transformed Preclinical Alzheimer’s Cognitive Composite (PACC) score at each visit. The Box-Cox transformation parameter ($\lambda$) was selected to maximize the likelihood that the transformed data approximated normality. Time was modeled as a continuous variable representing years since baseline.
 
