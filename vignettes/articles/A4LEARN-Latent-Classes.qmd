@@ -205,14 +205,6 @@ Elevated levels of brain amyloid in cognitively unimpaired older adults are asso
 
 Despite these consistent group-level associations, cognitive trajectories among amyloid-positive individuals remain highly variable. Conventional longitudinal models assume that individual cognitive trajectories are randomly scattered about a single mean trend for given covariate values, potentially obscuring meaningful heterogeneity. To better characterize this heterogeneity, we applied a Latent Class Mixed-Effects Model (LCMM) [@proust2017estimation] to A4 and LEARN data. This approach identifies unobserved subgroups of participants with distinct longitudinal patterns of change and allows for evaluation of baseline biomarkers and demographic factors as predictors of class membership.
 
-# Key points
-
-**Question:** Among cognitively unimpaired older adults with and without Alzheimer’s disease biomarkers, are there distinct subgroups of cognitive decline, and can baseline biomarkers predict subgroup membership?
-
-**Findings:** In this latent class mixed‐effects modeling analysis of participants from the A4 and LEARN studies, three subgroups of cognitive trajectories were identified, representing stable, slow decline, and fast decline. Higher baseline plasma P‐tau217 levels, greater baseline hippocampal atrophy, and higher baseline tau PET levels were associated with membership in declining subgroups. Even among amyloid-positive participants, approximately 70% were classified as stable, a proportion that is not unexpected given the long presymptomatic phase of Alzheimer disease, which may span more than a decade.
-
-**Meaning:** Substantial heterogeneity exists in cognitive decline during the preclinical phase of Alzheimer’s disease. Identifying subgroups of decline may improve prognostic modeling and guide precision enrollment and outcome strategies for prevention trials.
-
 # Methods
 
 ## Conduct of the A4 and LEARN Studies
