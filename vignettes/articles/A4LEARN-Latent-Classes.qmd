@@ -26,7 +26,7 @@ author:
       - ref: ATRI
 affiliations:
   - id: ATRI
-    name: Alzheimer's Therapeutic Research Institute, University of Southern California
+    name: USC Epstein Family Alzheimer's Therapeutic Research Institute, University of Southern California
     city: San Diego
     state: CA
   - id: UCSF
@@ -1268,7 +1268,7 @@ Among cognitively unimpaired older adults, cognitive trajectories showed marked 
 
 The authors would like to thank the A4 and LEARN Study Teams and site principal investigators and staff. Special gratitude to the A4 and LEARN participants and their study partners, without whom these studies would not be possible. 
 
-**Funding:** The A4 and LEARN Studies were supported by a public-private-philanthropic partnership which included funding from the National Institute of Aging of the National Institutes of Health (R01 AG063689, U19AG010483 and U24AG057437), Eli Lilly (also the supplier of active medication and placebo), the Alzheimer’s Association, the Accelerating Medicines Partnership through the Foundation for the National Institutes of Health, the GHR Foundation, the Davis Alzheimer Prevention Program, the Yugilbar Foundation, an anonymous foundation, and additional private donors to Brigham and Women’s Hospital, with in-kind support from Avid Radiopharmaceuticals, Cogstate, Albert Einstein College of Medicine and the Foundation for Neurologic Diseases.
+**Funding:** The A4 and LEARN Studies were supported by a public-private-philanthropic partnership which included funding from the National Institute of Aging of the National Institutes of Health (R01 AG063689, U19AG010483 and U24AG057437), Eli Lilly (also the supplier of active medication and placebo), the Alzheimer’s Association, the Accelerating Medicines Partnership through the Foundation for the National Institutes of Health, the GHR Foundation, the Davis Alzheimer Prevention Program, the Yugilbar Foundation, an anonymous foundation, and additional private donors to Brigham and Women’s Hospital, with in-kind support from Avid Radiopharmaceuticals, Cogstate, Albert Einstein College of Medicine and the Foundation for Neurologic Diseases. Other support was provided by grants from the Epstein Family Foundation.
 
 **Conflict of Interest Disclosures:** Dr Aisen reported personal fees from Merck, Biogen, Roche, AbbVie, ImmunoBrain Checkpoint, Bristol Myers Squibb, and Neurimmune and grants from Eisai outside the submitted work. Dr Sperling reported consulting fees from AbbVie, AC Immune, Acumen, Alector, Apellis, Biohaven, Bristol Myers Squibb, Genentech, Janssen, Nervgen, Oligomerixg, Prothena, Roche, Vigil Neuroscience, Ionis, and Vaxxinity outside the submitted work. Dr Donohue reported personal fees from Roche (consultant) and Janssen Pharmaceuticals (spouse is full-time employee) outside the submitted work. Dr Raman reported grants from American Heart Association, Gates Ventures, Eisai, Alzheimer's Association. No other disclosures were reported.
 
