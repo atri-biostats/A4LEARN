@@ -1,5 +1,5 @@
 ---
-title: "Divergent patterns of cognitive decline in preclinical Alzheimer’s disease: implications for secondary prevention trials"
+title: "Divergent patterns of cognitive decline in preclinical Alzheimer's disease: implications for secondary prevention trials"
 author:
   - name: Runpeng Li
     email: runpengl@usc.edu
@@ -87,7 +87,7 @@ crossref:
 # Research in Context
 
 **Evidence before this study**
-We searched PubMed, MEDLINE, and Google Scholar for articles published between January 1, 2000, and December 31, 2025, using the terms “preclinical Alzheimer’s disease,” “cognitive decline,” and “latent class.” Previous studies have identified patterns of cognitive decline in aging populations, but there is limited understanding of the predictive value of recently developed biomarkers of Alzheimer’s pathology, and we found no studies examining the impact on secondary prevention trial design.
+We searched PubMed, MEDLINE, and Google Scholar for articles published between January 1, 2000, and December 31, 2025, using the terms “preclinical Alzheimer's disease,” “cognitive decline,” and “latent class.” Previous studies have identified patterns of cognitive decline in aging populations, but there is limited understanding of the predictive value of recently developed biomarkers of Alzheimer's pathology, and we found no studies examining the impact on secondary prevention trial design.
 
 **Added value of this study**
 This study is the first to apply latent class analysis to data from the A4 and LEARN studies, identifying distinct classes of cognitive decline in individuals at risk for Alzheimer's disease. Our findings reveal significant heterogeneity in cognitive trajectories, suggesting that preclinical Alzheimer's disease is not a uniform process. These insights could inform personalized intervention strategies and improve the design of future clinical trials.
@@ -462,7 +462,7 @@ To assess the reliability and potential predictive utility of the latent class m
 
 ### Power Analysis for Latent Class-Specific Trials
 
-To explore the impact of heterogeneity on clinical trials in preclinical Alzheimer’s disease, we conducted power calculations to estimate power for hypothetical trials targeting latent classes of cognitive decline among amyloid-positive participants. Effect size estimates were derived from longitudinal models using natural cubic splines applied to Preclinical Alzheimer Cognitive Composite (PACC) scores.[@donohue2023natural] Separate models were fit for (a) the stable class, (b) the decliner classes, and (c) a reference group of amyloid-negative stable individuals. The models included fixed effects for time (two degrees of freedom), APOE $\epsilon 4$ carrier status, sex, age, education, plasma P-tau217, and florbetapir PET. Residuals were assumed to be normally distributed with an unstructured covariance matrix.
+To explore the impact of heterogeneity on clinical trials in preclinical Alzheimer's disease, we conducted power calculations to estimate power for hypothetical trials targeting latent classes of cognitive decline among amyloid-positive participants. Effect size estimates were derived from longitudinal models using natural cubic splines applied to Preclinical Alzheimer Cognitive Composite (PACC) scores.[@donohue2023natural] Separate models were fit for (a) the stable class, (b) the decliner classes, and (c) a reference group of amyloid-negative stable individuals. The models included fixed effects for time (two degrees of freedom), APOE $\epsilon 4$ carrier status, sex, age, education, plasma P-tau217, and florbetapir PET. Residuals were assumed to be normally distributed with an unstructured covariance matrix.
 
 For each group, we extracted mean PACC and residual variance from the model at two time points: 2 years and 4 years, representing potential trial durations. These estimates were used to compute the power to detect treatment effects. Power was approximated using two-sample t-test calculations, assuming 500 participants per arm, attrition rates of 10% at 2 years and 20% at 4 years, and a two-sided alpha of 0.05.
 
@@ -1093,7 +1093,7 @@ ggplot(em_all, aes(x=Years, y=emmean)) +
 
 Latent class-specific power analyses revealed marked differences in cognitive trajectories and variability across classes (see @supptbl-clda-power). The amyloid-negative stable group had the highest mean (SD) PACC scores over time: +1.14 (2.11) at 2 years and +1.20 (2.25) at 4 years. We considered this the maximum possible treatment benefit. The stable amyloid-positive group had means of +0.88 (2.19) at 2 years and +0.96 (2.34) at 4 years. With 500 participants per arm, a trial in amyloid-positive stable individuals would have only 44% power at 2 years and 30% at 4 years to detect even 100% of the maximum benefit (0.26 PACC points at 2 years and 0.24 at 4 years). In contrast, a trial in amyloid-positive declining individuals would have 93% power at 2 years and 98% at 4 years to detect just 20% of the maximum benefit (0.79 PACC points at 2 years and 1.40 at 4 years).
 
-These findings suggest that stable amyloid-positive individuals, although they may have the greatest potential long-term benefit from a disease-modifying drug, contribute little to the statistical power of a preclinical Alzheimer’s disease trial to detect an effect on the PACC. Instead, power is primarily driven by declining individuals, who represent a minority of the amyloid-positive population. Enrolling large numbers of stable individuals may dilute the overall treatment effect and reduce the trial’s ability to detect meaningful cognitive benefits. These results underscore the need to account for latent classes of decline when designing preclinical Alzheimer’s disease trials.
+These findings suggest that stable amyloid-positive individuals, although they may have the greatest potential long-term benefit from a disease-modifying drug, contribute little to the statistical power of a preclinical Alzheimer's disease trial to detect an effect on the PACC. Instead, power is primarily driven by declining individuals, who represent a minority of the amyloid-positive population. Enrolling large numbers of stable individuals may dilute the overall treatment effect and reduce the trial's ability to detect meaningful cognitive benefits. These results underscore the need to account for latent classes of decline when designing preclinical Alzheimer's disease trials.
 
 ## Predictive Performance and Cross-Validation
 
@@ -1101,7 +1101,7 @@ The overall cross-validated accuracy was 0.80 (95% CI 0.79 to 0.82) for the base
 
 ## Post-hoc Regression Tree
 
-The optimally-tuned classification tree without tau PET achieved a mean balanced accuracy of 0.63 (standard error 0.014) in 10-fold cross-validation (@fig-tree-base). Variable importance analysis identified baseline P-tau217 (56.2%), baseline PACC (15.5%), amyloid PET (13.1%), and hippocampal atrophy (10.0%) as most important; though amyloid PET was not included in the tree, likely due to its correlation with P-tau217. The tree structure revealed a hierarchical decision process with participants with baseline P-tau217 \< 0.29 were classified as stable individuals, though this miss-classifies $N=155$ decliners. Those with P-tau217 $\geq$ 0.29 are further parsed by hippocampal atrophy, PACC, and P-tau217. Only one leaf contains a majority of fast decliners, and it contains only 1% of the initial sample. While the tree demonstrates the relative importance and utility of the predictors, it also demonstrates a high degree of miss-classification (31.4%). Cross-validated balanced accuracy is improved by the addition of tau PET (mean 0.70, standard error 0.011; @suppfig-tree-tau-pet). Tau PET has the second largest variable importance (22.5%), between P-tau217 (29.8%) and hippocampal atrophy (17.4%). The tree with tau PET results in a larger proportion leaves which are majority fast decliners (8.5% versus 1% without tau PET).
+The optimally-tuned classification tree without tau PET achieved a mean balanced accuracy of 0.63 (standard error 0.014) in 10-fold cross-validation (@suppfig-tree-base). Variable importance analysis identified baseline P-tau217 (56.2%), baseline PACC (15.5%), amyloid PET (13.1%), and hippocampal atrophy (10.0%) as most important; though amyloid PET was not included in the tree, likely due to its correlation with P-tau217. The tree structure revealed a hierarchical decision process with participants with baseline P-tau217 \< 0.29 were classified as stable individuals, though this miss-classifies $N=155$ decliners. Those with P-tau217 $\geq$ 0.29 are further parsed by hippocampal atrophy, PACC, and P-tau217. Only one leaf contains a majority of fast decliners, and it contains only 1% of the initial sample. While the tree demonstrates the relative importance and utility of the predictors, it also demonstrates a high degree of miss-classification (31.4%). Cross-validated balanced accuracy is improved by the addition of tau PET (mean 0.70, standard error 0.011; @suppfig-tree-tau-pet). Tau PET has the second largest variable importance (22.5%), between P-tau217 (29.8%) and hippocampal atrophy (17.4%). The tree with tau PET results in a larger proportion leaves which are majority fast decliners (8.5% versus 1% without tau PET).
 
 ## Longitudinal Biomarker Progression Across Latent Classes
 
@@ -1384,7 +1384,7 @@ pA + pB + pC + pD +
 ```{r suppfig-tree-base} 
 if(file.exists('tree_cv_base_results.rdata')){
   load('tree_cv_base_results.rdata')
-  knitr::include_graphics("fig-tree-base.png")
+  knitr::include_graphics("suppfig-tree-base.png")
 }else{
   tree_model <- list(frame = list(var = NA))
   top_models <- tibble(mean = NA, std_err = NA)
@@ -2469,8 +2469,8 @@ print(conf_matrix$table)
 print(conf_matrix$byClass[, c("Sensitivity", "Specificity", "Pos Pred Value")])
 ```
 
-```{r make-fig-tree-base, include=FALSE}
-png("fig-tree-base.png", width = 4.5*1.25, height = 5.75*1.2, units = "in", res = 300)
+```{r make-suppfig-tree-base, include=FALSE}
+png("suppfig-tree-base.png", width = 4.5*1.25, height = 5.75*1.2, units = "in", res = 300)
 # Set up 2-panel layout
 layout(matrix(c(1, 2.5, 2.5), nrow = 3, ncol = 1))
   
