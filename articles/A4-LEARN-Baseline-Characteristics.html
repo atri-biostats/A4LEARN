@@ -86,15 +86,14 @@ Biostatistics</h4>
     
 <p>The <em>Anti-Amyloid Treatment in Asymptomatic Alzheimer’s Disease
 (A4)</em> study was a Phase 3, double-blind, placebo-controlled study of
-solanezumab in subjects with preclinical Alzheimer’s Disease <span class="citation">(Sperling et al. 2023)</span>. The <em>Longitudinal
-Evaluation of Amyloid Risk and Neurodegeneration (LEARN)</em> study
-enrolled clinically unimpaired individuals who screen-failed for the A4
-Study on the basis of not showing elevated amyloid on screening amyloid
-PET imaging and followed them longitudinally with all of the same
-assessments as A4.</p>
-<p>The code below demonstrates how to reproduce Table 1 from <span class="citation">Sperling et al. (2020)</span> using data in the
-<code>A4LEARN</code> package and <span class="citation">R Core Team
-(2024)</span>.</p>
+solanezumab in subjects with preclinical Alzheimer’s Disease <span class="citation">(<span class="nocase">Sperling et al.</span>
+2023)</span>. The <em>Longitudinal Evaluation of Amyloid Risk and
+Neurodegeneration (LEARN)</em> study enrolled clinically unimpaired
+individuals who screen-failed for the A4 Study on the basis of not
+showing elevated amyloid on screening amyloid PET imaging and followed
+them longitudinally with all of the same assessments as A4.</p>
+<p>The code below demonstrates how to reproduce Table 1 from <span class="citation"><span class="nocase">Sperling et al.</span>
+(2020)</span> using data in the <code>A4LEARN</code> package and <span class="citation">R Core Team (2024)</span>.</p>
 <div class="section level2">
 <h2 id="load-required-r-packages">Load required R packages<a class="anchor" aria-label="anchor" href="#load-required-r-packages"></a>
 </h2>
@@ -108,25 +107,25 @@ assessments as A4.</p>
 </h2>
 <p><strong>Rescreens</strong></p>
 <p>Participants who re-screened may appear in the data twice with
-different BIDs each time. The <code><a href="../reference/SUBJINFO.html">A4LEARN::SUBJINFO</a></code> derived
+different BIDs each time. The <code><a href="https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.html">A4LEARN::SUBJINFO</a></code> derived
 dataset indicates which participants are re-screens, and how the
 re-screen BIDs are mapped to each other. The code below also accounts
 for this to set up the removal of duplicate appearances.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rescreens</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="../reference/SUBJINFO.html">SUBJINFO</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">rescreens</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.html">SUBJINFO</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">PREVBID</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>BID1 <span class="op">=</span> <span class="va">PREVBID</span>, BID2 <span class="op">=</span> <span class="va">BID</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BID1</span>, <span class="va">BID2</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Gather Amyloid PET data</strong></p>
 <p>The Amyloid PET quantitative data
-(<code><a href="../reference/imaging_SUVR_amyloid.html">A4LEARN::imaging_SUVR_amyloid</a></code>) is in long format with one
+(<code><a href="https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.html">A4LEARN::imaging_SUVR_amyloid</a></code>) is in long format with one
 row per region. We use <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">tidyr::pivot_wider</a></code> to transform to
 wide format with one column per region.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pet</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="../reference/imaging_SUVR_amyloid.html">imaging_SUVR_amyloid</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">pet</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.html">imaging_SUVR_amyloid</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">brain_region</span> <span class="op">!=</span> <span class="st">''</span> <span class="op">&amp;</span> <span class="va">VISCODE</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>id_cols<span class="op">=</span><span class="st">'BID'</span>, names_from<span class="op">=</span><span class="va">brain_region</span>, values_from<span class="op">=</span><span class="va">suvr_cer</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="../reference/imaging_PET_VA.html">imaging_PET_VA</a></span>, by<span class="op">=</span><span class="st">'BID'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="https://atri-biostats.github.io/A4LEARN/reference/imaging_PET_VA.html">imaging_PET_VA</a></span>, by<span class="op">=</span><span class="st">'BID'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">rescreens</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'BID'</span> <span class="op">=</span> <span class="st">'BID1'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span> <span class="co"># update PET BIDs to second BID if necessary</span></span>
 <span>    BID <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -137,13 +136,13 @@ wide format with one column per region.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">BID2</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Baseline PACC</strong></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pacc_bl</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="../reference/PACC.html">PACC</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">pacc_bl</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="https://atri-biostats.github.io/A4LEARN/reference/PACC.html">PACC</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">VISCODE</span> <span class="op">==</span> <span class="fl">6</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">PACC.raw</span>, <span class="va">MMSCORE</span>, <span class="va">LDELTOTAL</span>, <span class="va">DIGITTOTAL</span>, <span class="va">FCTOTAL96</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Prepare data table</strong></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="../reference/SUBJINFO.html">SUBJINFO</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">APOEGN</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="../reference/ptdemog.html">ptdemog</a></span>, by<span class="op">=</span><span class="st">'BID'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.html">SUBJINFO</a></span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BID</span>, <span class="va">APOEGN</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu">A4LEARN</span><span class="fu">::</span><span class="va"><a href="https://atri-biostats.github.io/A4LEARN/reference/ptdemog.html">ptdemog</a></span>, by<span class="op">=</span><span class="st">'BID'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">pet</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'SUBSTUDY'</span>,<span class="st">'BID'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">pacc_bl</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'BID'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># remove first appearance of rescreens:</span></span>
@@ -1010,24 +1009,22 @@ and the modifications made to the SUVR algorithm.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-R" class="csl-entry">
 R Core Team. 2024. <em>R: A Language and Environment for Statistical
-Computing</em>. Vienna, Austria: R Foundation for Statistical Computing.
-<a href="https://www.R-project.org/" class="external-link">https://www.R-project.org/</a>.
-</div>
-<div id="ref-sperling2023trial" class="csl-entry">
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023.
-<span>“Trial of Solanezumab in Preclinical Alzheimer’s Disease.”</span>
-<em>New England Journal of Medicine</em> 389 (12): 1096–1107. <a href="https://doi.org/10.1056/NEJMoa2305032" class="external-link">https://doi.org/10.1056/NEJMoa2305032</a>.
+Computing</em>. R Foundation for Statistical Computing. <a href="https://www.R-project.org/" class="external-link">https://www.R-project.org/</a>.
 </div>
 <div id="ref-sperling2020association" class="csl-entry">
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Chung-Kai Sun, Roy
-Yaari, Karen Holdridge, Eric Siemers, Keith A Johnson, Paul S Aisen, and
-for the A4 Study Team. 2020. <span>“Association of Factors with Elevated
-Amyloid Burden in Clinically Normal Older Individuals.”</span> <em>JAMA
+<span class="nocase">Sperling, Reisa A, Michael C Donohue, Rema Raman,
+et al.</span> 2020. <span>“Association of Factors with Elevated Amyloid
+Burden in Clinically Normal Older Individuals.”</span> <em>JAMA
 Neurology</em> 77 (6): 735–45. <a href="https://doi.org/10.1001/jamaneurol.2020.0387" class="external-link">https://doi.org/10.1001/jamaneurol.2020.0387</a>.
+</div>
+<div id="ref-sperling2023trial" class="csl-entry">
+<span class="nocase">Sperling, Reisa A, Michael C Donohue, Rema Raman,
+et al.</span> 2023. <span>“Trial of Solanezumab in Preclinical
+Alzheimer’s Disease.”</span> <em>New England Journal of Medicine</em>
+389 (12): 1096–107. <a href="https://doi.org/10.1056/NEJMoa2305032" class="external-link">https://doi.org/10.1056/NEJMoa2305032</a>.
 </div>
 </div>
 </div>
@@ -1042,7 +1039,7 @@ Neurology</em> 77 (6): 735–45. <a href="https://doi.org/10.1001/jamaneurol.202
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

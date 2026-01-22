@@ -11,6 +11,7 @@ findings of the A4 trial (Sperling et al. 2023) using R Core Team
 ### Load required R packages
 
 ``` r
+
 library(tidyverse)
 library(arsenal)
 library(kableExtra)
@@ -29,6 +30,7 @@ formatp <- function(x) case_when(
 ### Organize data
 
 ``` r
+
 # Outcomes collected at Visit 1
 V1OUTCOME <- A4LEARN::ADQS %>%
   dplyr::filter(VISITCD == "001") %>%
@@ -63,6 +65,7 @@ ADQS_PACC <- A4LEARN::ADQS %>%
 ### Baseline characteristics of the A4 trial
 
 ``` r
+
 A4labels <- list(TX = "Treatment group", AGEYR = "Age (y)", 
   EDCCNTU = "Education (y)", SUVRCER = "FBP SUVr", AMYLCENT = "FBP Centiloid", 
   LMIIa = "LM Delayed Recall",  MMSE = "MMSE", 
@@ -154,7 +157,7 @@ summary(table1, labelTranslations = A4labels, digits = 1,
 Characteristics of the A4 participants by randomized treatment group
 (Modified Intention-to-Treat Population of those who received at least
 one dose of solanezumab or placebo and underwent assessment for the
-primary end point).
+primary end point). {.table}
 
 ### Primary analyis of the PACC
 
@@ -174,6 +177,7 @@ first structure, heterogeneous unstructured, did not converge. Here we
 fit the second, heterogeneous Toeplitz, which did converge.
 
 ``` r
+
 ggplot(ADQS_PACC, aes(x=ADURW, y=PACC, color=TX)) +
   geom_line(aes(group = BID), alpha=0.2) +
   theme(legend.position = "inside", legend.position.inside = c(0.2, 0.2)) +
@@ -187,6 +191,7 @@ group.](A4-Primary-Results_files/figure-html/pacc-spaghetti-plot-1.png)
 Spaghetti plot of PACC data over time by treatment group.
 
 ``` r
+
 # Spline basis expansion functions
 # CAUTION: these function depend on the ADQS_PACC data frame object in the 
 # global environment. If ADQS_PACC changes, so do these funtions
@@ -213,6 +218,7 @@ pacc_fit <- gls(PACC ~
 ```
 
 ``` r
+
 ref_grid(pacc_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
@@ -233,9 +239,11 @@ ref_grid(pacc_fit,
 | ADURW240 - ADURW0 | Solanezumab |    -1.43 | 0.21 | 10791 |   -6.95 | p\<0.001 |
 
 Mean PACC change from baseline at week 240 by treatment group estimated
-from spline model.
+from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 contrast240 <- ref_grid(pacc_fit, 
   at = list(ADURW = 240, TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
@@ -262,9 +270,11 @@ contrast240 %>%
 | Solanezumab - Placebo | 240 | -0.3 | 0.26 | 10791 | -1.13 | -0.82 | 0.22 | 0.26 |
 
 Mean PACC group change from baseline at week 240 by treatment group
-estimated from spline model.
+estimated from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 ref_grid(pacc_fit, 
   at = list(ADURW = seq(0, 312, by=12), TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
@@ -291,6 +301,7 @@ Shaded region depicts 95% confidence intervals.
 ### Primary analyis of the CFI
 
 ``` r
+
 # Filter A4LEARN::ADQS for CFITOTAL collected in the blinded phases among mITT population
 ADQS_CFI <- A4LEARN::ADQS %>%
   dplyr::filter(MITTFL== 1) %>%
@@ -304,6 +315,7 @@ ADQS_CFI <- A4LEARN::ADQS %>%
 ```
 
 ``` r
+
 ggplot(ADQS_CFI, aes(x=ADURW, y=QSSTRESN, color=TX)) +
   geom_line(aes(group = BID), alpha=0.2) +
   theme(legend.position = "inside", legend.position.inside = c(0.2, 0.9)) +
@@ -324,6 +336,7 @@ Spaghetti plot of CFI data over time by treatment group.
 ```
 
 ``` r
+
 # Spline basis expansion functions
 # CAUTION: these function depend on the ADQS_CFI data frame object in the 
 # global environment. If ADQS_CFI changes, so do these funtions
@@ -350,6 +363,7 @@ cfi_fit <- gls(QSSTRESN ~
 ```
 
 ``` r
+
 ref_grid(cfi_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_CFI$TX)),
   vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
@@ -370,9 +384,11 @@ ref_grid(cfi_fit,
 | ADURW240 - ADURW0 | Solanezumab |     2.09 | 0.21 | 2299.16 |    9.77 | p\<0.001 |
 
 Mean CFI change from baseline at week 240 by treatment group estimated
-from spline model.
+from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 contrast240 <- ref_grid(cfi_fit, 
   at = list(ADURW = 240, TX = levels(ADQS_CFI$TX)),
   vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
@@ -399,9 +415,11 @@ contrast240 %>%
 | Solanezumab - Placebo | 240 | 0.58 | 0.29 | 2103.74 | 2.04 | 0.02 | 1.14 | 0.04 |
 
 Mean CFI group change from baseline at week 240 by treatment group
-estimated from spline model.
+estimated from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 ref_grid(cfi_fit, 
   at = list(ADURW = seq(0, 312, by=12), TX = levels(ADQS_CFI$TX)),
   vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
@@ -427,23 +445,20 @@ Shaded region depicts 95% confidence intervals.
 
 ## References
 
-Donohue, Michael C, Oliver Langford, Philip S Insel, Christopher H van
-Dyck, Ronald C Petersen, Suzanne Craft, Gopalan Sethuraman, Rema Raman,
-Paul S Aisen, and Alzheimer’s Disease Neuroimaging Initiative. 2023.
+Donohue, Michael C, Oliver Langford, Philip S Insel, et al. 2023.
 “Natural Cubic Splines for the Analysis of Alzheimer’s Clinical Trials.”
-*Pharmaceutical Statistics*. <https://doi.org/10.1002/pst.2285>.
+*Pharmaceutical Statistics*, ahead of print.
+<https://doi.org/10.1002/pst.2285>.
 
-Donohue, Michael C, Reisa A Sperling, David P Salmon, Dorene M Rentz,
-Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
-“The Preclinical Alzheimer Cognitive Composite: Measuring
-Amyloid-Related Decline.” *JAMA Neurology* 71 (8): 961–70.
+Donohue, Michael C, Reisa A Sperling, David P Salmon, et al. 2014. “The
+Preclinical Alzheimer Cognitive Composite: Measuring Amyloid-Related
+Decline.” *JAMA Neurology* 71 (8): 961–70.
 <https://doi.org/10.1001/jamaneurol.2014.803>.
 
 R Core Team. 2024. *R: A Language and Environment for Statistical
-Computing*. Vienna, Austria: R Foundation for Statistical Computing.
+Computing*. R Foundation for Statistical Computing.
 <https://www.R-project.org/>.
 
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
+Sperling, Reisa A, Michael C Donohue, Rema Raman, et al. 2023. “Trial of
 Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
-Medicine* 389 (12): 1096–1107. <https://doi.org/10.1056/NEJMoa2305032>.
+Medicine* 389 (12): 1096–107. <https://doi.org/10.1056/NEJMoa2305032>.

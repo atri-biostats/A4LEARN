@@ -15,6 +15,7 @@ al. (2020) using data in the `A4LEARN` package and R Core Team (2024).
 ## Load required R packages
 
 ``` r
+
 library(tidyverse)
 library(arsenal)
 library(A4LEARN)
@@ -26,12 +27,13 @@ library(A4LEARN)
 
 Participants who re-screened may appear in the data twice with different
 BIDs each time. The
-[`A4LEARN::SUBJINFO`](https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.md)
+[`A4LEARN::SUBJINFO`](https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.html)
 derived dataset indicates which participants are re-screens, and how the
 re-screen BIDs are mapped to each other. The code below also accounts
 for this to set up the removal of duplicate appearances.
 
 ``` r
+
 rescreens <- A4LEARN::SUBJINFO %>%
   filter(!is.na(PREVBID)) %>%
   rename(BID1 = PREVBID, BID2 = BID) %>%
@@ -41,12 +43,13 @@ rescreens <- A4LEARN::SUBJINFO %>%
 **Gather Amyloid PET data**
 
 The Amyloid PET quantitative data
-([`A4LEARN::imaging_SUVR_amyloid`](https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.md))
+([`A4LEARN::imaging_SUVR_amyloid`](https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.html))
 is in long format with one row per region. We use
 [`tidyr::pivot_wider`](https://tidyr.tidyverse.org/reference/pivot_wider.html)
 to transform to wide format with one column per region.
 
 ``` r
+
 pet <- A4LEARN::imaging_SUVR_amyloid %>% 
   filter(brain_region != '' & VISCODE == 2) %>%
   pivot_wider(id_cols='BID', names_from=brain_region, values_from=suvr_cer) %>%
@@ -64,6 +67,7 @@ pet <- A4LEARN::imaging_SUVR_amyloid %>%
 **Baseline PACC**
 
 ``` r
+
 pacc_bl <- A4LEARN::PACC %>% 
   filter(VISCODE == 6) %>%
   select(BID, PACC.raw, MMSCORE, LDELTOTAL, DIGITTOTAL, FCTOTAL96)
@@ -72,6 +76,7 @@ pacc_bl <- A4LEARN::PACC %>%
 **Prepare data table**
 
 ``` r
+
 dd <- A4LEARN::SUBJINFO %>% select(BID, APOEGN) %>%
   left_join(A4LEARN::ptdemog, by='BID') %>%
   left_join(pet, by=c('SUBSTUDY','BID')) %>%
@@ -102,6 +107,7 @@ dd <- A4LEARN::SUBJINFO %>% select(BID, APOEGN) %>%
 ## Characteristics by screening amyloid PET status
 
 ``` r
+
 tableby(`A4 amyloid eligibility^b^` ~ .,
   data = dd %>%
     filter(!is.na(`Amyloid PET SUVr^b^`)) %>%
@@ -174,10 +180,12 @@ tableby(`A4 amyloid eligibility^b^` ~ .,
 
 Characteristics of all who underwent screening amyloid PET with
 comparison of Not Elevated (Aβ−) and Elevated Amyloid (Aβ+) groups
+{.table}
 
 ## Characteristics by A4 vs LEARN
 
 ``` r
+
 tableby(SUBSTUDY ~ .,
   data = dd %>%
     filter(!SUBSTUDY %in% 'SF') %>% # excluding screen-fails
@@ -245,6 +253,7 @@ tableby(SUBSTUDY ~ .,
 |    Range | 44.00 - 92.00 | 58.00 - 94.00 | 44.00 - 94.00 |  |
 
 Baseline characteristics of A4-randomized^(a) and LEARN-enrolled cohorts
+{.table}
 
 ^(a) A4-randomized cohort (n=1169) includes other participants in
 addition to the modified intention-to-treat population (mITT n=1147)
@@ -264,16 +273,14 @@ modifications made to the SUVR algorithm.
 ## References
 
 R Core Team. 2024. *R: A Language and Environment for Statistical
-Computing*. Vienna, Austria: R Foundation for Statistical Computing.
+Computing*. R Foundation for Statistical Computing.
 <https://www.R-project.org/>.
 
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
-Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
-Medicine* 389 (12): 1096–1107. <https://doi.org/10.1056/NEJMoa2305032>.
+Sperling, Reisa A, Michael C Donohue, Rema Raman, et al. 2020.
+“Association of Factors with Elevated Amyloid Burden in Clinically
+Normal Older Individuals.” *JAMA Neurology* 77 (6): 735–45.
+<https://doi.org/10.1001/jamaneurol.2020.0387>.
 
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Chung-Kai Sun, Roy
-Yaari, Karen Holdridge, Eric Siemers, Keith A Johnson, Paul S Aisen, and
-for the A4 Study Team. 2020. “Association of Factors with Elevated
-Amyloid Burden in Clinically Normal Older Individuals.” *JAMA Neurology*
-77 (6): 735–45. <https://doi.org/10.1001/jamaneurol.2020.0387>.
+Sperling, Reisa A, Michael C Donohue, Rema Raman, et al. 2023. “Trial of
+Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
+Medicine* 389 (12): 1096–107. <https://doi.org/10.1056/NEJMoa2305032>.

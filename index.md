@@ -38,6 +38,7 @@ The script to build this R package can be found in
 ## Load required R packages
 
 ``` r
+
 library(tidyverse)
 library(arsenal)
 library(kableExtra)
@@ -56,6 +57,7 @@ formatp <- function(x) case_when(
 ## Organize data
 
 ``` r
+
 # Outcomes collected at Visit 1
 V1OUTCOME <- A4LEARN::ADQS %>%
   dplyr::filter(VISITCD == "001") %>%
@@ -90,6 +92,7 @@ ADQS_PACC <- A4LEARN::ADQS %>%
 ## Baseline characteristics of the A4 trial
 
 ``` r
+
 A4labels <- list(TX = "Treatment group", AGEYR = "Age (y)", 
   EDCCNTU = "Education (y)", SUVRCER = "FBP SUVr", AMYLCENT = "FBP Centiloid", 
   LMIIa = "LM Delayed Recall",  MMSE = "MMSE", 
@@ -201,6 +204,7 @@ first structure, heterogeneous unstructured, did not converge. Here we
 fit the second, heterogeneous Toeplitz, which did converge.
 
 ``` r
+
 ggplot(ADQS_PACC, aes(x=ADURW, y=PACC, color=TX)) +
   geom_line(aes(group = BID), alpha=0.2) +
   theme(legend.position = "inside", legend.position.inside = c(0.2, 0.2)) +
@@ -214,6 +218,7 @@ group.](reference/figures/README-pacc-spaghetti-plot-1.png)
 Spaghetti plot of PACC data over time by treatment group.
 
 ``` r
+
 # Spline basis expansion functions
 # CAUTION: these function depend on the ADQS_PACC data frame object in the 
 # global environment. If ADQS_PACC changes, so do these funtions
@@ -240,6 +245,7 @@ pacc_fit <- gls(PACC ~
 ```
 
 ``` r
+
 ref_grid(pacc_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
@@ -260,9 +266,11 @@ ref_grid(pacc_fit,
 | ADURW240 - ADURW0 | Solanezumab |    -1.43 | 0.21 | 10791 |   -6.95 | p\<0.001 |
 
 Mean PACC change from baseline at week 240 by treatment group estimated
-from spline model.
+from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 contrast240 <- ref_grid(pacc_fit, 
   at = list(ADURW = 240, TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
@@ -289,9 +297,11 @@ contrast240 %>%
 | Solanezumab - Placebo | 240 | -0.3 | 0.26 | 10791 | -1.13 | -0.82 | 0.22 | 0.26 |
 
 Mean PACC group change from baseline at week 240 by treatment group
-estimated from spline model.
+estimated from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 ref_grid(pacc_fit, 
   at = list(ADURW = seq(0, 312, by=12), TX = levels(ADQS_PACC$TX)),
   vcov. = clubSandwich::vcovCR(pacc_fit, type = "CR2") %>% as.matrix(), 
@@ -318,6 +328,7 @@ Shaded region depicts 95% confidence intervals.
 ## Primary analyis of the CFI
 
 ``` r
+
 # Filter A4LEARN::ADQS for CFITOTAL collected in the blinded phases among mITT population
 ADQS_CFI <- A4LEARN::ADQS %>%
   dplyr::filter(MITTFL== 1) %>%
@@ -331,6 +342,7 @@ ADQS_CFI <- A4LEARN::ADQS %>%
 ```
 
 ``` r
+
 ggplot(ADQS_CFI, aes(x=ADURW, y=QSSTRESN, color=TX)) +
   geom_line(aes(group = BID), alpha=0.2) +
   theme(legend.position = "inside", legend.position.inside = c(0.2, 0.9)) +
@@ -351,6 +363,7 @@ Spaghetti plot of CFI data over time by treatment group.
 ```
 
 ``` r
+
 # Spline basis expansion functions
 # CAUTION: these function depend on the ADQS_CFI data frame object in the 
 # global environment. If ADQS_CFI changes, so do these funtions
@@ -377,6 +390,7 @@ cfi_fit <- gls(QSSTRESN ~
 ```
 
 ``` r
+
 ref_grid(cfi_fit,
   at = list(ADURW = c(0,240), TX = levels(ADQS_CFI$TX)),
   vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
@@ -397,9 +411,11 @@ ref_grid(cfi_fit,
 | ADURW240 - ADURW0 | Solanezumab |     2.09 | 0.21 | 1768.38 |    9.77 | p\<0.001 |
 
 Mean CFI change from baseline at week 240 by treatment group estimated
-from spline model.
+from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 contrast240 <- ref_grid(cfi_fit, 
   at = list(ADURW = 240, TX = levels(ADQS_CFI$TX)),
   vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
@@ -426,9 +442,11 @@ contrast240 %>%
 | Solanezumab - Placebo | 240 | 0.58 | 0.29 | 1769.54 | 2.04 | 0.02 | 1.14 | 0.04 |
 
 Mean CFI group change from baseline at week 240 by treatment group
-estimated from spline model.
+estimated from spline model. {.table .table
+style="margin-left: auto; margin-right: auto;"}
 
 ``` r
+
 ref_grid(cfi_fit, 
   at = list(ADURW = seq(0, 312, by=12), TX = levels(ADQS_CFI$TX)),
   vcov. = clubSandwich::vcovCR(cfi_fit, type = "CR2") %>% as.matrix(), 
