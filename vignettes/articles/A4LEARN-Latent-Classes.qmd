@@ -596,7 +596,7 @@ save(mt1, mt2, mt3, mt31, mt32, mt33,
   file='a4learn-pacc-lcmm-tau.rdata')
 ```
 
-```{r load-lcmm-results, include = FALSE}
+```{r load-lcmm-results, include = FALSE, eval = UPDATELCMM}
 load('a4learn-pacc-lcmm-base.rdata')
 
 summarytable(m1, m2, m3, m31, m32, m33,
@@ -626,9 +626,15 @@ plot(predictY(mt3, newdata = tau_model_data,
 m.best.tau <- permut(mt3, order=c(3,1,2))
 plot(predictY(m.best.tau, newdata = tau_model_data,
    var.time="ADURW"),legend.loc="right",bty="l")
+
+save(m.best.mri, m.best.tau, file = "a4learn-pacc-lcmm-best-models.rdata")
 ```
 
 ```{r attach-class-labels}
+load('a4learn-pacc-lcmm-base.rdata')
+load('a4learn-pacc-lcmm-tau.rdata')
+load("a4learn-pacc-lcmm-best-models.rdata")
+
 qs_pacc <- qs_pacc %>%
   left_join(m.best.mri$pprob %>% as_tibble() %>% select(id, class),
     by = 'id') %>%
@@ -1382,16 +1388,10 @@ pA + pB + pC + pD +
 ::: {#suppfig-tree-base}
 
 ```{r suppfig-tree-base} 
-if(file.exists('tree_cv_base_results.rdata')){
-  load('tree_cv_base_results.rdata')
-  knitr::include_graphics("suppfig-tree-base.png")
-}else{
-  tree_model <- list(frame = list(var = NA))
-  top_models <- tibble(mean = NA, std_err = NA)
-}
+knitr::include_graphics("suppfig-tree-base.png")
 ```
 
-**Classification tree analysis for latent class assignment from Base Model.** Panel (A) shows relative importance of baseline predictors for class separation. Panel (B) shows classification tree showing binary decision rules for assigning subjects to latent classes based on predictors. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with `{r} sum(tree_model$frame$var != '<leaf>')` splits (mean balanced accuracy = `{r} format(round(top_models[[1, 'mean']], 2), nsmall = 2)`, standard error `{r} round(top_models[[1, 'std_err']], 3)`)
+{{< include _suppfig-tree-base-cap.txt >}}
 
 :::
 
@@ -1412,7 +1412,7 @@ tableby(`Class (Tau PET)` ~ Group + AGEYR + Sex + Race + Ethnicity + EDCCNTU +
   kbl("pipe", booktabs = T)
 ```
 
-**Baseline Demographic, Clinical, and Biomarker Characteristics by Latent Class of Cognitive Decline with Tau PET.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: stable, slow decliner, and fast decliner. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander; CDR = Clinical Dementia Rating; Prog. = Progressor. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling. CDR Progressors were observed to have a CDR Global score greater than zero at two consecutive visits, or their last visit.
+**Baseline demographic, clinical, and biomarker characteristics by latent class of cognitive decline with tau PET.** Baseline characteristics of participants classified by the latent class mixed model (LCMM) of Preclinical Alzheimer Cognitive Composite (PACC) trajectories. Classes represent distinct longitudinal cognitive patterns: stable, slow decliner, and fast decliner. Continuous variables are presented as mean (SD); categorical variables as No. (%). **Abbreviations:** APOE = apolipoprotein E; PET = positron emission tomography; P-tau217 = plasma phosphorylated tau 217; SUVr = standardized uptake value ratio; U/mL = arbitrary units proportional to assay signal; Am. = American; PI = Pacific Islander; CDR = Clinical Dementia Rating; Prog. = Progressor. **Footnotes:** Amyloid PET and tau PET SUVr values represent mean cortical uptake relative to cerebellar reference region. Hippocampal atrophy are residualized for intracranial volume and z-scored. Education reported in years of formal schooling. CDR Progressors were observed to have a CDR Global score greater than zero at two consecutive visits, or their last visit.
 
 :::
 
@@ -1502,7 +1502,7 @@ p2 <- ggplot(pred, aes(x=Years, y=prediction_raw, group = `Class (Tau PET)`)) +
 p1 + p2 + plot_annotation(tag_levels = "A")
 ```
 
-**Individual and Mean PACC Trajectories by Latent Class Model with Tau PET.** Left panel (A): Spaghetti plot of individual participant trajectories on the Preclinical Alzheimer Cognitive Composite (PACC), colored by latent class derived from the latent class mixed model (LCMM) which included tau PET as a predictor. Each line represents one participant's observed scores over time. Right panel (B): Estimated mean PACC trajectories for each latent class, with shaded regions indicating 95% confidence intervals. Higher PACC scores indicate better cognitive performance. **Abbreviations:** PET = positron emission tomography.
+**Individual and mean PACC trajectories by latent class model with tau PET.** Left panel (A): Spaghetti plot of individual participant trajectories on the Preclinical Alzheimer Cognitive Composite (PACC), colored by latent class derived from the latent class mixed model (LCMM) which included tau PET as a predictor. Each line represents one participant's observed scores over time. Right panel (B): Estimated mean PACC trajectories for each latent class, with shaded regions indicating 95% confidence intervals. Higher PACC scores indicate better cognitive performance. **Abbreviations:** PET = positron emission tomography.
 
 :::
 
@@ -1543,7 +1543,7 @@ ggplot(posterior_probs, aes(x = `PACC class`,  y = value, color = `PACC class`))
   ylim(0,1)
 ```
 
-**Distribution of posterior class membership probabilities by assigned latent class, indicating model confidence in class assignment.** This plot shows the degree of certainty in class assignments, a good indicator of model reliability. Mean posterior probabilities were `{r}pp_sum[[1,2]]`, `{r}pp_sum[[2,2]]`, and `{r}pp_sum[[3,2]]` for non-, slow-, and fast decliners. With most participants having high posterior probabilities ($>0.8$) for their assigned class, class separation is strong and predictive discrimination is good.
+**Distribution of posterior class membership probabilities by assigned latent class, indicating model confidence in class assignment.** This plot shows the degree of certainty in class assignments, a good indicator of model reliability. Mean posterior probabilities were `r pp_sum[[1,2]]`, `r pp_sum[[2,2]]`, and `r pp_sum[[3,2]]` for non-, slow-, and fast decliners. With most participants having high posterior probabilities ($>0.8$) for their assigned class, class separation is strong and predictive discrimination is good.
 
 :::
 
@@ -1783,7 +1783,7 @@ ggplot(pr_plot_data,
   coord_equal()
 ```
 
-**Cross-validated Precision-Recall Curves for Latent Class Membership Model Without Tau PET.** Precision-recall curves summarizing 10-fold cross-validated classification performance of the latent class membership submodel based on baseline demographics and biomarkers, excluding tau PET. Curves depict the ability to distinguish the given class from the other two. The area under the precision-recall curve (AUPRC) quantifies overall predictive performance, emphasizing recall (or sensitivity, TP/(TP+FN)) and precision (TP/(TP+FP)) for less prevalent classes. **Abbreviations:** AUPRC = area under the precision-recall curve; TP = true positive rate; FN = false negative rate; FP = false positive rate.
+**Cross-validated precision-recall curves for latent class membership model without tau PET.** Precision-recall curves summarizing 10-fold cross-validated classification performance of the latent class membership submodel based on baseline demographics and biomarkers, excluding tau PET. Curves depict the ability to distinguish the given class from the other two. The area under the precision-recall curve (AUPRC) quantifies overall predictive performance, emphasizing recall (or sensitivity, TP/(TP+FN)) and precision (TP/(TP+FP)) for less prevalent classes. **Abbreviations:** AUPRC = area under the precision-recall curve; TP = true positive rate; FN = false negative rate; FP = false positive rate.
 
 :::
 
@@ -2182,7 +2182,7 @@ ggplot(pr_plot_data,
   coord_equal()
 ```
 
-**Cross-validated Precision-Recall Curves for Latent Class Membership Model With Tau PET.** Precision-recall curves summarizing 10-fold cross-validated classification performance of the latent class membership submodel based on baseline demographics and biomarkers, excluding tau PET. Curves depict the ability to distinguish the given class from the other two. The area under the precision-recall curve (AUPRC) quantifies overall predictive performance, emphasizing recall (or sensitivity, TP/(TP+FN)) and precision (TP/(TP+FP)) for less prevalent classes. **Abbreviations:** AUPRC = area under the precision-recall curve; TP = true positive rate; FN = false negative rate; FP = false positive rate.
+**Cross-validated precision-recall curves for latent class membership model with tau PET.** Precision-recall curves summarizing 10-fold cross-validated classification performance of the latent class membership submodel based on baseline demographics and biomarkers, excluding tau PET. Curves depict the ability to distinguish the given class from the other two. The area under the precision-recall curve (AUPRC) quantifies overall predictive performance, emphasizing recall (or sensitivity, TP/(TP+FN)) and precision (TP/(TP+FP)) for less prevalent classes. **Abbreviations:** AUPRC = area under the precision-recall curve; TP = true positive rate; FN = false negative rate; FP = false positive rate.
 :::
 
 \clearpage
@@ -2435,8 +2435,13 @@ save(tune_results, top_models, best_params, final_workflow, tree_model,
   file = 'tree_cv_base_results.rdata')
 ```
 
-```{r rpart_acc}
+```{r suppfig-tree-base-cap}
 load('tree_cv_base_results.rdata')
+cat("**Classification tree analysis for latent class assignment from Base Model.** Panel (A) shows relative importance of baseline predictors for class separation. Panel (B) shows classification tree showing binary decision rules for assigning subjects to latent classes based on predictors. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with ", sum(tree_model$frame$var != '<leaf>'), " splits (mean balanced accuracy ", format(round(top_models[[1, 'mean']], 2), nsmall = 2), ", standard error ", round(top_models[[1, 'std_err']], 3), ").", sep = '',
+  file = "_suppfig-tree-base-cap.txt")
+```
+
+```{r rpart_acc}
 tree_predictions <- predict(tree_model, type = "class")
 tree_probs <- predict(tree_model, type = "prob")
 
@@ -2648,11 +2653,12 @@ print(conf_matrix$table)
 
 print(conf_matrix$byClass[, c("Sensitivity", "Specificity", "Pos Pred Value")])
 
-tree_tau_pet_fig_caption <- paste0("**Classification tree analysis for latent class assignment from Tau PET Model.** (A) Relative importance of baseline characteristics for class separation. (B) Classification tree showing binary decision rules for assigning subjects to latent classes based on baseline characteristics. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with ",
+tree_tau_pet_fig_cap <- cat("**Classification tree analysis for latent class assignment from Tau PET Model.** (A) Relative importance of baseline characteristics for class separation. (B) Classification tree showing binary decision rules for assigning subjects to latent classes based on baseline characteristics. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with ",
 sum(tree_model$frame$var != '<leaf>'), " splits (mean balanced accuracy = ",
 format(round(top_models[[1, 'mean']], 2), nsmall = 2), 
 ", standard error ", 
-round(top_models[[1, 'std_err']], 3), ").")
+round(top_models[[1, 'std_err']], 3), ").",
+  file = "_suppfig-tree-tau-pet-cap.txt")
 ```
 
 ::: {#suppfig-tree-tau-pet}
@@ -2714,7 +2720,7 @@ rpart.plot(
 )
 ```
 
-**Classification tree analysis for latent class assignment from Tau PET Model.** (A) Relative importance of baseline characteristics for class separation. (B) Classification tree showing binary decision rules for assigning subjects to latent classes based on baseline characteristics. Terminal nodes show predicted class, number of subjects, and percentage of total sample. The optimal tree complexity was determined using 10-fold cross-validation with the 1-standard error rule, resulting in a tree with 6 splits (mean balanced accuracy = 0.70, standard error 0.011).
+{{< include _suppfig-tree-tau-pet-cap.txt >}}
 
 :::
 
