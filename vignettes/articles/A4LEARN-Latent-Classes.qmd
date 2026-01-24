@@ -38,15 +38,13 @@ affiliations:
     city: Boston
     state: MA
 abstract: |
-  **Background:** Alzheimer's disease biomarkers in cognitively unimpaired older adults are associated with later cognitive and clinical decline, yet substantial heterogeneity in the timing and rate of decline remains insufficiently characterized. This study aims to identify subgroups of cognitive decline among biomarker-defined cognitively unimpaired adults and determine baseline predictors of heterogeneity in preclinical Alzheimer's disease progression.
-
-  **Methods:** Longitudinal data was analyzed from the Anti-Amyloid Treatment in Asymptomatic Alzheimer's Disease (A4) Study, which enrolled amyloid-positive participants, and the parallel LEARN Study, which enrolled amyloid-negative individuals meeting all other A4 criteria. Participants completed baseline amyloid PET, plasma P-tau217, structural MRI, and serial cognitive assessments. Latent Class Mixed-Effects Models (LCMMs) were used to identify distinct cognitive trajectory classes. Associations between class membership and demographic, clinical, and biomarker characteristics were evaluated. The primary outcome was longitudinal change in the Preclinical Alzheimer Cognitive Composite (PACC).
-
-  **Findings:** Three cognitive trajectory classes were identified: stable, slow decliners, and fast decliners. Higher plasma P-tau217, smaller hippocampal volume, and elevated tau PET were associated with greater odds of belonging to declining classes. Among amyloid-positive individuals, approximately 70% were classified as stable over the observed follow-up interval. These stable individuals likely contribute little to the power of preclincal Alzheimer's trials.
-
-  **Interpretation:** Latent class modeling reveals marked heterogeneity in preclinical cognitive trajectories, even among individuals with biomarker evidence of Alzheimer pathology. The high proportion of stable individuals, though consistent with the long presymptomatic interval, has important implications for prevention trial design, particularly regarding inclusion criteria, outcome measures, and treatment effect assumptions. Identifying subgroups of decline may improve prognostic modeling and guide enrichment strategies for precision secondary prevention trials.
+  **Introduction:** Biomarkers identify Alzheimer disease pathology in cognitively unimpaired adults, but the timing and rate of cognitive decline vary widely. This study aimed to identify subgroups of cognitive decline and baseline predictors of heterogeneity in preclinical progression.
   
-  **Funding:** US National Institutes of Health, Eli Lilly, Alzheimer's Association, Foundation for the National Institutes of Health, GHR Foundation, Davis Alzheimer Prevention Program, Yugilbar Foundation, Avid Radiopharmaceuticals, Cogstate, Albert Einstein College of Medicine, Foundation for Neurologic Diseases, and Epstein Family Foundation.
+  **Methods:** Data were drawn from the A4 Study, which enrolled amyloid positive participants, and the LEARN Study, which enrolled amyloid negative individuals. Latent class mixed effects models identified cognitive trajectory classes. Associations between class membership and demographic, clinical, and biomarker variables were evaluated. The primary outcome was change in the Preclinical Alzheimer Cognitive Composite.
+
+  **Results:** Three trajectory classes were identified: stable, slow decliners, and fast decliners. Higher P-tau217, smaller hippocampal volume, and elevated tau PET were associated with declining classes. About 70 percent of amyloid positive individuals were stable.
+
+  **Discussion:** Latent class modeling reveals substantial heterogeneity in preclinical trajectories with important implications for prevention trial design.
 keywords: 
   - Latent Class Mixed Model
   - Preclinical Alzheimer's Disease
@@ -56,6 +54,10 @@ format:
     code-fold: true
     toc: true
   pdf:
+    documentclass: article
+    geometry:
+      - margin=1in
+  latex:
     documentclass: article
     geometry:
       - margin=1in
@@ -83,17 +85,6 @@ crossref:
       space-before-numbering: false
       latex-list-of-description: Supplementary Table
 ---
-
-# Research in Context
-
-**Evidence before this study**
-We searched PubMed, MEDLINE, and Google Scholar for articles published between January 1, 2000, and December 31, 2025, using the terms “preclinical Alzheimer's disease,” “cognitive decline,” and “latent class.” Previous studies have identified patterns of cognitive decline in aging populations, but there is limited understanding of the predictive value of recently developed biomarkers of Alzheimer's pathology, and we found no studies examining the impact on secondary prevention trial design.
-
-**Added value of this study**
-This study is the first to apply latent class analysis to data from the A4 and LEARN studies, identifying distinct classes of cognitive decline in individuals at risk for Alzheimer's disease. Our findings reveal significant heterogeneity in cognitive trajectories, suggesting that preclinical Alzheimer's disease is not a uniform process. These insights could inform personalized intervention strategies and improve the design of future clinical trials.
-
-**Implications of all the available evidence**
-Our results underscore the importance of considering individual variability in cognitive decline when developing and testing interventions for preclinical Alzheimer's disease. Recognizing the diverse patterns of cognitive decline can enhance the precision of clinical trial designs and lead to more effective, tailored therapeutic approaches. Future research should focus on validating these findings in larger, more diverse cohorts and exploring the underlying mechanisms driving the observed heterogeneity.
 
 # Introduction
 
@@ -1097,7 +1088,7 @@ ggplot(em_all, aes(x=Years, y=emmean)) +
     legend.position.inside = c(0.2, 0.2))
 ```
 
-Latent class-specific power analyses revealed marked differences in cognitive trajectories and variability across classes (see @supptbl-clda-power). The amyloid-negative stable group had the highest mean (SD) PACC scores over time: +1.14 (2.11) at 2 years and +1.20 (2.25) at 4 years. We considered this the maximum possible treatment benefit. The stable amyloid-positive group had means of +0.88 (2.19) at 2 years and +0.96 (2.34) at 4 years. With 500 participants per arm, a trial in amyloid-positive stable individuals would have only 44% power at 2 years and 30% at 4 years to detect even 100% of the maximum benefit (0.26 PACC points at 2 years and 0.24 at 4 years). In contrast, a trial in amyloid-positive declining individuals would have 93% power at 2 years and 98% at 4 years to detect just 20% of the maximum benefit (0.79 PACC points at 2 years and 1.40 at 4 years).
+Latent class-specific power analyses revealed marked differences in cognitive trajectories and variability across classes (see @supptbl-clda-power). The amyloid-negative stable group had the highest mean (SD) PACC scores over time: +1.14 (2.11) at 2 years and +1.20 (2.25) at 4 years. We considered this the maximum possible treatment benefit (see @fig-clda-power). The stable amyloid-positive group had means of +0.88 (2.19) at 2 years and +0.96 (2.34) at 4 years. With 500 participants per arm, a trial in amyloid-positive stable individuals would have only 44% power at 2 years and 30% at 4 years to detect even 100% of the maximum benefit (0.26 PACC points at 2 years and 0.24 at 4 years). In contrast, a trial in amyloid-positive declining individuals would have 93% power at 2 years and 98% at 4 years to detect just 20% of the maximum benefit (0.79 PACC points at 2 years and 1.40 at 4 years).
 
 These findings suggest that stable amyloid-positive individuals, although they may have the greatest potential long-term benefit from a disease-modifying drug, contribute little to the statistical power of a preclinical Alzheimer's disease trial to detect an effect on the PACC. Instead, power is primarily driven by declining individuals, who represent a minority of the amyloid-positive population. Enrolling large numbers of stable individuals may dilute the overall treatment effect and reduce the trial's ability to detect meaningful cognitive benefits. These results underscore the need to account for latent classes of decline when designing preclinical Alzheimer's disease trials.
 
@@ -1252,7 +1243,7 @@ The authors would like to thank the A4 and LEARN Study Teams and site principal 
 
 **Funding:** The A4 and LEARN Studies were supported by a public-private-philanthropic partnership which included funding from the National Institute of Aging of the National Institutes of Health (R01 AG063689, U19AG010483 and U24AG057437), Eli Lilly (also the supplier of active medication and placebo), the Alzheimer's Association, the Accelerating Medicines Partnership through the Foundation for the National Institutes of Health, the GHR Foundation, the Davis Alzheimer Prevention Program, the Yugilbar Foundation, an anonymous foundation, and additional private donors to Brigham and Women's Hospital, with in-kind support from Avid Radiopharmaceuticals, Cogstate, Albert Einstein College of Medicine and the Foundation for Neurologic Diseases. Other support was provided by grants from the Epstein Family Foundation.
 
-**Conflict of Interest Disclosures:** Dr Aisen reported personal fees from Merck, Biogen, Roche, AbbVie, ImmunoBrain Checkpoint, Bristol Myers Squibb, and Neurimmune and grants from Eisai outside the submitted work. Dr Sperling reported consulting fees from AbbVie, AC Immune, Acumen, Alector, Apellis, Biohaven, Bristol Myers Squibb, Genentech, Janssen, Nervgen, Oligomerixg, Prothena, Roche, Vigil Neuroscience, Ionis, and Vaxxinity outside the submitted work. Dr Donohue reported personal fees from Roche (consultant) and Janssen Pharmaceuticals (spouse is full-time employee) outside the submitted work. Dr Raman reported grants from American Heart Association, Gates Ventures, Eisai, Alzheimer's Association. No other disclosures were reported.
+**Conflict of Interest Disclosures:** Dr Aisen reported personal fees from Merck, Biogen, Roche, AbbVie, ImmunoBrain Checkpoint, Bristol Myers Squibb, and Neurimmune and grants from Eisai outside the submitted work. Dr Sperling reported consulting fees from AbbVie, AC Immune, Acumen, Alector, Apellis, Biohaven, Bristol Myers Squibb, Genentech, Janssen, Nervgen, Oligomerixg, Prothena, Roche, Vigil Neuroscience, Ionis, and Vaxxinity outside the submitted work. Dr Donohue reported personal fees from Roche (consultant) and Johnson & Johnson (spouse is full-time employee) outside the submitted work. Dr Raman reported grants from American Heart Association, Gates Ventures, Eisai, Alzheimer's Association. No other disclosures were reported.
 
 # Supplementary Material
 
