@@ -215,9 +215,9 @@ scale_fill_jama <- function(...) {
 #   scale_color_jama()
 ```
 
-Elevated levels of brain amyloid in cognitively unimpaired older adults are associated with subsequent cognitive decline and increased risk of clinical progression.[@petersen2016association; @Sperling2023; @donohue2017association; @parent2023longitudinal; @Sperling2024] The Anti-Amyloid Treatment in Asymptomatic Alzheimer's Disease (A4) Study, a randomized trial of solanezumab in cognitively normal individuals with elevated amyloid PET, demonstrated group-level decline on a cognitive composite but no treatment benefit.[@Sperling2023] Follow-up analyses from A4 and its companion observational study of amyloid-negative individuals, the Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN), further confirmed that higher baseline amyloid PET and plasma phosphorylated tau (P‐tau217) levels are associated with faster cognitive decline and increased functional progression.[@Sperling2024]
+Elevated levels of brain amyloid in cognitively unimpaired older adults are associated with subsequent cognitive decline and increased risk of clinical progression.[@petersen2016association; @Sperling2023; @donohue2017association; @parent2023longitudinal; @Sperling2024] The Anti-Amyloid Treatment in Asymptomatic Alzheimer's Disease (A4) Study, a randomized trial of solanezumab in cognitively unimpaired individuals with elevated amyloid PET, demonstrated group-level decline on a cognitive composite but no treatment benefit.[@Sperling2023] Follow-up analyses from A4 and its companion observational study of amyloid-negative individuals, the Longitudinal Evaluation of Amyloid Risk and Neurodegeneration (LEARN), further confirmed that higher baseline amyloid PET and plasma phosphorylated tau (P‐tau217) levels are associated with faster cognitive decline and increased functional progression.[@Sperling2024]
 
-Despite these consistent group-level associations, cognitive trajectories among amyloid-positive individuals remain highly variable. Conventional longitudinal models assume that individual cognitive trajectories are randomly scattered about a single mean trend for given covariate values, potentially obscuring meaningful heterogeneity. To better characterize this heterogeneity, we applied a Latent Class Mixed-Effects Model (LCMM) [@proust2017estimation] to A4 and LEARN data. This approach identifies unobserved subgroups of participants with distinct longitudinal patterns of change and allows for evaluation of baseline biomarkers and demographic factors as predictors of class membership.
+Despite these consistent group-level associations, cognitive trajectories among amyloid-positive cognitively unimpaired individuals remain highly variable. Conventional longitudinal models assume that individual cognitive trajectories are randomly scattered about a single mean trend for given covariate values, potentially obscuring meaningful heterogeneity. To better characterize this heterogeneity, we applied a Latent Class Mixed-Effects Model (LCMM) [@proust2017estimation] to A4 and LEARN data. This approach identifies unobserved subgroups of participants with distinct longitudinal patterns of change and allows for evaluation of baseline biomarkers and demographic factors as predictors of class membership.
 
 Latent class growth model approaches have been applied several times in the literature to identify distinct classes of late-life cognitive trajectories. A systematic review by Wu et al.[@wu2020distinct] identified 37 investigations and these consistently identified three classes: stable, slow decline, and fast decline. However, many of these papers lacked more recently developed biomarkers of Alzheimer's pathology. One exception is the study by Teipel et al.[@teipel2018effect] included amyloid PET as a predictor in a cohort of $N=265$ individuals followed for two years. Villeneuve et al.[@VILLENEUVE2019553] identified latent classes of Amsterdam Instrumental-Activities-of-Daily-Living questionnaire using amyloid PET and FDG PET in N=289 participants over three years. Here, we consider latent classes of cognition predicted by APOE genotype, amyloid PET, P‐tau217, hippocampal atrophy, and tau PET in a cohort of $N=1,629$ individuals followed for up to seven years in A4 and LEARN. Furthermore, we explore practical implications for classification algorithms and clinical trials.
 
@@ -451,9 +451,11 @@ In a secondary analysis, we fit the model to the subset of participants with bas
 
 To assess the reliability and potential predictive utility of the latent class membership model, we examined the posterior probabilities of class assignment for each participant. High posterior probabilities indicate greater certainty in latent class classification. We summarized these distributions across classes and computed the mean posterior probability within each group as an index of classification confidence. 
 
-### Power Analysis for Latent Class-Specific Trials
+### Power Analysis Stratified by Latent Class
 
-To explore the impact of heterogeneity on clinical trials in preclinical Alzheimer's disease, we conducted power calculations to estimate power for hypothetical trials targeting latent classes of cognitive decline among amyloid-positive participants. Effect size estimates were derived from longitudinal models using natural cubic splines applied to Preclinical Alzheimer Cognitive Composite (PACC) scores.[@donohue2023natural] Separate models were fit for (a) the stable class, (b) the decliner classes, and (c) a reference group of amyloid-negative stable individuals. The models included fixed effects for time (two degrees of freedom), APOE $\epsilon 4$ carrier status, sex, age, education, plasma P-tau217, and florbetapir PET. Residuals were assumed to be normally distributed with an unstructured covariance matrix.
+The design of preclinical Alzheimer’s clinical trials have typically assumed a homogeneous population. To explore the impact of heterogeneity on clinical trials in preclinical Alzheimer’s disease, we conducted power calculations to estimate power for trials used pilot parameters from different latent classes of cognitive decline among amyloid-positive participants. We emphasize this analysis is not intended to support class‑specific or stratified trials. Instead, the intent is to clarify how latent trajectory classes, if present in a trial population, may impact statistical power, sample‑size requirements, and interpretation of treatment effects. 
+
+Effect size estimates were derived from longitudinal models using natural cubic splines applied to Preclinical Alzheimer Cognitive Composite (PACC) scores.[@donohue2023natural] Separate models were fit for (a) the stable class, (b) the decliner classes, and (c) a reference group of amyloid-negative stable individuals. The models included fixed effects for time (two degrees of freedom), APOE $\epsilon 4$ carrier status, sex, age, education, plasma P-tau217, and florbetapir PET. Residuals were assumed to be normally distributed with an unstructured covariance matrix.
 
 For each group, we extracted mean PACC and residual variance from the model at two time points: 2 years and 4 years, representing potential trial durations. These estimates were used to compute the power to detect treatment effects. Power was approximated using two-sample t-test calculations, assuming 500 participants per arm, attrition rates of 10% at 2 years and 20% at 4 years, and a two-sided alpha of 0.05.
 
@@ -999,16 +1001,16 @@ The three classes are significantly separated starting immediately at baseline. 
 
 Clinical relevance of the PACC latent classes was supported by differences in functional outcomes. The proportion of participants who were observed to progress on the Clinical Dementia Rating (CDR) Global score increased monotonically across latent classes, with the lowest rate among stable individuals (22.8%) and progressively higher rates among slow- (71.9%) and fast-decliners (88.2%) (@tbl-baseline-base-characteristics). However, discordance between PACC latent class labels and observed CDR progression is common. While CDR Global scores greater than zero are possible without an indication of memory issues, this explains a very little of the discordance. Among CDR progressors, the proportion of individuals with a CDR Memory Box score of zero was 8.4% of PACC stable individuals, 5.5% of slow decliners, and 4.8% of fast decliners.
 
-The distribution of continuous baseline variables by latent class is shown in @fig-sina-baseline and @suppfig-lcmm-coefs summarizes standardized coefficients and 95% CIs from both components of the LCMM. @suppfig-lcmm-coefs Panels A and C depicts odds ratios (ORs) for the class membership submodels from the base model and tau PET model. Continuous predictors are standardized so that ORs reflect the change in odds of belonging to the fast- or slow declining class compared with the stable class per one SD increase in each continuous baseline predictor.
+The distribution of continuous baseline variables by latent class is shown in @fig-sina-baseline. @suppfig-lcmm-coefs summarizes standardized coefficients and 95% CIs from both components of the LCMM, and @supptbl-lcmm-raw-coefs shows these coefficients on the original scale of the covariates. @suppfig-lcmm-coefs Panels A and C depicts odds ratios (ORs) for the class membership submodels from the base model and tau PET model. Continuous predictors are standardized so that ORs reflect the change in odds of belonging to the fast- or slow declining class compared with the stable class per one SD increase in each continuous baseline predictor.
 
-From the base model (Panel A), higher plasma P-tau217 levels (OR 3.2, 95% CI 2.4 to 4.1), elevated amyloid PET centiloid (OR 1.4, 95% CI 1.0 to 1.9), and greater hippocampal atrophy scores (OR 3.9, 95% CI 2.7 to 5.6) were each associated with increased odds of belonging to faster-declining classes. Interestingly, P-tau217 and hippocampal atrophy had numerically stronger effects than amyloid PET. Also of interest, fast decliners were numerically younger (mean 73.1 years, SD 4.7), on average, than slow decliners (mean 74.1 years, SD 5.2) and increased age was associated with membership in the slow declining group (OR 1.4, 95% CI 1.1 to 1.7) but not the fast declining group (OR 0.93, 95% CI 0.69 to 1.2). Tau PET model results are largely similar, but confidence intervals are wider, likely due to smaller available sample ($N=427$ vs $N=1,629$). Increased tau PET was associated with increased odds of slow- (OR = 1.8, 95% CI 1.2 to 2.8) and fast-declining groups (OR = 3.6, 95% CI 2.1 to 6.1).
+From the base model (Panel A), higher plasma P-tau217 levels (OR 3.2, 95% CI 2.4 to 4.1), elevated amyloid PET centiloid (OR 1.4, 95% CI 1.0 to 1.9), and greater hippocampal atrophy scores (OR 3.9, 95% CI 2.7 to 5.6) were each associated with increased odds of belonging to faster-declining classes. Interestingly, P-tau217 and hippocampal atrophy had numerically stronger effects than amyloid PET. Also of interest, fast decliners were numerically younger (mean 73.1 years, SD 4.7), on average, than slow decliners (mean 74.1 years, SD 5.2) and increased age was associated with membership in the slow declining group (OR 1.4, 95% CI 1.1 to 1.7) but not the fast declining group (OR 0.93, 95% CI 0.69 to 1.2). A possible explanation for the non‑monotonic relationship between age and latent class severity (slow decliners are oldest followed by fast decliners, then stable) is that age exerts two opposing influences in this cohort. On one hand, older age is associated with a greater likelihood of belonging to the slow‑declining class, consistent with the well‑established role of age as a risk factor for cognitive decline. On the other hand, some comparatively younger amyloid‑positive individuals may have more aggressive or rapidly progressive disease biology, which attenuates the age association with membership in the fast‑declining class. In addition, survivor bias may contribute to the slow‑declining class having the highest mean age, as individuals with more aggressive forms of preclinical AD are less likely to be represented at older ages. Tau PET model results are largely similar, but confidence intervals are wider, likely due to smaller available sample ($N=427$ vs $N=1,629$). Increased tau PET was associated with increased odds of slow- (OR = 1.8, 95% CI 1.2 to 2.8) and fast-declining groups (OR = 3.6, 95% CI 2.1 to 6.1).
 
 @suppfig-lcmm-coefs Panels B and D presents standardized coefficients from the longitudinal submodels, representing associations between each covariate and the PACC outcome. Higher PACC scores correspond to better cognitive performance and continuous variables are standardized and oriented so that positive coefficients indicate better performance. We see that females had increased risk of being fast decliners (OR 2.5, 95% CI 1.5 to 4.4), but had better PACC performance for a given class membership (0.30 PACC points, 95% CI 0.24 to 0.35). APOE $\epsilon 4$ carriage was associated with increased risk of both slow (OR 1.9, 95% CI 1.3 to 2.8) and fast (OR 2.9, 95% CI 1.6 to 5.3) declining class versus stable class, but negligible remaining effect on PACC. Education had no effect on class membership, but was associated with better PACC performance (0.12 PACC points per SD of education, 95% CI 0.095 to 0.15).
 
-## Power Analysis for Latent Class-Specific Trials
+## Power Analysis Stratified by Latent Class
 
 ```{r fig-clda-power, fig.width = 7, fig.height = 7/1.6}
-#| fig-cap: "**Trends for latent class-specific clinical trials.** Mean trajectories were estimated from longitudinal models using natural cubic splines (two degrees of freedom) applied to Preclinical Alzheimer Cognitive Composite (PACC) scores for (a) two decliner classes, (b) amyloid-positive stable participants, and (c) a reference group of amyloid-negative stable individuals representing the maximum possible treatment benefit. For decliners, power calculations assume a treatment effect equal to 20% of the maximum possible benefit at 2 and 4 years. For amyloid-positive stable participants, power calculations assume a treatment effect equal to 100% of the maximum possible benefit at 2 and 4 years. Dashed lines represent projected mean PACC scores under treatment; crosses indicate time points used for power calculations."
+#| fig-cap: "**Trends for power analysis stratified by latent class.** Mean trajectories were estimated from longitudinal models using natural cubic splines (two degrees of freedom) applied to Preclinical Alzheimer Cognitive Composite (PACC) scores for (a) two decliner classes, (b) amyloid-positive stable participants, and (c) a reference group of amyloid-negative stable individuals representing the maximum possible treatment benefit. For decliners, power calculations assume a treatment effect equal to 20% of the maximum possible benefit at 2 and 4 years. For amyloid-positive stable participants, power calculations assume a treatment effect equal to 100% of the maximum possible benefit at 2 and 4 years. Dashed lines represent projected mean PACC scores under treatment; crosses indicate time points used for power calculations."
 
 clda_data <- qs_pacc %>% 
     filter(EPOCH %in% c("BLINDED TREATMENT", "Analysis visit <= 66") | 
@@ -1088,9 +1090,9 @@ ggplot(em_all, aes(x=Years, y=emmean)) +
     legend.position.inside = c(0.2, 0.2))
 ```
 
-Latent class-specific power analyses revealed marked differences in cognitive trajectories and variability across classes (see @supptbl-clda-power). The amyloid-negative stable group had the highest mean (SD) PACC scores over time: +1.14 (2.11) at 2 years and +1.20 (2.25) at 4 years. We considered this the maximum possible treatment benefit (see @fig-clda-power). The stable amyloid-positive group had means of +0.88 (2.19) at 2 years and +0.96 (2.34) at 4 years. With 500 participants per arm, a trial in amyloid-positive stable individuals would have only 44% power at 2 years and 30% at 4 years to detect even 100% of the maximum benefit (0.26 PACC points at 2 years and 0.24 at 4 years). In contrast, a trial in amyloid-positive declining individuals would have 93% power at 2 years and 98% at 4 years to detect just 20% of the maximum benefit (0.79 PACC points at 2 years and 1.40 at 4 years).
+Power analyses stratified by latent class revealed marked differences in cognitive trajectories and variability across classes (see @supptbl-clda-power). The amyloid-negative stable group had the highest mean (SD) PACC scores over time: +1.14 (2.11) at 2 years and +1.20 (2.25) at 4 years. We considered this the maximum possible treatment benefit (see @fig-clda-power). The stable amyloid-positive group had means of +0.88 (2.19) at 2 years and +0.96 (2.34) at 4 years. With 500 participants per arm, a trial in amyloid-positive stable individuals would have only 44% power at 2 years and 30% at 4 years to detect even 100% of the maximum benefit (0.26 PACC points at 2 years and 0.24 at 4 years). In contrast, a trial in amyloid-positive declining individuals would have 93% power at 2 years and 98% at 4 years to detect just 20% of the maximum benefit (0.79 PACC points at 2 years and 1.40 at 4 years).
 
-These findings suggest that stable amyloid-positive individuals, although they may have the greatest potential long-term benefit from a disease-modifying drug, contribute little to the statistical power of a preclinical Alzheimer's disease trial to detect an effect on the PACC. Instead, power is primarily driven by declining individuals, who represent a minority of the amyloid-positive population. Enrolling large numbers of stable individuals may dilute the overall treatment effect and reduce the trial's ability to detect meaningful cognitive benefits. These results underscore the need to account for latent classes of decline when designing preclinical Alzheimer's disease trials.
+These findings suggest that stable amyloid-positive individuals, although they may have the greatest potential long-term benefit from a disease-modifying drug, contribute little to the statistical power of a preclinical Alzheimer's disease trial to detect an effect on the PACC. Instead, power is primarily driven by declining individuals, who represent a minority of the amyloid-positive population. Enrolling large numbers of stable individuals may dilute the overall treatment effect and reduce the trial's ability to detect meaningful cognitive benefits. These results underscore the need to account for latent classes of decline when designing preclinical Alzheimer's disease trials. Again, the goal of this analysis was not to suggest conducting trials in homogeneous populations. Rather, we aimed to highlight the complexity and potential inefficiency introduced when multiple latent classes with distinct trajectories are present within a trial cohort.
 
 ## Predictive Performance and Cross-Validation
 
@@ -1098,7 +1100,9 @@ The overall cross-validated accuracy was 0.80 (95% CI 0.79 to 0.82) for the base
 
 ## Post-hoc Regression Tree
 
-The optimally-tuned classification tree without tau PET achieved a mean balanced accuracy of 0.63 (standard error 0.007) in 10-fold cross-validation (@suppfig-tree-base). Variable importance analysis identified baseline P-tau217 (56.2%), baseline PACC (15.5%), amyloid PET (13.1%), and hippocampal atrophy (10.0%) as most important; though amyloid PET was not included in the tree, likely due to its correlation with P-tau217. The tree structure revealed a hierarchical decision process with participants with baseline P-tau217 \< 0.29 were classified as stable individuals, though this miss-classifies $N=155$ decliners. Those with P-tau217 $\geq$ 0.29 are further parsed by hippocampal atrophy, PACC, and P-tau217. Only one leaf contains a majority of fast decliners, and it contains only 1% of the initial sample. While the tree demonstrates the relative importance and utility of the predictors, it also demonstrates a high degree of miss-classification (31.4%). Cross-validated balanced accuracy is improved by the addition of tau PET (mean 0.69, standard error 0.02; @suppfig-tree-tau-pet). Tau PET has the second largest variable importance (22.5%), between P-tau217 (29.8%) and hippocampal atrophy (17.4%). The tree with tau PET results in a larger proportion of leaves which are majority fast decliners (8.5% versus 1% without tau PET).
+The optimally-tuned classification tree without tau PET achieved a mean balanced accuracy of 0.63 (standard error 0.007) in 10-fold cross-validation (@suppfig-tree-base). Variable importance analysis identified baseline P-tau217 (56.2%), baseline PACC (15.5%), amyloid PET (13.1%), and hippocampal atrophy (10.0%) as most important; though amyloid PET was not included in the tree, likely due to its correlation with P-tau217. The tree structure revealed a hierarchical decision process with participants with baseline P-tau217 \< 0.29 were classified as stable individuals, though this miss-classifies $N=155$ decliners. Those with P-tau217 $\geq$ 0.29 are further parsed by hippocampal atrophy, PACC, and P-tau217. Only one leaf contains a majority of fast decliners, and it contains only 1% of the initial sample. Note that although P‑tau217 was selected instead of amyloid PET in the regression tree, amyloid PET is still recognized as an important predictor. This occurs because the tree algorithm selects the single best classifier among correlated variables (such as P‑tau217 and amyloid PET). Methods that aggregate multiple trees (e.g., random forests) could retain both biomarkers and leverage any independent predictive value each contributes.
+
+While the tree demonstrates the relative importance and utility of the predictors, it also demonstrates a high degree of miss-classification (31.4%). Cross-validated balanced accuracy is improved by the addition of tau PET (mean 0.69, standard error 0.02; @suppfig-tree-tau-pet). Tau PET has the second largest variable importance (22.5%), between P-tau217 (29.8%) and hippocampal atrophy (17.4%). The tree with tau PET results in a larger proportion of leaves which are majority fast decliners (8.5% versus 1% without tau PET).
 
 ## Longitudinal Biomarker Progression Across Latent Classes
 
@@ -1373,6 +1377,99 @@ pA + pB + pC + pD +
 ```
 
 **Association of baseline predictors with latent class membership and longitudinal cognitive decline in models with and without tau PET.** Panels A and B display results from the latent class mixed model (LCMM) excluding tau PET; panels C and D show corresponding results from the model including tau PET as an additional predictor. (A, C) Odds ratios (95% CIs) from the LCMM class-membership submodel represent the relative likelihood of belonging to the slow- or fast-declining classes relative to stable class. (B, D) Standardized coefficients (95% CIs) from the LCMM longitudinal submodel show associations between baseline predictors and rate of change in the Preclinical Alzheimer Cognitive Composite (PACC). All continuous predictors and the PACC outcome were standardized (z-scored) before analysis to enable comparison of effect magnitudes. Higher PACC scores indicate better cognitive performance; thus, larger positive coefficients correspond to slower decline or better preservation of cognition over time.
+
+:::
+
+::: {#supptbl-lcmm-raw-coefs}
+
+```{r supptbl-lcmm-raw-coefs}
+#| results: asis
+#| tbl-colwidths: [2,10,2,10,5,10,5]
+
+format.ci <- function(x, digits = 2, ...){
+  fx <- format(x, digits = digits, ...)
+  paste0(fx[1], " (", fx[2], ", ", fx[3], ")")
+}
+
+tbl.comb.long <- bind_rows(
+  tbl.long.mri.raw %>% mutate(Model = 'Base model', Part = "Longitudidnal"),
+  tbl.long.tau.raw %>% mutate(Model = 'Tau PET model', Part = "Longitudidnal")) %>%
+  select(Model, Part, Parameter, Estimate, lwr, upr, `P Value`) %>%
+  bind_rows(
+    bind_rows(
+      tbl.or.mri.raw %>% mutate(Model = 'Base model', Part = "Class membership"),
+      tbl.or.tau.raw %>% mutate(Model = 'Tau PET model', Part = "Class membership")) %>%
+      select(Model, Part, Parameter, Estimate = OR, lwr = OR.lwr, upr = OR.upr, `P Value`)) %>%
+  mutate(
+    Estimate = case_when(
+      grepl("P-tau217", Parameter) ~ Estimate * attr(qs_pacc$Ptau217_z, "scaled:scale"),
+      grepl("Amyloid PET", Parameter) ~ Estimate * attr(qs_pacc$SUVRCER_z, "scaled:scale"),
+      grepl("Age", Parameter) ~ Estimate * attr(qs_pacc$AGEYR_z, "scaled:scale"),
+      grepl("Education", Parameter) ~ Estimate * attr(qs_pacc$EDCCNTU_z, "scaled:scale"),
+      grepl("Hipp. atrophy", Parameter) ~ Estimate * attr(qs_pacc$Hipp_atrophy_z, "scaled:scale"),
+      grepl("Tau PET", Parameter) ~ Estimate * attr(qs_pacc$Tau_PET_z, "scaled:scale"),
+      TRUE ~ Estimate),
+    lwr = case_when(
+      grepl("P-tau217", Parameter) ~ lwr * attr(qs_pacc$Ptau217_z, "scaled:scale"),
+      grepl("Amyloid PET", Parameter) ~ lwr * attr(qs_pacc$SUVRCER_z, "scaled:scale"),
+      grepl("Age", Parameter) ~ lwr * attr(qs_pacc$AGEYR_z, "scaled:scale"),
+      grepl("Education", Parameter) ~ lwr * attr(qs_pacc$EDCCNTU_z, "scaled:scale"),
+      grepl("Hipp. atrophy", Parameter) ~ lwr * attr(qs_pacc$Hipp_atrophy_z, "scaled:scale"),
+      grepl("Tau PET", Parameter) ~ lwr * attr(qs_pacc$Tau_PET_z, "scaled:scale"),
+      TRUE ~ lwr),
+    upr = case_when(
+      grepl("P-tau217", Parameter) ~ upr * attr(qs_pacc$Ptau217_z, "scaled:scale"),
+      grepl("Amyloid PET", Parameter) ~ upr * attr(qs_pacc$SUVRCER_z, "scaled:scale"),
+      grepl("Age", Parameter) ~ upr * attr(qs_pacc$AGEYR_z, "scaled:scale"),
+      grepl("Education", Parameter) ~ upr * attr(qs_pacc$EDCCNTU_z, "scaled:scale"),
+      grepl("Hipp. atrophy", Parameter) ~ upr * attr(qs_pacc$Hipp_atrophy_z, "scaled:scale"),
+      grepl("Tau PET", Parameter) ~ upr * attr(qs_pacc$Tau_PET_z, "scaled:scale"),
+      TRUE ~ upr),
+    Parameter = as.character(Parameter),
+    Parameter = gsub("P-tau217", "P-tau217 (U/ml)", Parameter),
+    Parameter = gsub("Amyloid PET", "Amyloid PET (SUVr)", Parameter),
+    Parameter = gsub("Age", "Age (yrs)", Parameter),
+    Parameter = gsub("Education", "Education (yrs)", Parameter),
+    Parameter = gsub("Hipp. atrophy", "Hipp. atrophy (cc$^3$)", Parameter),
+    Parameter = gsub("Tau PET", "Tau PET (SUVr)", Parameter),
+    `P Value` = Hmisc::format.pval(`P Value`, digits = 3, eps = 0.001, nsmall=3)) %>%
+  rowwise() %>%
+  mutate(`Estimate (95% CI)` = format.ci(c(Estimate, lwr, upr))) %>%
+  select(Model, Part, Parameter, `Estimate (95% CI)`, `P Value`)
+
+tbl.comb <- left_join(
+  tbl.comb.long %>% filter(Model == 'Base model', Part == "Class membership") %>%
+    mutate(Parameter0 = gsub(' (slow)', '', Parameter, fixed = TRUE)),
+  tbl.comb.long %>% filter(Model == 'Base model', Part == "Longitudidnal") %>%
+    rename(Parameter0 = Parameter),
+  by = "Parameter0") %>% 
+  bind_rows(
+    left_join(
+      tbl.comb.long %>% filter(Model == 'Tau PET model', Part == "Class membership") %>%
+        mutate(Parameter0 = gsub(' (slow)', '', Parameter, fixed = TRUE)),
+      tbl.comb.long %>% filter(Model == 'Tau PET model', Part == "Longitudidnal") %>%
+        rename(Parameter0 = Parameter),
+      by = "Parameter0")) %>%
+  mutate(Class = case_when(
+    grepl("(slow)", Parameter) ~ "slow",
+    grepl("(fast)", Parameter) ~ "fast"),
+    Parameter = gsub(" (slow)", '', Parameter, fixed = TRUE),
+    Parameter = gsub(" (fast)", '', Parameter, fixed = TRUE)) %>%
+  select(Model = Model.x, Parameter, Class, `Estimate (95% CI).x`, `P Value.x`, 
+    `Estimate (95% CI).y`, `P Value.y`)
+
+tbl.comb %>%
+  kable(col.names = c('Model', 'Parameter', 'Class', 
+  'Estimate (95% CI)', 'P Value', 'Estimate (95% CI)', 'P Value'), 
+    escape = FALSE, font_size = 5) %>%
+  collapse_rows(c(1,2)) %>%
+  add_header_above(
+    c(" " = 2, "Class membership model" = 3, 
+      "Longitudinal model" = 2)) %>%
+  kable_styling()
+```
+
+**Association of baseline predictors (on the _raw_ scale) with latent class membership and longitudinal cognitive decline in models with and without tau PET.** The top rows display results from the latent class mixed model (LCMM) excluding tau PET, while the bottom rows show corresponding results from the model including tau PET as an additional predictor. The left side shows odds ratios (95% CIs) from the LCMM class-membership submodel represent the relative likelihood of belonging to the slow- or fast-declining classes relative to stable class. The right side shows coefficients (95% CIs) from the LCMM longitudinal submodel show associations between baseline predictors and the Preclinical Alzheimer Cognitive Composite (PACC). All continuous predictors are on the raw scale. Higher PACC scores indicate better cognitive performance; thus, larger positive coefficients correspond to slower decline or better preservation of cognition over time.
 
 :::
 

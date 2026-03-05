@@ -13,7 +13,7 @@ License: https://www.a4studydata.org/terms-of-use
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Collate:
     'data.R'
     'A4LEARN-package.R'
