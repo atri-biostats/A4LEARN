@@ -57,10 +57,6 @@ format:
     documentclass: article
     geometry:
       - margin=1in
-  latex:
-    documentclass: article
-    geometry:
-      - margin=1in
   docx: default
 editor: source
 prefer-html: true
@@ -90,9 +86,9 @@ crossref:
 
 ```{r setup, include=FALSE}
 # rmarkdown::render('A4LEARN-Latent-Classes.qmd')
-UPDATELCMM <- TRUE
-UPDATELCMMCV <- TRUE
-UPDATETREECV <- TRUE
+UPDATELCMM <- FALSE
+UPDATELCMMCV <- FALSE
+UPDATETREECV <- FALSE
 library(A4LEARN)
 library(lcmm)
 library(emmeans)
@@ -1076,15 +1072,16 @@ em_effect <- em_all %>%
       TRUE ~ emmean + Delta))
 
 ggplot(em_all, aes(x=Years, y=emmean)) +
-  geom_line(aes(color=Group)) +
+  geom_line(aes(color=Group), size = 1.5) +
   geom_line(data=em_effect, aes(x=Years, y=Treated, color=Group), 
-    linetype='dashed') +
+    linetype='dashed', size = 1.5) +
   geom_point(data=em_effect %>% filter(Years %in% c(2,4)), 
     aes(x=Years, y=Treated, color=Group), 
-    shape=3) +
+    shape=3, stroke = 2) +
   ylab("Mean PACC Score") +
   theme_jama() +
-  scale_color_manual(values = c("#B24745", "#79AF97", "#6A6599")) +
+  scale_color_manual(values = c("#B24745", "#79AF97", "#6A6599"),
+    guide = guide_legend(override.aes = list(shape = NA))) +
   theme(
     legend.position = 'inside', 
     legend.position.inside = c(0.2, 0.2))
