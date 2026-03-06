@@ -27,7 +27,7 @@ library(A4LEARN)
 
 Participants who re-screened may appear in the data twice with different
 BIDs each time. The
-[`A4LEARN::SUBJINFO`](https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.html)
+[`A4LEARN::SUBJINFO`](https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.md)
 derived dataset indicates which participants are re-screens, and how the
 re-screen BIDs are mapped to each other. The code below also accounts
 for this to set up the removal of duplicate appearances.
@@ -43,7 +43,7 @@ rescreens <- A4LEARN::SUBJINFO %>%
 **Gather Amyloid PET data**
 
 The Amyloid PET quantitative data
-([`A4LEARN::imaging_SUVR_amyloid`](https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.html))
+([`A4LEARN::imaging_SUVR_amyloid`](https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.md))
 is in long format with one row per region. We use
 [`tidyr::pivot_wider`](https://tidyr.tidyverse.org/reference/pivot_wider.html)
 to transform to wide format with one column per region.

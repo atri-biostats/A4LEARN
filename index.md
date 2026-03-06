@@ -4,8 +4,8 @@
 
 `A4LEARN` is an R package containing data and code to reproduce results
 from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study
-(Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
-Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
+(Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
+Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
 bundle of clinical data, analysis code examples, and html and pdf
 documentation. Documentation can be found at
 <https://atri-biostats.github.io/A4LEARN/>.
@@ -188,7 +188,7 @@ primary end point).
 
 ## Primary analyis of the PACC
 
-Preclinical Alzheimer Cognitive Composite (PACC, Donohue et al. (2014))
+Preclinical Alzheimer Cognitive Composite (PACC, Donohue et al. (2014))
 data was modeled using natural cubic splines as described in Donohue et
 al. (2023). The fixed effects included the following terms: (i) spline
 basis expansion terms (two terms), (ii) spline basis expansion
@@ -407,8 +407,8 @@ ref_grid(cfi_fit,
 
 | contrast          | TX          | estimate |   SE |      df | t.ratio | p.value  |
 |:------------------|:------------|---------:|-----:|--------:|--------:|:---------|
-| ADURW240 - ADURW0 | Placebo     |     1.51 | 0.19 | 1437.56 |    7.96 | p\<0.001 |
-| ADURW240 - ADURW0 | Solanezumab |     2.09 | 0.21 | 1768.38 |    9.77 | p\<0.001 |
+| ADURW240 - ADURW0 | Placebo     |     1.51 | 0.19 | 1845.32 |    7.96 | p\<0.001 |
+| ADURW240 - ADURW0 | Solanezumab |     2.09 | 0.21 | 2299.16 |    9.77 | p\<0.001 |
 
 Mean CFI change from baseline at week 240 by treatment group estimated
 from spline model. {.table .table
@@ -439,7 +439,7 @@ contrast240 %>%
 
 | contrast | ADURW | estimate | SE | df | t.ratio | lower.CL | upper.CL | p.value |
 |:---|---:|---:|---:|---:|---:|---:|---:|:---|
-| Solanezumab - Placebo | 240 | 0.58 | 0.29 | 1769.54 | 2.04 | 0.02 | 1.14 | 0.04 |
+| Solanezumab - Placebo | 240 | 0.58 | 0.29 | 2103.74 | 2.04 | 0.02 | 1.14 | 0.04 |
 
 Mean CFI group change from baseline at week 240 by treatment group
 estimated from spline model. {.table .table
@@ -472,26 +472,22 @@ Shaded region depicts 95% confidence intervals.
 
 ## References
 
-Donohue, Michael C, Oliver Langford, Philip S Insel, Christopher H van
-Dyck, Ronald C Petersen, Suzanne Craft, Gopalan Sethuraman, Rema Raman,
-Paul S Aisen, and Alzheimer’s Disease Neuroimaging Initiative. 2023.
+Donohue, Michael C, Oliver Langford, Philip S Insel, et al. 2023.
 “Natural Cubic Splines for the Analysis of Alzheimer’s Clinical Trials.”
-*Pharmaceutical Statistics*. <https://doi.org/10.1002/pst.2285>.
+*Pharmaceutical Statistics*, ahead of print.
+<https://doi.org/10.1002/pst.2285>.
 
-Donohue, Michael C, Reisa A Sperling, David P Salmon, Dorene M Rentz,
-Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
-“The Preclinical Alzheimer Cognitive Composite: Measuring
-Amyloid-Related Decline.” *JAMA Neurology* 71 (8): 961–70.
+Donohue, Michael C, Reisa A Sperling, David P Salmon, et al. 2014. “The
+Preclinical Alzheimer Cognitive Composite: Measuring Amyloid-Related
+Decline.” *JAMA Neurology* 71 (8): 961–70.
 <https://doi.org/10.1001/jamaneurol.2014.803>.
 
-Sperling, Reisa A, MC Donohue, RA Rissman, KA Johnson, DM Rentz, JD
-Grill, JL Heidebrink, et al. 2024. “Amyloid and Tau Prediction of
-Cognitive and Functional Decline in Unimpaired Older Individuals:
-Longitudinal Data from the A4 and LEARN Studies.” *The Journal of
-Prevention of Alzheimer’s Disease* 11 (4): 802–13.
+Sperling, Reisa A, MC Donohue, RA Rissman, et al. 2024. “Amyloid and Tau
+Prediction of Cognitive and Functional Decline in Unimpaired Older
+Individuals: Longitudinal Data from the A4 and LEARN Studies.” *The
+Journal of Prevention of Alzheimer’s Disease* 11 (4): 802–13.
 <https://doi.org/10.14283/jpad.2024.122>.
 
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
+Sperling, Reisa A, Michael C Donohue, Rema Raman, et al. 2023. “Trial of
 Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
-Medicine* 389 (12): 1096–1107. <https://doi.org/10.1056/NEJMoa2305032>.
+Medicine* 389 (12): 1096–107. <https://doi.org/10.1056/NEJMoa2305032>.

@@ -4,8 +4,8 @@
 
 `A4LEARN` is an R package containing data and code to reproduce results
 from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study
-(Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
-Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
+(Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
+Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
 bundle of clinical data, analysis code examples, and html and pdf
 documentation. Documentation can be found at
 <https://atri-biostats.github.io/A4LEARN/>.
@@ -188,7 +188,7 @@ primary end point).
 
 ## Primary analyis of the PACC
 
-Preclinical Alzheimer Cognitive Composite (PACC, Donohue et al. (2014))
+Preclinical Alzheimer Cognitive Composite (PACC, Donohue et al. (2014))
 data was modeled using natural cubic splines as described in Donohue et
 al. (2023). The fixed effects included the following terms: (i) spline
 basis expansion terms (two terms), (ii) spline basis expansion
@@ -407,8 +407,8 @@ ref_grid(cfi_fit,
 
 | contrast          | TX          | estimate |   SE |      df | t.ratio | p.value  |
 |:------------------|:------------|---------:|-----:|--------:|--------:|:---------|
-| ADURW240 - ADURW0 | Placebo     |     1.51 | 0.19 | 1437.56 |    7.96 | p\<0.001 |
-| ADURW240 - ADURW0 | Solanezumab |     2.09 | 0.21 | 1768.38 |    9.77 | p\<0.001 |
+| ADURW240 - ADURW0 | Placebo     |     1.51 | 0.19 | 1845.32 |    7.96 | p\<0.001 |
+| ADURW240 - ADURW0 | Solanezumab |     2.09 | 0.21 | 2299.16 |    9.77 | p\<0.001 |
 
 Mean CFI change from baseline at week 240 by treatment group estimated
 from spline model. {.table .table
@@ -439,7 +439,7 @@ contrast240 %>%
 
 | contrast | ADURW | estimate | SE | df | t.ratio | lower.CL | upper.CL | p.value |
 |:---|---:|---:|---:|---:|---:|---:|---:|:---|
-| Solanezumab - Placebo | 240 | 0.58 | 0.29 | 1769.54 | 2.04 | 0.02 | 1.14 | 0.04 |
+| Solanezumab - Placebo | 240 | 0.58 | 0.29 | 2103.74 | 2.04 | 0.02 | 1.14 | 0.04 |
 
 Mean CFI group change from baseline at week 240 by treatment group
 estimated from spline model. {.table .table
@@ -472,31 +472,142 @@ Shaded region depicts 95% confidence intervals.
 
 ## References
 
-Donohue, Michael C, Oliver Langford, Philip S Insel, Christopher H van
-Dyck, Ronald C Petersen, Suzanne Craft, Gopalan Sethuraman, Rema Raman,
-Paul S Aisen, and Alzheimer’s Disease Neuroimaging Initiative. 2023.
+Donohue, Michael C, Oliver Langford, Philip S Insel, et al. 2023.
 “Natural Cubic Splines for the Analysis of Alzheimer’s Clinical Trials.”
-*Pharmaceutical Statistics*. <https://doi.org/10.1002/pst.2285>.
+*Pharmaceutical Statistics*, ahead of print.
+<https://doi.org/10.1002/pst.2285>.
 
-Donohue, Michael C, Reisa A Sperling, David P Salmon, Dorene M Rentz,
-Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
-“The Preclinical Alzheimer Cognitive Composite: Measuring
-Amyloid-Related Decline.” *JAMA Neurology* 71 (8): 961–70.
+Donohue, Michael C, Reisa A Sperling, David P Salmon, et al. 2014. “The
+Preclinical Alzheimer Cognitive Composite: Measuring Amyloid-Related
+Decline.” *JAMA Neurology* 71 (8): 961–70.
 <https://doi.org/10.1001/jamaneurol.2014.803>.
 
-Sperling, Reisa A, MC Donohue, RA Rissman, KA Johnson, DM Rentz, JD
-Grill, JL Heidebrink, et al. 2024. “Amyloid and Tau Prediction of
-Cognitive and Functional Decline in Unimpaired Older Individuals:
-Longitudinal Data from the A4 and LEARN Studies.” *The Journal of
-Prevention of Alzheimer’s Disease* 11 (4): 802–13.
+Sperling, Reisa A, MC Donohue, RA Rissman, et al. 2024. “Amyloid and Tau
+Prediction of Cognitive and Functional Decline in Unimpaired Older
+Individuals: Longitudinal Data from the A4 and LEARN Studies.” *The
+Journal of Prevention of Alzheimer’s Disease* 11 (4): 802–13.
 <https://doi.org/10.14283/jpad.2024.122>.
 
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
+Sperling, Reisa A, Michael C Donohue, Rema Raman, et al. 2023. “Trial of
 Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
-Medicine* 389 (12): 1096–1107. <https://doi.org/10.1056/NEJMoa2305032>.
+Medicine* 389 (12): 1096–107. <https://doi.org/10.1056/NEJMoa2305032>.
 
-# 
+# Package index
+
+## All functions
+
+- [`ADQS`](https://atri-biostats.github.io/A4LEARN/reference/ADQS.md) :
+  ADQS: \[Derived\] Analysis Data Questionnaire Scores
+- [`COGSTATE_COMPUTERIZED`](https://atri-biostats.github.io/A4LEARN/reference/COGSTATE_COMPUTERIZED.md)
+  : COGSTATE_COMPUTERIZED: \[Derived\] Cogstate (Computerized)
+- [`DS`](https://atri-biostats.github.io/A4LEARN/reference/DS.md) : DS:
+  \[Derived\] Disposition
+- [`PACC`](https://atri-biostats.github.io/A4LEARN/reference/PACC.md) :
+  PACC: \[Derived\] PACC
+- [`SUBJINFO`](https://atri-biostats.github.io/A4LEARN/reference/SUBJINFO.md)
+  : SUBJINFO: \[Derived\] Subject Information
+- [`SV`](https://atri-biostats.github.io/A4LEARN/reference/SV.md) : SV:
+  \[Derived\] Subject Visits
+- [`adlpq`](https://atri-biostats.github.io/A4LEARN/reference/adlpq.md)
+  : adlpq: ADCS ADL-Prevention Questionnaire for Participant
+- [`adlpqsp`](https://atri-biostats.github.io/A4LEARN/reference/adlpqsp.md)
+  : adlpqsp: ADCS ADL-Prevention Questionnaire for Study Partner
+- [`biomarker_AB_Test`](https://atri-biostats.github.io/A4LEARN/reference/biomarker_AB_Test.md)
+  : biomarker_AB_Test: Biomarker - Amyloid-β Tests
+- [`biomarker_Plasma_Roche_Results`](https://atri-biostats.github.io/A4LEARN/reference/biomarker_Plasma_Roche_Results.md)
+  : biomarker_Plasma_Roche_Results: Biomarker - Roche Plasma Assay
+- [`biomarker_pTau217`](https://atri-biostats.github.io/A4LEARN/reference/biomarker_pTau217.md)
+  : biomarker_pTau217: Biomarker - pTau-217 Digital Immunoassay
+- [`cdr`](https://atri-biostats.github.io/A4LEARN/reference/cdr.md) :
+  cdr: Clinical Dementia Rating
+- [`cfi`](https://atri-biostats.github.io/A4LEARN/reference/cfi.md) :
+  cfi: Cognitive Function Index - Participant
+- [`cfisp`](https://atri-biostats.github.io/A4LEARN/reference/cfisp.md)
+  : cfisp: Cognitive Function Index - Study Partner
+- [`clrm_ecg`](https://atri-biostats.github.io/A4LEARN/reference/clrm_ecg.md)
+  : clrm_ecg: Clinical Laboratory Results Modernization (CLRM) - ECG
+- [`clrm_lab`](https://atri-biostats.github.io/A4LEARN/reference/clrm_lab.md)
+  : clrm_lab: Clinical Laboratory Results Modernization (CLRM) -
+  Laboratory Tests
+- [`cogdigit`](https://atri-biostats.github.io/A4LEARN/reference/cogdigit.md)
+  : cogdigit: Cognitive Test - Digit Symbol Substitution Test
+- [`cogfcsr16`](https://atri-biostats.github.io/A4LEARN/reference/cogfcsr16.md)
+  : cogfcsr16: Cognitive Test - Free and Cued Selective Reminding (16
+  Pictures)
+- [`coglogic`](https://atri-biostats.github.io/A4LEARN/reference/coglogic.md)
+  : coglogic: Cognitive Test - Logical Memory
+- [`cogstate_battery`](https://atri-biostats.github.io/A4LEARN/reference/cogstate_battery.md)
+  : cogstate_battery: Cogstate - Computerized Battery
+- [`cogstate_cpath`](https://atri-biostats.github.io/A4LEARN/reference/cogstate_cpath.md)
+  : cogstate_cpath: Cogstate - Critical Path Institute: Activities of
+  Daily Living
+- [`cogstate_macq`](https://atri-biostats.github.io/A4LEARN/reference/cogstate_macq.md)
+  : cogstate_macq: Cogstate - Memory Complaint Questionnaire
+- [`concerns`](https://atri-biostats.github.io/A4LEARN/reference/concerns.md)
+  : concerns: Concerns about Alzheimer's Disease Dementia
+- [`cssrs`](https://atri-biostats.github.io/A4LEARN/reference/cssrs.md)
+  : cssrs: C-SSRS - Baseline/Screening Version
+- [`cssrslv`](https://atri-biostats.github.io/A4LEARN/reference/cssrslv.md)
+  : cssrslv: C-SSRS - Since Last Visit
+- [`data_download_date`](https://atri-biostats.github.io/A4LEARN/reference/data_download_date.md)
+  : A4 LEARN data download date
+- [`clinical_datadic`](https://atri-biostats.github.io/A4LEARN/reference/datadic.md)
+  [`derived_datadic`](https://atri-biostats.github.io/A4LEARN/reference/datadic.md)
+  [`external_datadic`](https://atri-biostats.github.io/A4LEARN/reference/datadic.md)
+  [`visits_datadic`](https://atri-biostats.github.io/A4LEARN/reference/datadic.md)
+  : A4 LEARN data dictionaries
+- [`dose`](https://atri-biostats.github.io/A4LEARN/reference/dose.md) :
+  dose: Study Drug Therapy
+- [`famhxpar`](https://atri-biostats.github.io/A4LEARN/reference/famhxpar.md)
+  : famhxpar: Family History - Parents
+- [`famhxsib`](https://atri-biostats.github.io/A4LEARN/reference/famhxsib.md)
+  : famhxsib: Family History - Sibling Log
+- [`ftpscale`](https://atri-biostats.github.io/A4LEARN/reference/ftpscale.md)
+  : ftpscale: Future Time Perspective Scale
+- [`habits`](https://atri-biostats.github.io/A4LEARN/reference/habits.md)
+  : habits: Habits
+- [`ies`](https://atri-biostats.github.io/A4LEARN/reference/ies.md) :
+  ies: Impact of Events Scale
+- [`imaging_FLAIR_WMH_QC`](https://atri-biostats.github.io/A4LEARN/reference/imaging_FLAIR_WMH_QC.md)
+  : imaging_FLAIR_WMH_QC: Imaging - FLAIR MRI White Matter
+  Hyperintensities (WMH) QC
+- [`imaging_MRI_reads`](https://atri-biostats.github.io/A4LEARN/reference/imaging_MRI_reads.md)
+  : imaging_MRI_reads: Imaging - MRI Read Results
+- [`imaging_PET_VA`](https://atri-biostats.github.io/A4LEARN/reference/imaging_PET_VA.md)
+  : imaging_PET_VA: Imaging - Amyloid PET Qualitative Visual Assessment
+- [`imaging_SUVR_amyloid`](https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_amyloid.md)
+  : imaging_SUVR_amyloid: Imaging - Amyloid PET SUVR Quantitative
+  Analysis
+- [`imaging_SUVR_tau`](https://atri-biostats.github.io/A4LEARN/reference/imaging_SUVR_tau.md)
+  : imaging_SUVR_tau: Imaging - Tau PET SUVR Quantitative Analysis
+- [`imaging_Tau_PET_PetSurfer`](https://atri-biostats.github.io/A4LEARN/reference/imaging_Tau_PET_PetSurfer.md)
+  : imaging_Tau_PET_PetSurfer: Imaging - Tau PET (PetSurfer Pipeline)
+- [`imaging_Tau_PET_Stanford`](https://atri-biostats.github.io/A4LEARN/reference/imaging_Tau_PET_Stanford.md)
+  : imaging_Tau_PET_Stanford: Imaging - Tau PET (Stanford Pipeline)
+- [`imaging_retinal`](https://atri-biostats.github.io/A4LEARN/reference/imaging_retinal.md)
+  : imaging_retinal: Imaging - Retinal
+- [`imaging_volumetric_mri`](https://atri-biostats.github.io/A4LEARN/reference/imaging_volumetric_mri.md)
+  : imaging_volumetric_mri: Imaging - Volumetric MRI Results
+- [`mmse`](https://atri-biostats.github.io/A4LEARN/reference/mmse.md) :
+  mmse: Mini Mental State Exam
+- [`phyneuro`](https://atri-biostats.github.io/A4LEARN/reference/phyneuro.md)
+  : phyneuro: Physical and Neurological Exam
+- [`psychwell`](https://atri-biostats.github.io/A4LEARN/reference/psychwell.md)
+  : psychwell: Assessment of Psychological Well-Being
+- [`ptdemog`](https://atri-biostats.github.io/A4LEARN/reference/ptdemog.md)
+  : ptdemog: Participant Demographics
+- [`rss`](https://atri-biostats.github.io/A4LEARN/reference/rss.md) :
+  rss: Research Satisfaction Survey
+- [`ruib`](https://atri-biostats.github.io/A4LEARN/reference/ruib.md) :
+  ruib: Resource Use Inventory - Brief
+- [`ruib1`](https://atri-biostats.github.io/A4LEARN/reference/ruib1.md)
+  : ruib1: Resource Use Inventory - Brief: Hospital Admissions Log
+- [`spinfo`](https://atri-biostats.github.io/A4LEARN/reference/spinfo.md)
+  : spinfo: Study Partner Information
+- [`views`](https://atri-biostats.github.io/A4LEARN/reference/views.md)
+  : views: Views & Perceptions of Amyloid Imaging
+- [`vitals`](https://atri-biostats.github.io/A4LEARN/reference/vitals.md)
+  : vitals: Vital Signs
 
 # Articles
 
