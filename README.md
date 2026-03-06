@@ -7,8 +7,9 @@
 
 `A4LEARN` is an R package containing data and code to reproduce results
 from the *Anti-Amyloid Treatment in Asymptomatic Alzheimer’s (A4)* study
-(Sperling et al. 2023) and *Longitudinal Evaluation of Amyloid Risk and
-Neurodegeneration (LEARN)* study (Sperling et al. 2024). `A4LEARN` is a
+(<span class="nocase">Sperling et al.</span> 2023) and *Longitudinal
+Evaluation of Amyloid Risk and Neurodegeneration (LEARN)* study
+(<span class="nocase">Sperling et al.</span> 2024). `A4LEARN` is a
 bundle of clinical data, analysis code examples, and html and pdf
 documentation. Documentation can be found at
 <https://atri-biostats.github.io/A4LEARN/>.
@@ -188,20 +189,21 @@ primary end point).
 
 ## Primary analyis of the PACC
 
-Preclinical Alzheimer Cognitive Composite (PACC, Donohue et al. (2014))
-data was modeled using natural cubic splines as described in Donohue et
-al. (2023). The fixed effects included the following terms: (i) spline
-basis expansion terms (two terms), (ii) spline basis expansion
-terms-by-treatment interaction (two terms), (iii) PACC test version
-administered, (iv) baseline age, (v) education, (vi) APOE4 Carrier
-Status (yes/no), and (vii) baseline florbetapir cortical SUVr. The model
-is constrained to not allow a difference between treatment group means
-at baseline. The following variance-covariance structures were assumed
-in sequence until a model converged: (i) heterogeneous unstructured,
-(ii) heterogeneous Toeplitz, (iii) heterogeneous autoregressive order 1,
-(iv) heterogeneous compound symmetry, and (v) compound symmetry. The
-first structure, heterogeneous unstructured, did not converge. Here we
-fit the second, heterogeneous Toeplitz, which did converge.
+Preclinical Alzheimer Cognitive Composite (PACC,
+<span class="nocase">Donohue et al.</span> (2014)) data was modeled
+using natural cubic splines as described in Donohue et al. (2023). The
+fixed effects included the following terms: (i) spline basis expansion
+terms (two terms), (ii) spline basis expansion terms-by-treatment
+interaction (two terms), (iii) PACC test version administered, (iv)
+baseline age, (v) education, (vi) APOE4 Carrier Status (yes/no), and
+(vii) baseline florbetapir cortical SUVr. The model is constrained to
+not allow a difference between treatment group means at baseline. The
+following variance-covariance structures were assumed in sequence until
+a model converged: (i) heterogeneous unstructured, (ii) heterogeneous
+Toeplitz, (iii) heterogeneous autoregressive order 1, (iv) heterogeneous
+compound symmetry, and (v) compound symmetry. The first structure,
+heterogeneous unstructured, did not converge. Here we fit the second,
+heterogeneous Toeplitz, which did converge.
 
 ``` r
 ggplot(ADQS_PACC, aes(x=ADURW, y=PACC, color=TX)) +
@@ -721,7 +723,7 @@ Placebo
 
 <td style="text-align:right;">
 
-1437.56
+1845.32
 </td>
 
 <td style="text-align:right;">
@@ -760,7 +762,7 @@ Solanezumab
 
 <td style="text-align:right;">
 
-1768.38
+2299.16
 </td>
 
 <td style="text-align:right;">
@@ -888,7 +890,7 @@ Solanezumab - Placebo
 
 <td style="text-align:right;">
 
-1769.54
+2103.74
 </td>
 
 <td style="text-align:right;">
@@ -947,46 +949,42 @@ Shaded region depicts 95% confidence intervals.
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent"
-entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-donohue2023natural" class="csl-entry">
 
-Donohue, Michael C, Oliver Langford, Philip S Insel, Christopher H van
-Dyck, Ronald C Petersen, Suzanne Craft, Gopalan Sethuraman, Rema Raman,
-Paul S Aisen, and Alzheimer’s Disease Neuroimaging Initiative. 2023.
+Donohue, Michael C, Oliver Langford, Philip S Insel, et al. 2023.
 “Natural Cubic Splines for the Analysis of Alzheimer’s Clinical Trials.”
-*Pharmaceutical Statistics*. <https://doi.org/10.1002/pst.2285>.
+*Pharmaceutical Statistics*, ahead of print.
+<https://doi.org/10.1002/pst.2285>.
 
 </div>
 
 <div id="ref-donohue2014preclinical" class="csl-entry">
 
-Donohue, Michael C, Reisa A Sperling, David P Salmon, Dorene M Rentz,
-Rema Raman, Ronald G Thomas, Michael Weiner, Paul S Aisen, et al. 2014.
-“The Preclinical Alzheimer Cognitive Composite: Measuring
-Amyloid-Related Decline.” *JAMA Neurology* 71 (8): 961–70.
-<https://doi.org/10.1001/jamaneurol.2014.803>.
+<span class="nocase">Donohue, Michael C, Reisa A Sperling, David P
+Salmon, et al.</span> 2014. “The Preclinical Alzheimer Cognitive
+Composite: Measuring Amyloid-Related Decline.” *JAMA Neurology* 71 (8):
+961–70. <https://doi.org/10.1001/jamaneurol.2014.803>.
 
 </div>
 
 <div id="ref-sperling2024amyloid" class="csl-entry">
 
-Sperling, Reisa A, MC Donohue, RA Rissman, KA Johnson, DM Rentz, JD
-Grill, JL Heidebrink, et al. 2024. “Amyloid and Tau Prediction of
-Cognitive and Functional Decline in Unimpaired Older Individuals:
-Longitudinal Data from the A4 and LEARN Studies.” *The Journal of
-Prevention of Alzheimer’s Disease* 11 (4): 802–13.
-<https://doi.org/10.14283/jpad.2024.122>.
+<span class="nocase">Sperling, Reisa A, MC Donohue, RA Rissman, et
+al.</span> 2024. “Amyloid and Tau Prediction of Cognitive and Functional
+Decline in Unimpaired Older Individuals: Longitudinal Data from the A4
+and LEARN Studies.” *The Journal of Prevention of Alzheimer’s Disease*
+11 (4): 802–13. <https://doi.org/10.14283/jpad.2024.122>.
 
 </div>
 
 <div id="ref-sperling2023trial" class="csl-entry">
 
-Sperling, Reisa A, Michael C Donohue, Rema Raman, Michael S Rafii, Keith
-Johnson, Colin L Masters, Christopher H van Dyck, et al. 2023. “Trial of
-Solanezumab in Preclinical Alzheimer’s Disease.” *New England Journal of
-Medicine* 389 (12): 1096–1107. <https://doi.org/10.1056/NEJMoa2305032>.
+<span class="nocase">Sperling, Reisa A, Michael C Donohue, Rema Raman,
+et al.</span> 2023. “Trial of Solanezumab in Preclinical Alzheimer’s
+Disease.” *New England Journal of Medicine* 389 (12): 1096–107.
+<https://doi.org/10.1056/NEJMoa2305032>.
 
 </div>
 

@@ -90,9 +90,9 @@ crossref:
 
 ```{r setup, include=FALSE}
 # rmarkdown::render('A4LEARN-Latent-Classes.qmd')
-UPDATELCMM <- FALSE
-UPDATELCMMCV <- FALSE
-UPDATETREECV <- FALSE
+UPDATELCMM <- TRUE
+UPDATELCMMCV <- TRUE
+UPDATETREECV <- TRUE
 library(A4LEARN)
 library(lcmm)
 library(emmeans)
@@ -1271,6 +1271,8 @@ tmp.or <- summarize_lcmm(m.best.mri)$memb_sum %>%
       levels = paste(rep(raw_names, each=2), c('(fast)', '(slow)')),
       labels = paste(rep(out_names, each=2), c('(fast)', '(slow)'))))
 
+tbl.or.mri.raw <- tmp.or
+
 tmp.long <- summarize_lcmm(m.best.mri)$long_sum %>%
   mutate(
     Parameter = gsub(' class1', ' (slow)', Parameter),
@@ -1284,6 +1286,8 @@ tmp.long <- summarize_lcmm(m.best.mri)$long_sum %>%
     Parameter = factor(Parameter,
       levels = raw_names,
       labels = out_names))
+
+tbl.long.mri.raw <- tmp.long
 
 pA <- ggplot(tmp.or, aes(x = OR, y = Parameter)) +
   geom_vline(xintercept = 1, linetype = "solid", 
@@ -1340,6 +1344,9 @@ tmp.long <- summarize_lcmm(m.best.tau)$long_sum %>%
     Parameter = factor(Parameter,
       levels = raw_names,
       labels = out_names))
+
+tbl.or.tau.raw <- tmp.or
+tbl.long.tau.raw <- tmp.long
 
 pC <- ggplot(tmp.or, aes(x = OR, y = Parameter)) +
   geom_vline(xintercept = 1, linetype = "solid", 
